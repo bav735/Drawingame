@@ -16,6 +16,7 @@ public class Line {// implements Serializable {
 	public List<Float> pointY;
 	public int color;
 	public int length;
+	public float strokeWidth;
 
 	public Line() {
 		pointX = new ArrayList<Float>();

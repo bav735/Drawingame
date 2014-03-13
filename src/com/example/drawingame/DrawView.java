@@ -24,13 +24,14 @@ public class DrawView extends View {
 	private int lastLineNum;
 	public int drawingColor;
 	private int backgroundColor;
-	private float strokeWidth;
+	public float strokeWidth;
 	public List<Line> lineList;
 	private MainActivity mainActivity;
 	private Paint paint = new Paint();
 	public boolean isEnabled;
 	public boolean isRandom;
 	public boolean isContinuous;
+	public boolean isOnChangeWidth;
 
 	private float lastX;
 	private float lastY;
@@ -39,7 +40,6 @@ public class DrawView extends View {
 	public DrawView(MainActivity mainActivity) {
 		super((Context) mainActivity);
 		this.mainActivity = mainActivity;
-		paint.setStrokeWidth(strokeWidth);
 		drawingColor = Color.BLACK;
 		backgroundColor = Color.WHITE;
 		strokeWidth = (float) 5;
@@ -52,6 +52,7 @@ public class DrawView extends View {
 		isEnabled = true;
 		isRandom = false;
 		isContinuous = false;
+		isOnChangeWidth = false;
 	}
 
 	public DrawView(Context context, AttributeSet attrs) {
@@ -72,6 +73,10 @@ public class DrawView extends View {
 		if (lineList != null && !lineList.isEmpty())
 			for (Line line : lineList) {
 				paint.setColor(line.color);
+				if (isOnChangeWidth)
+					paint.setStrokeWidth(strokeWidth);
+				else
+					paint.setStrokeWidth(line.strokeWidth);
 				for (int i = 1; i < line.length; i++)
 					canvas.drawLine(line.pointX.get(i - 1),
 							line.pointY.get(i - 1), line.pointX.get(i),
@@ -101,6 +106,7 @@ public class DrawView extends View {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			Line newLine = new Line();
+			newLine.strokeWidth = strokeWidth;
 			if (isRandom)
 				drawingColor = randomColor();
 			newLine.color = drawingColor;
@@ -111,7 +117,7 @@ public class DrawView extends View {
 		case MotionEvent.ACTION_MOVE:
 			lineList.get(lineNum - 1).addPoint(event.getX(), event.getY());
 			invalidate();
-			if (isContinuous && isNotClose(event.getX(), event.getY()))
+			if (isContinuous)// && isNotClose(event.getX(), event.getY()))
 				mainActivity.client.send();
 			break;
 		}
@@ -122,6 +128,7 @@ public class DrawView extends View {
 		lineNum = 0;
 		lastLineNum = 0;
 		lineList = new ArrayList<Line>();
+		invalidate();
 	}
 
 	public void undo() {

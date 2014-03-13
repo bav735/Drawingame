@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
+import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
 
 public class MainActivity extends Activity {
 
@@ -40,6 +41,7 @@ public class MainActivity extends Activity {
 	private Button btnClear;
 	private Button btnSaveDraw;
 	private Button btnTwitter;
+	private Button	btnChangeWidth;
 
 	private boolean isServer = false;
 
@@ -213,6 +215,22 @@ public class MainActivity extends Activity {
 			}
 		});
 		llScroll.addView(btnPickColor);
+		
+		btnChangeWidth = new Button(mainActivity);
+		btnChangeWidth.setText("Change stroke width");
+		btnChangeWidth.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ChangeWidthDialog changeWidthDialog = new ChangeWidthDialog(mainActivity, new OnChangeWidthListener() {
+					@Override
+					public void onOk(float strokeWidth) {
+						drawView.strokeWidth = strokeWidth;
+					}
+				});
+				changeWidthDialog.show();
+			}
+		});
+		llScroll.addView(btnChangeWidth);
 
 		btnSaveDraw = new Button(mainActivity);
 		btnSaveDraw.setText("Save drawing to disk");
