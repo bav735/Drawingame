@@ -22,23 +22,23 @@ public class ChangeWidthDialog {
 	private OnChangeWidthListener changeWidthListener;
 	private DrawView drawView;
 
-	public ChangeWidthDialog(MainActivity mainActivity1,
+	public ChangeWidthDialog(MainActivity parentActivity,
 			OnChangeWidthListener changeWidthListener1) {
 		this.changeWidthListener = changeWidthListener1;
-		this.mainActivity = mainActivity1;
+		this.mainActivity = parentActivity;
 		LinearLayout linearLayout = new LinearLayout(mainActivity);
 		linearLayout.setOrientation(LinearLayout.VERTICAL);
 
 		drawView = new DrawView(mainActivity);
+        drawView.init(mainActivity);
 		drawView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
 				200));
 		drawView.strokeWidth = mainActivity.drawView.strokeWidth;
 		drawView.drawingColor = mainActivity.drawView.drawingColor;
-		drawView.isOnChangeWidth = true;
 
 		seekBar = new SeekBar(mainActivity);
 		seekBar.setProgress((int) mainActivity.drawView.strokeWidth);
-		seekBar.setMax(50);
+		seekBar.setMax(DrawView.maxWidth);
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
@@ -52,8 +52,7 @@ public class ChangeWidthDialog {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				drawView.strokeWidth = progress;
-				drawView.invalidate();
+				drawView.changeStrokeWidth(progress);
 			}
 		});
 		linearLayout.addView(seekBar);

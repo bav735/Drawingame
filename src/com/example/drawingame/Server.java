@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 public class Server extends Thread {
 
-	private ServerSocket serverSocket = null; // сам сервер-сокет
-	private Thread serverThread; // главная нить обработки сервер-сокета
+	private ServerSocket serverSocket = null; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ
+	private Thread serverThread; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ
 	private int port;
 	private Activity activity;
 	private BlockingQueue<SocketProcessor> socketProcessors = new LinkedBlockingQueue<SocketProcessor>();
@@ -120,7 +120,7 @@ public class Server extends Thread {
 			try {
 				socketOut.writeUTF(s);
 				socketOut.flush();
-				toast("Sending...");
+			//	toast("Sending...");
 			} catch (IOException e) {
 				close();
 				Log.d("!", "Error while writing to socket - " + e.toString());
@@ -129,10 +129,10 @@ public class Server extends Thread {
 		}
 
 		public synchronized void close() {
-			socketProcessors.remove(this); // убираем из списка
+			socketProcessors.remove(this); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			if (!clientSocket.isClosed()) {
 				try {
-					clientSocket.close(); // закрываем
+					clientSocket.close(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				} catch (IOException e) {
 					toast("Couldn't close socket! - " + e.toString());
 				}

@@ -1,5 +1,6 @@
 package com.example.drawingame;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -8,293 +9,312 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.format.Formatter;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.view.*;
+import android.widget.*;
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
 
 public class MainActivity extends Activity {
 
-	public MainActivity mainActivity = this;
-	public DrawView drawView;
-	public String ipa;
-	public final int port = 4445;
-	public String deviceName = android.os.Build.MODEL;
-	public Client client;
+    public MainActivity mainActivity = this;
+    public DrawView drawView;
+    public String ipa;
+    public final int port = 4445;
+    public String deviceName = android.os.Build.MODEL;
+    public Client client;
 
-	private LinearLayout llMain;
-	private LinearLayout llServer;
-	private LinearLayout llScroll;
-	private Button btnSend;
-	private Button btnUndo;
-	private Button btnRandom;
-	private Button btnPickColor;
-	private Button btnContinuous;
-	private Button btnClear;
-	private Button btnSaveDraw;
-	private Button btnTwitter;
-	private Button	btnChangeWidth;
+    private HorizontalScrollView scrollView;
+    private LinearLayout llMain;
+    private LinearLayout llServer;
+    private LinearLayout llScroll;
+    private Button btnSend;
+    private Button btnUndo;
+    private Button btnRandom;
+    private Button btnPickColor;
+    private Button btnContinuous;
+    private Button btnClear;
+    private Button btnSaveDraw;
+    private Button btnTwitter;
+    private Button btnChangeWidth;
 
-	private boolean isServer = false;
+    private Menu mainActivityMenu;
+    private MenuItem menuClearDrawing;
+    private MenuItem menuContinuousCommit;
+    private MenuItem menuRandomColor;
+    private MenuItem menuRandomStrokeWidth;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    private boolean isServer = false;
 
-		if (!isNetworkAvailable()) {
-			ConnectionDialog cd = new ConnectionDialog(mainActivity);
-			cd.show();
-		}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mainActivityMenu = menu;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-		llMain = new LinearLayout(mainActivity);
-		llMain.setOrientation(LinearLayout.VERTICAL);
-		setContentView(llMain);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.menuUndo:
+                drawView.undo();
+                return true;
 
-		llServer = new LinearLayout(mainActivity);
-		llMain.addView(llServer);
+            case R.id.menuClearDrawing:
+                drawView.clear();
+                return true;
 
-		TextView tvSetServer = new TextView(mainActivity);
-		tvSetServer.setText("Set device as a server?");
-		llServer.addView(tvSetServer);
+            case R.id.menuCommitDrawing:
+                client.send();
+                if (drawView.isContinuous)
+                    changeContinuous();
+                return true;
 
-		Button btnServerYes = new Button(mainActivity);
-		btnServerYes.setText("Yes");
-		btnServerYes.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ipa = getLocalIpAddress();
-				new Server(mainActivity, port).start();
-				isServer = true;
-				createClient();
-				llMain.removeView(llServer);
-			}
-		});
-		llServer.addView(btnServerYes);
+            case R.id.menuContinuousCommit:
+                changeContinuous();
+                return true;
 
-		Button btnServerNo = new Button(mainActivity);
-		btnServerNo.setText("No");
-		btnServerNo.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				llMain.removeView(llServer);
+            case R.id.menuChooseColor:
+                AmbilWarnaDialog dialog = new AmbilWarnaDialog(mainActivity,
+                        drawView.drawingColor, new OnAmbilWarnaListener() {
+                    @Override
+                    public void onOk(AmbilWarnaDialog dialog, int color) {
+                        if (drawView.isRandomColor)
+                            changeRandomColor();
+                        drawView.drawingColor = color;
+                    }
 
-				final EditText etAdress = new EditText(mainActivity);
-				etAdress.setHint("Set network IP address");
-				llMain.addView(etAdress);
+                    @Override
+                    public void onCancel(AmbilWarnaDialog dialog) {
+                    }
+                }
+                );
+                dialog.show();
+                if (drawView.isRandomColor)
+                    changeRandomColor();
+                return true;
 
-				final Button btnSetAddress = new Button(mainActivity);
-				btnSetAddress.setText("Set");
-				btnSetAddress.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						String s = etAdress.getText().toString();
-						if (new IPAddressValidator().validate(s)) {
-							ipa = s;
-							toast("IP was set: " + s);
-							llMain.removeView(btnSetAddress);
-							llMain.removeView(etAdress);
-							createClient();
-						} else {
-							toast("Enter correct IP address");
-						}
-					}
-				});
-				llMain.addView(btnSetAddress);
+            case R.id.menuRandomColor:
+                changeRandomColor();
+                return true;
 
-			}
-		});
-		llServer.addView(btnServerNo);
-	}
+            case R.id.menuChooseStrokeWidth:
+                ChangeWidthDialog changeWidthDialog = new ChangeWidthDialog(
+                        mainActivity, new OnChangeWidthListener() {
+                    @Override
+                    public void onOk(float strokeWidth) {
+                        drawView.strokeWidth = strokeWidth;
+                    }
+                }
+                );
+                changeWidthDialog.show();
+                if (drawView.isRandomWidth)
+                    changeRandomWidth();
+                return true;
 
-	// private void disableInteraction() {
-	// btnSave.setVisibility(View.INVISIBLE);
-	// btnUndo.setVisibility(View.INVISIBLE);
-	// btnRandom.setVisibility(View.INVISIBLE);
-	// drawView.isEnabled = false;
-	// }
+            case R.id.menuRandomStrokeWidth:
+                changeRandomWidth();
+                return true;
 
-	private void createClient() {
-		drawView = new DrawView(mainActivity);
-		// drawView = (DrawView) findViewById(R.id.drawView);
-		// drawView.init(mainActivity);
-		// Display display = getWindowManager().getDefaultDisplay();
-		drawView.setLayoutParams(new LayoutParams(400, 400));
+            case R.id.menuSaveDrawing:
+                drawView.save();
+                return true;
 
-		llMain.addView(drawView);
+            case R.id.menuPostDrawing:
+                drawView.save();
+                startActivity(new Intent(mainActivity, TwitterActivity.class));
+                return true;
 
-		client = new Client(mainActivity);
-		client.start();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-		ScrollView scrollView = new ScrollView(mainActivity);
-		llMain.addView(scrollView);
 
-		llScroll = new LinearLayout(mainActivity);
-		llScroll.setOrientation(LinearLayout.VERTICAL);
-		scrollView.addView(llScroll);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().hide();
 
-		btnUndo = new Button(mainActivity);
-		btnUndo.setText("Undo");
-		btnUndo.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				drawView.undo();
-			}
-		});
-		llScroll.addView(btnUndo);
+        if (!isNetworkAvailable()) {
+            ConnectionDialog cd = new ConnectionDialog(mainActivity);
+            cd.show();
+        }
 
-		if (isServer) {
-			btnClear = new Button(mainActivity);
-			btnClear.setText("Clear drawing");
-			btnClear.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					drawView.clear();
-					client.send();
-				}
-			});
-			llScroll.addView(btnClear);
-		}
+        llMain = new LinearLayout(mainActivity);
+        llMain.setOrientation(LinearLayout.VERTICAL);
+        setContentView(llMain);
 
-		btnSend = new Button(mainActivity);
-		btnSend.setText("Send");
-		btnSend.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				client.send();
-			}
-		});
-		llScroll.addView(btnSend);
+        llServer = new LinearLayout(mainActivity);
+        llMain.addView(llServer);
 
-		btnContinuous = new Button(mainActivity);
-		btnContinuous.setText("Continuous drawing is off");
-		btnContinuous.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				changeBtnContinuous();
-			}
-		});
-		llScroll.addView(btnContinuous);
+        TextView tvSetServer = new TextView(mainActivity);
+        tvSetServer.setText("Set device as a server?");
+        llServer.addView(tvSetServer);
 
-		btnRandom = new Button(mainActivity);
-		btnRandom.setText("Random color pick is off");
-		btnRandom.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				changeBtnRandom();
-			}
-		});
-		llScroll.addView(btnRandom);
+        Button btnServerYes = new Button(mainActivity);
+        btnServerYes.setText("Yes");
+        btnServerYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ipa = getLocalIpAddress();
+                new Server(mainActivity, port).start();
+                isServer = true;
+                deviceName += " (Server)";
+                createClient();
+                if (isServer) {
+                    changeClear();
+                }
+                getActionBar().show();
+                llMain.removeView(llServer);
+            }
+        });
+        llServer.addView(btnServerYes);
 
-		btnPickColor = new Button(mainActivity);
-		btnPickColor.setText("Pick color");
-		btnPickColor.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AmbilWarnaDialog dialog = new AmbilWarnaDialog(mainActivity,
-						drawView.drawingColor, new OnAmbilWarnaListener() {
-							@Override
-							public void onOk(AmbilWarnaDialog dialog, int color) {
-								if (drawView.isRandom)
-									changeBtnRandom();
-								drawView.drawingColor = color;
-							}
+        Button btnServerNo = new Button(mainActivity);
+        btnServerNo.setText("No");
+        btnServerNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llMain.removeView(llServer);
 
-							@Override
-							public void onCancel(AmbilWarnaDialog dialog) {
-							}
-						});
-				dialog.show();
-			}
-		});
-		llScroll.addView(btnPickColor);
-		
-		btnChangeWidth = new Button(mainActivity);
-		btnChangeWidth.setText("Change stroke width");
-		btnChangeWidth.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ChangeWidthDialog changeWidthDialog = new ChangeWidthDialog(mainActivity, new OnChangeWidthListener() {
-					@Override
-					public void onOk(float strokeWidth) {
-						drawView.strokeWidth = strokeWidth;
-					}
-				});
-				changeWidthDialog.show();
-			}
-		});
-		llScroll.addView(btnChangeWidth);
+                final EditText etAdress = new EditText(mainActivity);
+                etAdress.setHint("Set network IP address");
+                llMain.addView(etAdress);
 
-		btnSaveDraw = new Button(mainActivity);
-		btnSaveDraw.setText("Save drawing to disk");
-		btnSaveDraw.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.d("!", "clicked!!!");
-				drawView.save();
-			}
-		});
-		llScroll.addView(btnSaveDraw);
+                final Button btnSetAddress = new Button(mainActivity);
+                btnSetAddress.setText("Set");
+                btnSetAddress.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String s = etAdress.getText().toString();
+                        if (new IPAddressValidator().validate(s)) {
+                            ipa = s;
+                            toast("IP was set: " + s);
+                            llMain.removeView(btnSetAddress);
+                            llMain.removeView(etAdress);
+                            createClient();
+                            getActionBar().show();
+                        } else {
+                            toast("Enter correct IP address");
+                        }
+                    }
+                });
+                llMain.addView(btnSetAddress);
 
-		btnTwitter = new Button(mainActivity);
-		btnTwitter.setText("Tweet");
-		btnTwitter.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				drawView.save();
-				startActivity(new Intent(mainActivity, TwitterActivity.class));
-			}
-		});
-		llScroll.addView(btnTwitter);
-	}
+            }
+        });
+        llServer.addView(btnServerNo);
+    }
 
-	private void toast(String s) {
-		Toast.makeText(mainActivity, s, 0).show();
-	}
+    // private void disableInteraction() {
+    // btnSave.setVisibility(View.INVISIBLE);
+    // btnUndo.setVisibility(View.INVISIBLE);
+    // btnRandom.setVisibility(View.INVISIBLE);
+    // drawView.isEnabled = false;
+    // }
 
-	private boolean isNetworkAvailable() {
-		ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-		if (activeNetwork == null || !activeNetwork.isAvailable()
-				|| !activeNetwork.isConnected()) {
-			return false;
-		}
-		return true;
-	}
+    private void createClient() {
+        setContentView(R.layout.activity_main);
+        // drawView = new DrawView(mainActivity);
+        drawView = (DrawView) findViewById(R.id.drawView1);
+        drawView.init(mainActivity);
+        drawView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                scrollView.setVisibility(View.INVISIBLE);
+                return false;
+            }
+        });
+        // drawView.init(mainActivity);
+        // Display display = getWindowManager().getDefaultDisplay();
 
-	public String getLocalIpAddress() {
-		WifiManager wm = (WifiManager) mainActivity
-				.getSystemService(WIFI_SERVICE);
-		String ip = Formatter.formatIpAddress(wm.getConnectionInfo()
-				.getIpAddress());
-		return ip;
-	}
+        // drawView.setLayoutParams(new LayoutParams(400, 400));
 
-	private void changeBtnRandom() {
-		if (drawView.isRandom) {
-			btnRandom.setText("Random color pick is off");
-			drawView.isRandom = false;
-		} else {
-			btnRandom.setText("Random color pick is on");
-			drawView.isRandom = true;
-		}
-	}
+        // llMain.addView(drawView);
 
-	private void changeBtnContinuous() {
-		if (drawView.isContinuous) {
-			btnContinuous.setText("Continuous drawing is off");
-			drawView.isContinuous = false;
-		} else {
-			btnContinuous.setText("Continuous drawing is on");
-			drawView.isContinuous = true;
-		}
-	}
+        client = new Client(mainActivity);
+        client.start();
 
+        // ScrollView scrollView = new ScrollView(mainActivity);
+        scrollView = (HorizontalScrollView) findViewById(R.id.scrollView1);
+        scrollView.setVisibility(View.INVISIBLE);
+        // llMain.addView(scrollView);
+
+        // llScroll = new LinearLayout(mainActivity);
+        // llScroll.setOrientation(LinearLayout.VERTICAL);
+        // scrollView.addView(llScroll);
+        llScroll = (LinearLayout) findViewById(R.id.linearLayout);
+
+
+    }
+
+    /*@Override
+    protected void onS
+menuClearDrawing.setVisible(false);
+    }
+*/
+    private void toast(String s) {
+        Toast.makeText(mainActivity, s, 0).show();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        if (activeNetwork == null || !activeNetwork.isAvailable()
+                || !activeNetwork.isConnected()) {
+            return false;
+        }
+        return true;
+    }
+
+    public String getLocalIpAddress() {
+        WifiManager wm = (WifiManager) mainActivity
+                .getSystemService(WIFI_SERVICE);
+        String ip = Formatter.formatIpAddress(wm.getConnectionInfo()
+                .getIpAddress());
+        return ip;
+    }
+
+    private void changeRandomColor() {
+        menuRandomColor = mainActivityMenu.findItem(R.id.menuRandomColor);
+        if (drawView.isRandomColor) {
+            menuRandomColor.setTitle("Enable random color");
+            drawView.isRandomColor = false;
+        } else {
+            menuRandomColor.setTitle("Disable random color");
+            drawView.isRandomColor = true;
+        }
+    }
+
+    private void changeRandomWidth() {
+        menuRandomStrokeWidth = mainActivityMenu.findItem(R.id.menuRandomStrokeWidth);
+        if (drawView.isRandomWidth) {
+            menuRandomStrokeWidth.setTitle("Enable random width");
+            drawView.isRandomWidth = false;
+        } else {
+            menuRandomStrokeWidth.setTitle("Disable random width");
+            drawView.isRandomWidth = true;
+        }
+    }
+
+    private void changeContinuous() {
+        menuContinuousCommit = mainActivityMenu.findItem(R.id.menuContinuousCommit);
+        if (drawView.isContinuous) {
+            menuContinuousCommit.setTitle("Enable continuous commit");
+            drawView.isContinuous = false;
+        } else {
+            menuContinuousCommit.setTitle("Disable continuous commit");
+            drawView.isContinuous = true;
+        }
+    }
+
+    private void changeClear() {
+        menuClearDrawing = mainActivityMenu.findItem(R.id.menuClearDrawing);
+        if (menuClearDrawing.isVisible())
+            menuClearDrawing.setVisible(false);
+        else
+            menuClearDrawing.setVisible(true);
+    }
 }

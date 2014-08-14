@@ -1,24 +1,5 @@
 package com.example.drawingame;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.builder.api.TwitterApi;
-import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
-import org.scribe.model.Token;
-import org.scribe.model.Verb;
-import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
@@ -31,231 +12,197 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.builder.api.TwitterApi;
+import org.scribe.model.*;
+import org.scribe.oauth.OAuthService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class TwitterActivity extends Activity {// extends BaseActivity {
 
-	// private static final String JSON_TWEETS = "json tweets";
-	private static final String TOKEN_SECRET = "token secret";
-	private static final String ACCESS_TOKEN = "access token";
-	// private static final String TAG = "tag";
+    private static final String TOKEN_SECRET = "token secret";
+    private static final String ACCESS_TOKEN = "access token";
 
-	private final static String API_KEY = "mjIZHMMse8FOjBBhpSoNDA";
-	private final static String API_SECRET = "8eOITf6gzf5sKbNPvZGjgIMr3nvNY9nB0UwkBZbkgQ";
-	private final static String CALLBACK = "http://google.com";
+    private final static String API_KEY = "R186VuHyi4iIgRwY5bwQ9YpKH";
+    private final static String API_SECRET = "nkhldkKFqbizBabWBL1fQ8yPBF7WMCqam8dkS0lqjm9TjPm2Q7";
+    private final static String CALLBACK = "http://drawingame.twitter";
 
-	private TwitterActivity twitterActivity = this;
-	// private SharedPreferences prefs;
-	private Token requestToken;
-	private Token accessToken;
-	private WebView webView;
-	private ProgressBar progressBar;
-	private String authUrl;
-	private OAuthService service;
+    private TwitterActivity twitterActivity = this;
+    private Token requestToken;
+    private Token accessToken;
+    private WebView webView;
+    private ProgressBar progressBar;
+    private String authUrl;
+    private OAuthService service;
 
-	private WebViewClient client = new WebViewClient() {
-		@Override
-		public boolean shouldOverrideUrlLoading(final WebView webView,
-				String url) {
-			if (url.startsWith(CALLBACK)) {
-				String verifier = Uri.parse(url).getQueryParameter(
-						"oauth_verifier");
-				final Verifier v = new Verifier(verifier);
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						accessToken = service.getAccessToken(requestToken, v);
-						// prefs.edit()
-						// .putString(ACCESS_TOKEN, accessToken.getToken())
-						// .putString(TOKEN_SECRET,
-						// accessToken.getSecret()).commit();
+    private WebViewClient client = new WebViewClient() {
+        @Override
+        public boolean shouldOverrideUrlLoading(final WebView webView, String url) {
+            if (url.startsWith(CALLBACK)) {
+                String verifier = Uri.parse(url).getQueryParameter(
+                        "oauth_verifier");
+                final Verifier v = new Verifier(verifier);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        swapViews();
+                        accessToken = service.getAccessToken(requestToken, v);
+                        getInformation();
+                        swapViews();
+                    }
+                }).start();
+            } else {
+                webView.loadUrl(url);
+            }
+            return true;
+        }
 
-						twitterActivity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								swapViews();
-							}
-						});
-						getInformation();
-						twitterActivity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								swapViews();
-							}
-						});
-					}
-				}).start();
-			} else {
-				swapViews();
-				webView.loadUrl(url);
-			}
-			return true;
-		};
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler,
+                                       SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            handler.proceed();
+        }
 
-		@Override
-		public void onReceivedSslError(WebView view, SslErrorHandler handler,
-				SslError error) {
-			super.onReceivedSslError(view, handler, error);
-			handler.proceed();
-		}
+        @Override
+        public void onPageFinished(WebView view, String url) {
+        }
+    };
 
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			swapViews();
-		}
-	};
+    private void swapViews() {
+        twitterActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView.getVisibility() == View.VISIBLE) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.INVISIBLE);
+                } else {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    webView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
 
-	private void swapViews() {
-		if (webView.getVisibility() == View.VISIBLE) {
-			progressBar.setVisibility(View.VISIBLE);
-			webView.setVisibility(View.INVISIBLE);
-		} else {
-			progressBar.setVisibility(View.INVISIBLE);
-			webView.setVisibility(View.VISIBLE);
-		}
-	}
+    @SuppressLint("SetJavaScriptEnabled")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        service = new ServiceBuilder()
+                .provider(TwitterApi.SSL.class)
+                .apiKey(API_KEY)
+                .apiSecret(API_SECRET)
+                .callback(CALLBACK)
+                .build();
 
-	@SuppressLint("SetJavaScriptEnabled")
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		service = new ServiceBuilder().provider(TwitterApi.SSL.class)
-				.apiKey(API_KEY).apiSecret(API_SECRET).callback(CALLBACK)
-				.build();
+        setContentView(R.layout.activity_twitter);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        //progressBar.setVisibility(View.INVISIBLE);
+        webView = (WebView) findViewById(R.id.webView);
+        webView.setVisibility(View.INVISIBLE);
 
-		// if (prefs.contains(ACCESS_TOKEN)) {
-		// accessToken = new Token(prefs.getString(ACCESS_TOKEN, null),
-		// prefs.getString(TOKEN_SECRET, null));
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// getInformation();
-		// }
-		// }).start();
-		// } else {
-		setContentView(R.layout.activity_twitter);
-		progressBar = (ProgressBar) findViewById(R.id.progressBar);
-		webView = (WebView) findViewById(R.id.webView);
-		swapViews();
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.setWebViewClient(client);
+        getCredentials();
+    }
 
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.getSettings().setDomStorageEnabled(true);
-		webView.setWebViewClient(client);
-		getCredentials();
-		// }
-	}
+    private void getCredentials() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    requestToken = service.getRequestToken();
+                } catch (Exception e) {
+                    toast(e.toString());
+                    Log.d("!", e.toString());
+                }
 
-	private void getCredentials() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					requestToken = service.getRequestToken();
-				} catch (Exception e) {
-					toast(e.toString());
-					Log.d("!", e.toString());
-				}
-				authUrl = service.getAuthorizationUrl(requestToken);
-				// toast(authUrl);
-				twitterActivity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						webView.loadUrl(authUrl);
-					}
-				});
-			}
-		}).start();
-	}
+                Log.d("!", requestToken.toString());
+                authUrl = service.getAuthorizationUrl(requestToken);
 
-	@Override
-	public void onBackPressed() {
-		if (webView != null && webView.canGoBack()) {
-			webView.goBack();
-			return;
-		}
-		super.onBackPressed();
-	}
+                twitterActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl(authUrl);
+                    }
+                });
+                swapViews();
+            }
+        }).start();
+    }
 
-	private void getInformation() {
-		OAuthRequest request = new OAuthRequest(Verb.GET,
-				"https://api.twitter.com/1.1/account/verify_credentials.json");
-		service.signRequest(accessToken, request);
-		Response response = request.send();
-		try {
-			JSONObject jsonUserInfo = new JSONObject(response.getBody());
-			toast("You logged in as " + jsonUserInfo.getString("name"));
-		} catch (JSONException e) {
-			toast(e.toString());
-			Log.d("!", e.toString());
-		}
+    @Override
+    public void onBackPressed() {
+        if (webView != null && webView.canGoBack()) {
+            webView.goBack();
+            return;
+        }
+        super.onBackPressed();
+    }
 
-		request = new OAuthRequest(Verb.POST,
-				"https://api.twitter.com/1.1/statuses/update_with_media.json");
-		try {
-			MultipartEntity entity = new MultipartEntity();
-			entity.addPart("status", new StringBody(
-					"A picture was posted by Android app Drawingame:"));
-			entity.addPart("media", new FileBody(new File(
-					"/mnt/sdcard/Drawing.png")));
+    private void getInformation() {
+        OAuthRequest request = new OAuthRequest(Verb.GET,
+                "https://api.twitter.com/1.1/account/verify_credentials.json");
+        service.signRequest(accessToken, request);
+        Response response = request.send();
+        try {
+            JSONObject jsonUserInfo = new JSONObject(response.getBody());
+            toast("You logged in as " + jsonUserInfo.getString("name"));
+        } catch (JSONException e) {
+            toast(e.toString());
+            Log.d("!", e.toString() + "| LINE 190");
+        }
 
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			entity.writeTo(out);
+        request = new OAuthRequest(Verb.POST,
+                "https://api.twitter.com/1.1/statuses/update_with_media.json");
+        try {
+            MultipartEntity entity = new MultipartEntity();
+            entity.addPart("status", new StringBody(
+                    "A picture was posted by Android app Drawingame:"));
+            entity.addPart("media", new FileBody(new File(
+                    "/mnt/sdcard/Drawing.png")));
 
-			request.addPayload(out.toByteArray());
-			request.addHeader(entity.getContentType().getName(), entity
-					.getContentType().getValue());
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            entity.writeTo(out);
 
-			service.signRequest(accessToken, request);
-			response = request.send();
-			if (response.isSuccessful()) {
-				toast("Drawing was posted");
-			} else {
-				toast("Error while posting drawing");
-				Log.d("!", response.getBody());
-			}
+            request.addPayload(out.toByteArray());
+            request.addHeader(entity.getContentType().getName(), entity
+                    .getContentType().getValue());
 
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            service.signRequest(accessToken, request);
+            response = request.send();
+            if (response.isSuccessful()) {
+                toast("Drawing was posted");
+            } else {
+                toast("Error while posting drawing");
+                Log.d("!", response.getBody());
+            }
 
-		twitterActivity.finish();
-		// Intent intent = new Intent(this, ShowTweets.class);
-		// intent.putExtra("jsonUserInfo", response.getBody());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		// request = new OAuthRequest(Verb.GET,
-		// "https://api.twitter.com/1.1/statuses/home_timeline.json");
-		// service.signRequest(accessToken, request);
-		// response = request.send();
-		// try {
-		// JSONObject jsonUserInfo = new JSONObject(response.getBody());
-		// toast("You logged in as ");
-		// // jsonUserInfo.getString("screen_name"));
-		// // toast(jsonUserInfo.toString());
-		// } catch (JSONException e) {
-		// toast(e.toString());
-		// Log.d("!", e.toString());
-		// }
+        twitterActivity.finish();
+    }
 
-		// startActivity(intent);
-		// finish();
-
-	}
-
-	private void toast(final String string) {
-		twitterActivity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(twitterActivity, string, 0).show();
-			}
-		});
-	}
-
-	// private void sleep() {
-	// try {
-	// Thread.sleep(2500);
-	// } catch (Exception e) {
-	// }
-	// }
+    private void toast(final String string) {
+        twitterActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(twitterActivity, string, 0).show();
+            }
+        });
+    }
 }
