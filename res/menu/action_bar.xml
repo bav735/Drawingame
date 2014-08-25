@@ -10,7 +10,7 @@
     <!--<group android:id="@+id/actionBar"           android:visible="true">-->
 
     <item android:id="@+id/menuUndo"
-          android:title="Undo"/>
+          android:title="Undo line"/>
 
     <item android:id="@+id/menuClearDrawing"
           android:title="Clear drawing"

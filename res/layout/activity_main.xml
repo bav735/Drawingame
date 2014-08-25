@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="Open\nBar" />-->
+        android:text="Open\nBar" />
 
     <HorizontalScrollView
         android:id="@+id/scrollView1"
@@ -29,6 +29,6 @@
             android:layout_height="match_parent"
             android:orientation="horizontal" >
         </LinearLayout>
-    </HorizontalScrollView>
+    </HorizontalScrollView>-->
 
 </RelativeLayout>
