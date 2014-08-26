@@ -1,159 +1,132 @@
 package com.example.drawingame;
 
-import android.util.Log;
 import android.widget.Toast;
+import ibt.ortc.api.Ortc;
+import ibt.ortc.extensibility.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class Client extends Thread {
-
-    public int port;
-    public String ipa;
-    public MainActivity mainActivity;
-    public Socket clientSocket;
-    public DataOutputStream serverOut;
-    public DataInputStream serverIn;
-    // private Button btnSave;
-    // private Button btnUndo;
-    // private Button btnRandom;
+public class Client extends Ortc {
+    private MainActivity mainActivity;
     private String clientName;
-    // private DrawView drawView;
-    private String fromServer;
+    private OrtcClient ortcClient;
+    private int reconnectingTries;
 
-    public Client(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-        this.port = mainActivity.port;
-        this.ipa = mainActivity.ipa;
-        // this.btnSave = btnClient;
-        // this.btnUndo = btnUndo;
-        // this.btnRandom = btnRandom;
-        // this.drawView = drawView;
-        this.clientName = mainActivity.deviceName;
-    }
+    private OnConnected onConnected = new OnConnected() {
+        @Override
+        public void run(final OrtcClient sender) {
+            // Messaging client connected
 
-    public void run() {
-        try {
-            Log.d("!", "Creating client sockets and streams2\n"
-                    + toString(clientSocket) + "\n" + toString(serverIn));
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ortcClient.subscribe(MainActivity.channelName, true,
+                            new OnMessage() {
+                                public void run(OrtcClient sender, String channel,
+                                                String message) {
+                                    final Sending sending = new Sending(message);
+                                    if (!sending.clientName.equals(clientName)) {
+                                        toast("Received commit from " + sending.clientName);
+                                        mainActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mainActivity.drawView.recalcFromCommit(sending);
+                                            }
+                                        });
+                                    }
+                                }
 
-            clientSocket = new Socket(InetAddress.getByName(ipa), port);
-            toast("Client on " + clientName + " was created");
-
-            Log.d("!", "Creating client sockets and streams3\n"
-                    + toString(clientSocket) + "\n" + toString(serverIn));
-
-            serverOut = new DataOutputStream(clientSocket.getOutputStream());
-            // serverOut.writeObject(new Sending(getDate(), clientName, "in"));
-            // se/rverOut.flush();
-            serverIn = new DataInputStream(clientSocket.getInputStream());
-
-            Log.d("!", "Creating client sockets and streams4-ok!\n");
-        } catch (IOException e) {
-            Log.d("!",
-                    "Problems with creating client socket! - " + e.toString());
-            toast("Problems with creating client socket! - " + e.toString());
-        }
-        Log.d("!", "Writing to server0!");
-
-        while (!clientSocket.isClosed()) {
-            boolean ok = false;
-            try {
-                fromServer = serverIn.readUTF();
-                ok = true;
-                Log.d("!", "Reading server socket0");
-            } catch (IOException e) {
-                Log.d("!", "Couldn't read from server! - " + e.toString());
-                toast("Couldn't read from server! - " + e.toString());
-                close();
-            }
-            if (ok) {
-                Log.d("!", "Reading server sending0");
-                final Sending sending = new Sending(fromServer);
-                if (!sending.clientName.equals(clientName)) {
-                    toast("Received commit from " + sending.clientName);
-                    mainActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mainActivity.drawView.recalcFromCommit(sending);
-                        }
-                    });
+                                ;
+                            }
+                    );
                 }
-                // if (fromServer.clientName.equals(this.clientName)) {
-                // disableInteraction();
-                // }
-                // if (!fromServer.clientName.equals(this.clientName)) {
-                // enableInteraction();
-                // }
-            } else {
-                toast("Error while reading from server");
-            }
+            });
         }
+    };
+
+    private OnDisconnected onDisconnected = new OnDisconnected() {
+        @Override
+        public void run(OrtcClient arg0) {
+            mainActivity.runOnUiThread(new Runnable() {
+
+                public void run() {
+                    toast("Disconnected!");
+                }
+            });
+        }
+    };
+
+    private OnReconnected onReconnected = new OnReconnected() {
+
+        public void run(final OrtcClient sender) {
+            mainActivity.runOnUiThread(new Runnable() {
+
+                public void run() {
+                    reconnectingTries = 0;
+                    toast("Reconnected!");
+                }
+            });
+        }
+    };
+
+    private OnReconnecting onReconnecting = new OnReconnecting() {
+
+        public void run(OrtcClient sender) {
+            mainActivity.runOnUiThread(new Runnable() {
+
+                public void run() {
+                    reconnectingTries++;
+                    toast("Reconnecting... Attempt #" + String.valueOf(reconnectingTries));
+                }
+            });
+        }
+    };
+
+    private OnSubscribed onSubscribed = new OnSubscribed() {
+        @Override
+        public void run(OrtcClient sender, final String channel) {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toast("Subscribed to channel: " + channel);
+                }
+            });
+        }
+    };
+
+    private OnUnsubscribed onUnsubscribed = new OnUnsubscribed() {
+
+        public void run(OrtcClient sender, final String channel) {
+            mainActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    toast("Unsubscribed from channel: " + channel);
+                }
+            });
+        }
+    };
+
+    public Client(MainActivity mainActivity) throws Exception {
+        this.mainActivity = mainActivity;
+        clientName = android.os.Build.MODEL + "(" + currentTime() + ")";
+        Ortc ortc = new Ortc();
+        OrtcFactory factory = ortc.loadOrtcFactory(MainActivity.ortcType);
+        ortcClient = factory.createClient();
+        ortcClient.setApplicationContext(mainActivity.getApplicationContext());
+        ortcClient.setClusterUrl(MainActivity.serverUrl);
+        ortcClient.setConnectionMetadata(MainActivity.connectionMetadata);
+        ortcClient.onConnected = onConnected;
+        ortcClient.onDisconnected = onDisconnected;
+        ortcClient.onReconnected = onReconnected;
+        ortcClient.onReconnecting = onReconnecting;
+        ortcClient.onSubscribed = onSubscribed;
+        ortcClient.connect(MainActivity.applicationKey, MainActivity.authenticationToken);
     }
 
     public void send() {
-        Log.d("!", "Writing to server1!");
         Sending sending = new Sending(clientName, mainActivity.drawView);
-        Log.d("!", "Writing to server2!");
-        try {
-            Log.d("!", "Writing to server3!");
-            serverOut.writeUTF(sending.toJsonObject().toString());
-            Log.d("!", "Writing to server4!");
-            serverOut.flush();
-            Log.d("!", "Writing to server5!-ok");
-          //  toast("Drawing was sent to server");
-        } catch (IOException e) {
-            toast("Couldn't send data to server!");
-        }
-    }
-
-    // private void enableInteraction() {
-    // activity.runOnUiThread(new Runnable() {
-    // @Override
-    // public void run() {
-    // drawView.recalcPoints(fromServer);
-    // drawView.isEnabled = true;
-    // btnSave.setVisibility(View.VISIBLE);
-    // btnUndo.setVisibility(View.VISIBLE);
-    // btnRandom.setVisibility(View.VISIBLE);
-    // }
-    // });
-    // }
-    //
-    // private void disableInteraction() {
-    // activity.runOnUiThread(new Runnable() {
-    // @Override
-    // public void run() {
-    // drawView.isEnabled = false;
-    // btnSave.setVisibility(View.INVISIBLE);
-    // btnUndo.setVisibility(View.INVISIBLE);
-    // btnRandom.setVisibility(View.INVISIBLE);
-    // }
-    // });
-    // }
-
-    private void close() {
-        Log.d("!", "Closing!1 " + clientName);
-        if (!clientSocket.isClosed()) {
-            try {
-                clientSocket.close();
-                Log.d("!", "Closing!2 " + clientName);
-            } catch (IOException e) {
-                Log.d("!", "Closing error -" + e.toString());
-                toast("Closing error -" + e.toString());
-            } catch (Throwable e) {
-                Log.d("!", "destroying client error");
-                toast("destroying client error");
-            }
-        }
-
-    }
-
-    private String toString(Object o) {
-        return o == null ? "null" : o.toString();
+        ortcClient.send(MainActivity.channelName, sending.toJsonObject().toString());
+        toast("Commit was sent!");
     }
 
     private void toast(final String s) {
@@ -163,5 +136,12 @@ public class Client extends Thread {
                 Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private String currentTime() {
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");
+        Date now = new Date();
+        String strTime = sdfTime.format(now);
+        return strTime;
     }
 }

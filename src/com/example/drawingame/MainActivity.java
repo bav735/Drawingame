@@ -1,6 +1,5 @@
 package com.example.drawingame;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,33 +8,30 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.format.Formatter;
-import android.view.*;
-import android.widget.*;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
+import ibt.ortc.api.Ortc;
+import ibt.ortc.extensibility.*;
 
 public class MainActivity extends Activity {
+    public final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
+    public final static String connectionMetadata = "AndroidApp";
+    public final static String ortcType = "IbtRealtimeSJ";
+    public final static String applicationKey ="XEQyNG";
+    public final static String authenticationToken = "m8vUKz6sRvzw";
+    public final static String channelName = "drawingameChannel";
 
     public MainActivity mainActivity = this;
     public DrawView drawView;
-    public String ipa;
-    public final int port = 4445;
-    public String deviceName = android.os.Build.MODEL;
     public Client client;
-
-    private HorizontalScrollView scrollView;
-    private LinearLayout llMain;
-    private LinearLayout llServer;
-    private LinearLayout llScroll;
-    private Button btnSend;
-    private Button btnUndo;
-    private Button btnRandom;
-    private Button btnPickColor;
-    private Button btnContinuous;
-    private Button btnClear;
-    private Button btnSaveDraw;
-    private Button btnTwitter;
-    private Button btnChangeWidth;
 
     private Menu mainActivityMenu;
     private MenuItem menuClearDrawing;
@@ -55,7 +51,6 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.menuUndo:
                 drawView.undo();
@@ -131,132 +126,37 @@ public class MainActivity extends Activity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().hide();
-
+        setContentView(R.layout.activity_main);
         if (!isNetworkAvailable()) {
             ConnectionDialog cd = new ConnectionDialog(mainActivity);
             cd.show();
         }
-
-        llMain = new LinearLayout(mainActivity);
-        llMain.setOrientation(LinearLayout.VERTICAL);
-        setContentView(llMain);
-
-        llServer = new LinearLayout(mainActivity);
-        llMain.addView(llServer);
-
-        TextView tvSetServer = new TextView(mainActivity);
-        tvSetServer.setText("Set device as a server?");
-        llServer.addView(tvSetServer);
-
-        Button btnServerYes = new Button(mainActivity);
-        btnServerYes.setText("Yes");
-        btnServerYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ipa = getLocalIpAddress();
-                new Server(mainActivity, port).start();
-                isServer = true;
-                deviceName += " (Server)";
-                createClient();
-                if (isServer) {
-                    changeClear();
-                }
-                getActionBar().show();
-                llMain.removeView(llServer);
-            }
-        });
-        llServer.addView(btnServerYes);
-
-        Button btnServerNo = new Button(mainActivity);
-        btnServerNo.setText("No");
-        btnServerNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMain.removeView(llServer);
-
-                final EditText etAdress = new EditText(mainActivity);
-                etAdress.setHint("Set network IP address");
-                llMain.addView(etAdress);
-
-                final Button btnSetAddress = new Button(mainActivity);
-                btnSetAddress.setText("Set");
-                btnSetAddress.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String s = etAdress.getText().toString();
-                        if (new IPAddressValidator().validate(s)) {
-                            ipa = s;
-                            toast("IP was set: " + s);
-                            llMain.removeView(btnSetAddress);
-                            llMain.removeView(etAdress);
-                            createClient();
-                            getActionBar().show();
-                        } else {
-                            toast("Enter correct IP address");
-                        }
-                    }
-                });
-                llMain.addView(btnSetAddress);
-
-            }
-        });
-        llServer.addView(btnServerNo);
-    }
-
-    // private void disableInteraction() {
-    // btnSave.setVisibility(View.INVISIBLE);
-    // btnUndo.setVisibility(View.INVISIBLE);
-    // btnRandom.setVisibility(View.INVISIBLE);
-    // drawView.isEnabled = false;
-    // }
-
-    private void createClient() {
-        setContentView(R.layout.activity_main);
-        // drawView = new DrawView(mainActivity);
         drawView = (DrawView) findViewById(R.id.drawView1);
         drawView.init(mainActivity);
-        drawView.setOnTouchListener(new View.OnTouchListener() {
+        try {
+            client = new Client(mainActivity);
+        } catch (Exception e) {
+            toast("Client create error - "+ e.toString());
+            Log.d("!", "Client create error - " + e.toString());
+            ConnectionDialog cd = new ConnectionDialog(mainActivity);
+            cd.show();
+        }
+
+    }
+
+
+
+    private void toast(final String s) {
+        mainActivity.runOnUiThread(new Runnable() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scrollView.setVisibility(View.INVISIBLE);
-                return false;
+            public void run() {
+                Toast.makeText(mainActivity, s, 0).show();
             }
         });
-        // drawView.init(mainActivity);
-        // Display display = getWindowManager().getDefaultDisplay();
 
-        // drawView.setLayoutParams(new LayoutParams(400, 400));
-
-        // llMain.addView(drawView);
-
-        client = new Client(mainActivity);
-        client.start();
-
-        // ScrollView scrollView = new ScrollView(mainActivity);
-        scrollView = (HorizontalScrollView) findViewById(R.id.scrollView1);
-        scrollView.setVisibility(View.INVISIBLE);
-        // llMain.addView(scrollView);
-
-        // llScroll = new LinearLayout(mainActivity);
-        // llScroll.setOrientation(LinearLayout.VERTICAL);
-        // scrollView.addView(llScroll);
-        llScroll = (LinearLayout) findViewById(R.id.linearLayout);
-
-
-    }
-
-    /*@Override
-    protected void onS
-menuClearDrawing.setVisible(false);
-    }
-*/
-    private void toast(String s) {
-        Toast.makeText(mainActivity, s, 0).show();
     }
 
     private boolean isNetworkAvailable() {
