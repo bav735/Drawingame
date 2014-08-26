@@ -8,30 +8,55 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.*;
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
-import ibt.ortc.api.Ortc;
-import ibt.ortc.extensibility.*;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.channel.PrivateChannel;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
+import com.pusher.client.util.HttpAuthorizer;
 
 public class MainActivity extends Activity {
-    public final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
-    public final static String connectionMetadata = "AndroidApp";
-    public final static String ortcType = "IbtRealtimeSJ";
-    public final static String applicationKey ="XEQyNG";
-    public final static String authenticationToken = "m8vUKz6sRvzw";
-    public final static String channelName = "drawingameChannel";
+    private static final String PUBLIC_CHANNEL_NAME = "public_channel";
+    private static final String PUSHER_APP_KEY = "78bf0843958c05f36a1b";
+    private static final String PUSHER_APP_SECRET = "8842a8b549aa48c2a81e";
+
+    private Pusher pusher;
+    private Channel publicChannel;
+
+    private ConnectionState targetState = ConnectionState.DISCONNECTED;
+    private int failedConnectionAttempts = 0;
+    private static int MAX_RETRIES = 10;
+
+    private Switch connectionSwitch;
 
     public MainActivity mainActivity = this;
     public DrawView drawView;
+    public String ipa;
+    public final int port = 4445;
+    public String deviceName = android.os.Build.MODEL;
     public Client client;
+
+    private HorizontalScrollView scrollView;
+    private LinearLayout llMain;
+    private LinearLayout llServer;
+    private LinearLayout llScroll;
+    private Button btnSend;
+    private Button btnUndo;
+    private Button btnRandom;
+    private Button btnPickColor;
+    private Button btnContinuous;
+    private Button btnClear;
+    private Button btnSaveDraw;
+    private Button btnTwitter;
+    private Button btnChangeWidth;
 
     private Menu mainActivityMenu;
     private MenuItem menuClearDrawing;
@@ -130,33 +155,227 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!isNetworkAvailable()) {
-            ConnectionDialog cd = new ConnectionDialog(mainActivity);
-            cd.show();
-        }
-        drawView = (DrawView) findViewById(R.id.drawView1);
-        drawView.init(mainActivity);
-        try {
-            client = new Client(mainActivity);
-        } catch (Exception e) {
-            toast("Client create error - "+ e.toString());
-            Log.d("!", "Client create error - " + e.toString());
-            ConnectionDialog cd = new ConnectionDialog(mainActivity);
-            cd.show();
-        }
+        //needs to implement own server !!!
+        //HttpAuthorizer authorizer = new HttpAuthorizer();
+        //HttpAuthorizer authorizer = new HttpAuthorizer("http://www.leggetter.co.uk/pusher/pusher-examples/php/authentication/src/private_auth.php");
+        //PusherOptions options = new PusherOptions().setEncrypted(true).setAuthorizer(authorizer);
+        pusher = new Pusher(PUSHER_APP_KEY);//, options);
+        pusher.connect(new ConnectionEventListener() {
+            @Override
+            public void onConnectionStateChange(ConnectionStateChange connectionStateChange) {
+                toast("State changed to " + connectionStateChange.getCurrentState() +
+                        " from " + connectionStateChange.getPreviousState());
+            }
+
+            @Override
+            public void onError(String s, String s2, Exception e) {
+                toast("There was a problem connecting!");
+            }
+        });
+
+        //        pusher.getConnection().bind(ConnectionState.ALL, this);
+
+        // Get view for logging
+//        logTextView = (TextView) this.findViewById(R.id.loggerText);
+
+  //      bindToConnectionSwitch();
+//
+        //log("Application running");
+
+        publicChannel = pusher.subscribe(PUBLIC_CHANNEL_NAME, new ChannelEventListener() {
+            @Override
+            public void onSubscriptionSucceeded(String s) {
+                toast("Subscribed to channel:" + PUBLIC_CHANNEL_NAME);
+            }
+
+            @Override
+            public void onEvent(String channel, String event, String data) {
+            }
+        });
+        PrivateChannel  channelt = pusher.subscribePrivate("private-1");
+
+
+        publicChannel.bind("received data", new ChannelEventListener() {
+            @Override
+            public void onEvent(String channel, String event, String data) {
+            }
+
+            @Override
+            public void onSubscriptionSucceeded(String s) {
+            }
+        });
 
     }
 
 
-
-    private void toast(final String s) {
-        mainActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mainActivity, s, 0).show();
+    /*// Connect/disconnect depending on switch state
+    private void bindToConnectionSwitch() {
+        connectionSwitch = (Switch) this.findViewById(R.id.connectSwitch);
+        connectionSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton button, boolean checked) {
+                targetState = (checked ? ConnectionState.CONNECTED : ConnectionState.DISCONNECTED);
+                achieveExpectedConnectionState();
             }
         });
+    }
 
+    private void achieveExpectedConnectionState() {
+        ConnectionState currentState = pusher.getConnection().getState();
+        if (currentState == targetState) {
+            // do nothing, we're there.
+            failedConnectionAttempts = 0;
+        } else if (targetState == ConnectionState.CONNECTED &&
+                failedConnectionAttempts == MAX_RETRIES) {
+            targetState = ConnectionState.DISCONNECTED;
+            log("failed to connect after " + failedConnectionAttempts + " attempts. Reconnection attempts stopped.");
+        } else if (currentState == ConnectionState.DISCONNECTED &&
+                targetState == ConnectionState.CONNECTED) {
+            Runnable task = new Runnable() {
+                public void run() {
+                    pusher.connect();
+                }
+            };
+            log("Connecting in " + failedConnectionAttempts + " seconds");
+            connectionAttemptsWorker.schedule(task, (failedConnectionAttempts), TimeUnit.SECONDS);
+            ++failedConnectionAttempts;
+        } else if (currentState == ConnectionState.CONNECTED &&
+                targetState == ConnectionState.DISCONNECTED) {
+            pusher.disconnect();
+        } else {
+            // transitional state
+        }
+    }
+
+    //ConnectionEventListener implementation
+    public void onConnectionStateChange(ConnectionStateChange change) {
+        String msg = String.format("Connection state changed from [%s] to [%s]",
+                change.getPreviousState(), change.getCurrentState());
+
+        log(msg);
+
+        achieveExpectedConnectionState();
+    }
+
+    public void onError(String message, String code, Exception e) {
+        String msg = String.format("Connection error: [%s] [%s] [%s]", message, code, e);
+        log(msg);
+    }
+
+    // ChannelEventListener implementation
+    public void onEvent(String channelName, String eventName, String data) {
+        String msg = String.format("Event received: [%s] [%s] [%s]", channelName, eventName, data);
+        log(msg);
+    }
+
+    public void onSubscriptionSucceeded(String channelName) {
+        String msg = String.format("Subscription succeeded for [%s]", channelName);
+        log(msg);
+    }
+
+    // Logging helper method
+    private void log(String msg) {
+        LogTask task = new LogTask(logTextView, msg);
+        task.execute();
+    }*/
+
+    /*    @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            getActionBar().hide();
+
+            if (!isNetworkAvailable()) {
+                ConnectionDialog cd = new ConnectionDialog(mainActivity);
+                cd.show();
+            }
+
+            llMain = new LinearLayout(mainActivity);
+            llMain.setOrientation(LinearLayout.VERTICAL);
+            setContentView(llMain);
+
+            llServer = new LinearLayout(mainActivity);
+            llMain.addView(llServer);
+
+            TextView tvSetServer = new TextView(mainActivity);
+            tvSetServer.setText("Set device as a server?");
+            llServer.addView(tvSetServer);
+
+            Button btnServerYes = new Button(mainActivity);
+            btnServerYes.setText("Yes");
+            btnServerYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ipa = getLocalIpAddress();
+                    new Server(mainActivity, port).start();
+                    isServer = true;
+                    deviceName += " (Server)";
+                    createClient();
+                    if (isServer) {
+                        changeClear();
+                    }
+                    getActionBar().show();
+                    llMain.removeView(llServer);
+                }
+            });
+            llServer.addView(btnServerYes);
+
+            Button btnServerNo = new Button(mainActivity);
+            btnServerNo.setText("No");
+            btnServerNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    llMain.removeView(llServer);
+
+                    final EditText etAdress = new EditText(mainActivity);
+                    etAdress.setHint("Set network IP address");
+                    llMain.addView(etAdress);
+
+                    final Button btnSetAddress = new Button(mainActivity);
+                    btnSetAddress.setText("Set");
+                    btnSetAddress.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String s = etAdress.getText().toString();
+                            if (new IPAddressValidator().validate(s)) {
+                                ipa = s;
+                                toast("IP was set: " + s);
+                                llMain.removeView(btnSetAddress);
+                                llMain.removeView(etAdress);
+                                createClient();
+                                getActionBar().show();
+                            } else {
+                                toast("Enter correct IP address");
+                            }
+                        }
+                    });
+                    llMain.addView(btnSetAddress);
+
+                }
+            });
+            llServer.addView(btnServerNo);
+        }
+
+        private void createClient() {
+            setContentView(R.layout.activity_main);
+            drawView = (DrawView) findViewById(R.id.drawView1);
+            drawView.init(mainActivity);
+            drawView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    scrollView.setVisibility(View.INVISIBLE);
+                    return false;
+                }
+            });
+
+            client = new Client(mainActivity);
+            client.start();
+
+            scrollView = (HorizontalScrollView) findViewById(R.id.scrollView1);
+            scrollView.setVisibility(View.INVISIBLE);
+            llScroll = (LinearLayout) findViewById(R.id.linearLayout);
+        }
+    */
+    private void toast(String s) {
+        Toast.makeText(mainActivity, s, 0).show();
     }
 
     private boolean isNetworkAvailable() {
