@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<item android:id="@+id/actionBar"
+          android:title="Open Bar"
+          android:showAsAction="always"/>
+    android:icon="@drawable/ic_action_search"-->
+
+    <!--<group android:id="@+id/actionBar"           android:visible="true">-->
+
+    <item android:id="@+id/menuUndo"
+          android:title="Undo"/>
+
+    <item android:id="@+id/menuClearDrawing"
+          android:title="Clear drawing"
+          android:visible="false"/>
+
+    <item android:id="@+id/menuCommitDrawing"
+          android:title="Commit drawing"/>
+
+    <item android:id="@+id/menuContinuousCommit"
+          android:title="Enable continuous commit"/>
+
+    <item android:id="@+id/menuChooseColor"
+          android:title="Choose color"/>
+
+    <item android:id="@+id/menuRandomColor"
+          android:title="Enable random color"/>
+
+    <item android:id="@+id/menuChooseStrokeWidth"
+          android:title="Choose stroke width"/>
+
+    <item android:id="@+id/menuRandomStrokeWidth"
+          android:title="Enable random stroke width"/>
+
+    <item android:id="@+id/menuSaveDrawing"
+          android:title="Save drawing to disk"/>
+
+    <item android:id="@+id/menuPostDrawing"
+          android:title="Post drawing to Twitter"/>
+    <!--</group>-->
+
+</menu>

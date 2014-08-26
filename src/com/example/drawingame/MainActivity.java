@@ -12,14 +12,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
-import ibt.ortc.api.Ortc;
-import ibt.ortc.extensibility.*;
 
 public class MainActivity extends Activity {
     public final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
@@ -45,7 +40,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         mainActivityMenu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar, menu);
+        inflater.inflate(R.menu.activity_main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -147,8 +142,6 @@ public class MainActivity extends Activity {
 
     }
 
-
-
     private void toast(final String s) {
         mainActivity.runOnUiThread(new Runnable() {
             @Override
@@ -167,14 +160,6 @@ public class MainActivity extends Activity {
             return false;
         }
         return true;
-    }
-
-    public String getLocalIpAddress() {
-        WifiManager wm = (WifiManager) mainActivity
-                .getSystemService(WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wm.getConnectionInfo()
-                .getIpAddress());
-        return ip;
     }
 
     private void changeRandomColor() {
@@ -208,13 +193,5 @@ public class MainActivity extends Activity {
             menuContinuousCommit.setTitle("Disable continuous commit");
             drawView.isContinuous = true;
         }
-    }
-
-    private void changeClear() {
-        menuClearDrawing = mainActivityMenu.findItem(R.id.menuClearDrawing);
-        if (menuClearDrawing.isVisible())
-            menuClearDrawing.setVisible(false);
-        else
-            menuClearDrawing.setVisible(true);
     }
 }

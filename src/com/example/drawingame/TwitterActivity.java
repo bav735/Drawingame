@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class TwitterActivity extends Activity {// extends BaseActivity {
+public class TwitterActivity extends Activity {
 
     private static final String TOKEN_SECRET = "token secret";
     private static final String ACCESS_TOKEN = "access token";

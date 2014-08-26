@@ -92,6 +92,7 @@ public class Client extends Ortc {
                     toast("Subscribed to channel: " + channel);
                 }
             });
+            
         }
     };
 
