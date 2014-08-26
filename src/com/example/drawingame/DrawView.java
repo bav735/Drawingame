@@ -192,9 +192,6 @@ public class DrawView extends View {
             }
         }
         invalidate();
-        // } else {
-        // toast("Received empty drawing");
-        // }
     }
 
     private void toast(String s) {
