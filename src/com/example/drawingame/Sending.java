@@ -18,15 +18,12 @@ public class Sending {// implements Serializable {
     public int sourceDisplayWidth;
     public int sourceDisplayHeight;
 
-    public Sending(String clientName, DrawView drawView) {// int
-        // lastLineNum)
-        // {
+    public Sending(String clientName, DrawView drawView) {
         this.clientName = clientName;
         this.lineList = drawView.lineList;
         this.lineNum = drawView.lineNum;
         this.sourceDisplayHeight = drawView.displayHeight;
         this.sourceDisplayWidth = drawView.displayWidth;
-        // this.lastLineNum = lastLineNum;
     }
 
     public Sending(String string) {

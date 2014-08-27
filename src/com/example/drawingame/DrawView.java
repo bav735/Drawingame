@@ -175,7 +175,7 @@ public class DrawView extends View {
         return random.nextInt(maxWidth + 1 - minWidth) + minWidth;
     }
 
-    public void recalcFromCommit(Sending sending) {
+    public void recalcFromSending(Sending sending) {
         if (sending.lineNum == 0) {
             toast("BAD!");
             return;
