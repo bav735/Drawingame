@@ -42,10 +42,8 @@ public class Sending {// implements Serializable {
                 Line line = new Line(jsonLine);
                 lineList.add(line);
             }
-            Log.d("!", "Sending created =)");
         } catch (JSONException e) {
-            Log.d("!", "couldnt create Sending");
-            e.printStackTrace();
+            Log.d("!", "couldnt create Sending" + e.toString());
         }
 
     }
@@ -63,10 +61,8 @@ public class Sending {// implements Serializable {
             jsonSending.put("jsonLinesArray", jsonLinesArray);
             jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
             jsonSending.put("sourceDisplayWidth", sourceDisplayWidth);
-            Log.d("!", "Json of Sending created =)");
         } catch (JSONException e) {
-            Log.d("!", "couldnt create json of Sending");
-            e.printStackTrace();
+            Log.d("!", "couldnt create json of Sending"+e.toString());
         }
         return jsonSending;
     }

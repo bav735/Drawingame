@@ -21,6 +21,7 @@ public class RetryDialog {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 dialog.cancel();
+                                mainActivity.client.disconnect();
                                 mainActivity.finish();
                                 mainActivity.startActivity(new Intent(
                                         (Context) mainActivity,

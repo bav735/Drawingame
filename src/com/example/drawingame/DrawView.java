@@ -21,28 +21,28 @@ import java.util.Random;
 public class DrawView extends View {
     public static int maxWidth = 150;
     public static int minWidth = 5;
-    private static float e = (float) 0.1;
+    public static float e = (float) 0.1;
 
     public int lineNum;
-    private int lastLineNum;
+    public int lastLineNum;
     public int drawingColor;
-    private int backgroundColor;
+    public int backgroundColor;
     public float strokeWidth;
     public int displayWidth;
     public int displayHeight;
 
     public List<Line> lineList;
-    private MainActivity mainActivity;
-    private Paint paint;
+    public MainActivity mainActivity;
+    public Paint paint;
 
     public boolean isEnabled;
     public boolean isRandomColor;
     public boolean isRandomWidth;
     public boolean isContinuous;
-    private boolean isInWidthDialog;
+    public boolean isInWidthDialog;
 
-    private float lastX;
-    private float lastY;
+    public float lastX;
+    public float lastY;
 
     public DrawView(MainActivity mainActivity) {
         super((Context) mainActivity);
@@ -142,8 +142,8 @@ public class DrawView extends View {
             case MotionEvent.ACTION_MOVE:
                 lineList.get(lineNum - 1).addPoint(event.getX(), event.getY());
                 invalidate();
-                if (isContinuous)// && isNotClose(event.getX(), event.getY()))
-                    mainActivity.client.send();
+//                if (isContinuous)// && isNotClose(event.getX(), event.getY()))
+//                    mainActivity.client.send();
                 break;
         }
         return true;
@@ -177,24 +177,24 @@ public class DrawView extends View {
 
     public void recalcFromSending(Sending sending) {
         if (sending.lineNum == 0) {
-            toast("BAD!");
+            toast("Empty drawing committed!");
             return;
         }
-        lineList = sending.lineList;
-        lineNum = sending.lineNum;
-        lastLineNum = sending.lineNum;
-        for (int i = 0; i < lineNum; i++) {
-            for (int j = 0; j < lineList.get(i).length; j++) {
-                float px = lineList.get(i).pointX.get(j).floatValue();
-                lineList.get(i).pointX.set(j, px * (float) displayWidth / (float) sending.sourceDisplayWidth);
-                float py = lineList.get(i).pointY.get(j).floatValue();
-                lineList.get(i).pointY.set(j, py * (float) displayHeight / (float) sending.sourceDisplayHeight);
+        for (int i = 0; i < sending.lineNum; i++) {
+            for (int j = 0; j < sending.lineList.get(i).length; j++) {
+                float px = sending.lineList.get(i).pointX.get(j).floatValue();
+                sending.lineList.get(i).pointX.set(j, px * (float) displayWidth / (float) sending.sourceDisplayWidth);
+                float py = sending.lineList.get(i).pointY.get(j).floatValue();
+                sending.lineList.get(i).pointY.set(j, py * (float) displayHeight / (float) sending.sourceDisplayHeight);
             }
         }
+        for (int i = lastLineNum; i < lineNum; i++) {
+            sending.lineList.add(lineList.get(i));
+        }
+        lineList = sending.lineList;
+        lineNum = sending.lineNum + lineNum - lastLineNum;
+        lastLineNum = sending.lineNum;
         invalidate();
-        // } else {
-        // toast("Received empty drawing");
-        // }
     }
 
     private void toast(String s) {
