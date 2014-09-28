@@ -1,5 +1,11 @@
 package com.example.drawingame;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 import ibt.ortc.api.OnEnablePresence;
@@ -13,37 +19,48 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Client {
-    private MainActivity mainActivity;
-    private String clientName;
-    private OrtcClient ortcClient;
+    private final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
+    private final static String ortcType = "IbtRealtimeSJ";
+    private final static String applicationKey = "XEQyNG";
+    private final static String privateKey = "m8vUKz6sRvzw";
+
+    public String clientName;
+
     private String channelName;
+    private MainActivity mainActivity;
+    private OrtcClient ortcClient;
+
+    private OnMessage onMessage = new OnMessage() {
+        public void run(OrtcClient sender, String channel, String message) {
+            if (message.charAt(0) == '>') {
+                String receiver = message.substring(1);
+                //toast("Request from " + sender.getConnectionMetadata());
+                if (ortcClient.getConnectionMetadata().equals(receiver)) {
+                    int lineNum = mainActivity.drawView.lineNum;
+                    mainActivity.drawView.lineNum = mainActivity.drawView.lastLineNum;
+                    send();
+                    mainActivity.drawView.lineNum = lineNum;
+                }
+            } else {
+                updateDrawing(message);
+                if (ortcClient.getConnectionMetadata().equals(sender.getConnectionMetadata())) {
+                    sendNotification("Drawingame", "Received commit from " + sender.getConnectionMetadata().substring(12));
+                }
+            }
+        }
+    };
 
     private OnConnected onConnected = new OnConnected() {
         @Override
         public void run(final OrtcClient sender) {
-            toast("Client connected!");
-            ortcClient.subscribe(channelName, true,
-                    new OnMessage() {
-                        public void run(OrtcClient sender, String channel, String message) {
-                            if (message.charAt(0) == '>') {
-                                String receiver = message.substring(1);
-                                toast("Request from " + sender.getConnectionMetadata());
-                                if (clientName.equals(receiver)) {
-                                    int lineNum = mainActivity.drawView.lineNum;
-                                    mainActivity.drawView.lineNum = mainActivity.drawView.lastLineNum;
-                                    send();
-                                    mainActivity.drawView.lineNum = lineNum;
-                                }
-                            } else {
-                                updateDrawing(message);//drawing sender updates own drawing twice: think about it
-                                if (!sender.getConnectionMetadata().equals(clientName)) {
-                                    toast("Received commit from " + sender.getConnectionMetadata());
-                                }
-                            }
-                        }
-                    }
-            );
-
+            //toast("Client " + clientName + " connected!");
+            if (!ortcClient.isSubscribed(channelName)) {
+                toast("was not subscribed!");
+                ortcClient.subscribe(channelName, true, onMessage);
+            } else {
+                toast("was subscribed!");
+                getPresence();
+            }
         }
 
     };
@@ -51,13 +68,20 @@ public class Client {
     private OnDisconnected onDisconnected = new OnDisconnected() {
         @Override
         public void run(OrtcClient arg0) {
-            toast("Disconnected!");
+            sendNotification("Drawingame", "You was disconnected");
         }
     };
 
     private OnReconnected onReconnected = new OnReconnected() {
         public void run(final OrtcClient sender) {
-            toast("Reconnected!");
+            //toast("Client reconnected!");
+            if (!ortcClient.isSubscribed(channelName)) {
+                toast("was not subscribed!");
+                ortcClient.subscribe(channelName, true, onMessage);
+            } else {
+                toast("was subscribed!");
+                getPresence();
+            }
         }
     };
 
@@ -65,75 +89,59 @@ public class Client {
     private OnSubscribed onSubscribed = new OnSubscribed() {
         @Override
         public void run(final OrtcClient sender, final String channel) {
-            toast("Subscribed to channel: " + channel);
+            //toast("Subscribed to channel: " + channel);
+            toast("enabling presence!");
             try {
-                ortcClient.enablePresence(MainActivity.privateKey, channelName, true,
+                ortcClient.enablePresence(privateKey, channelName, true,
                         new OnEnablePresence() {
                             @Override
                             public void run(final Exception exception, final String result) {
                                 if (exception != null) {
                                     toast("Couldn't enable presence! - " + exception);
+                                    Log.d("!", exception.toString());
                                 } else {
-                                    try {
-                                        ortcClient.presence(MainActivity.channelName,
-                                                new OnPresence() {
-                                                    @Override
-                                                    public void run(final Exception exception, final Presence presenceData) {
-                                                        if (exception != null) {
-                                                            toast("Couldn't get presence! - " + exception.toString());
-                                                            Log.d("!", exception.toString());
-                                                        } else {
-                                                            toast(String.valueOf(presenceData.getSubscriptions())+" users are online!");
-                                                            if (presenceData.getMetadata().isEmpty())
-                                                                toast("Empty presence!");
-                                                            else {
-                                                                String receiver = presenceData.getMetadata().keySet().iterator().next();
-                                                                toast("Sending request to " + receiver);
-                                                                ortcClient.send(channelName, ">" + receiver);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                        );
-                                    } catch (OrtcNotConnectedException e) {
-                                        Log.d("!", e.toString());
-                                        //this cannot be because it's connected
-                                    }
+                                    getPresence();
                                 }
                             }
                         }
                 );
             } catch (OrtcNotConnectedException e) {
+                toast("OrtcNotConnectedException!");
                 Log.d("!", e.toString());
-                //this cannot be because it's connected
             }
-
-
         }
     };
 
     private OnUnsubscribed onUnsubscribed = new OnUnsubscribed() {
         public void run(OrtcClient sender, final String channel) {
-            toast("Unsubscribed from channel: " + channel);
+            //toast("Unsubscribed from channel: " + channel);
         }
     };
 
-    public Client(MainActivity mainActivity) throws Exception {
+    public void disconnect() {
+        ortcClient.disconnect();
+    }
+
+    public void connect() {
+        ortcClient.connect(applicationKey, privateKey);
+    }
+
+    public Client(MainActivity mainActivity, String channelName, String clientName) throws Exception {
         this.mainActivity = mainActivity;
-        clientName = android.os.Build.MODEL + "(at " + currentTime() + ")";
-        channelName = MainActivity.channelName;
+        this.channelName = channelName;
+        this.clientName = clientName;
         Ortc ortc = new Ortc();
-        OrtcFactory factory = ortc.loadOrtcFactory(MainActivity.ortcType);
+        OrtcFactory factory = ortc.loadOrtcFactory(ortcType);
         ortcClient = factory.createClient();
         ortcClient.setApplicationContext(mainActivity.getApplicationContext());
-        ortcClient.setConnectionMetadata(clientName);
-        ortcClient.setClusterUrl(MainActivity.serverUrl);
+        ortcClient.setClusterUrl(serverUrl);
+        ortcClient.setConnectionMetadata(currentTime()+clientName);
         ortcClient.onConnected = onConnected;
         ortcClient.onDisconnected = onDisconnected;
         ortcClient.onReconnected = onReconnected;
         ortcClient.onSubscribed = onSubscribed;
         ortcClient.onUnsubscribed = onUnsubscribed;
-        ortcClient.connect(MainActivity.applicationKey, MainActivity.privateKey);
+        ortcClient.connect(applicationKey, privateKey);
     }
 
     private void updateDrawing(final String json) {
@@ -147,10 +155,64 @@ public class Client {
     }
 
     public void send() {
-        Sending sending = new Sending(clientName, mainActivity.drawView);
-        ortcClient.send(MainActivity.channelName, sending.toJsonObject().toString());
-        toast("Commit was sent!");
+        Sending sending = new Sending(mainActivity);
+        ortcClient.send(channelName, sending.toJsonObject().toString());
+        //toast("Commit was sent!");
     }
+
+    void sendNotification(String title, String text) {
+        int icon = R.drawable.ic_launcher;
+        long when = System.currentTimeMillis();
+        NotificationManager nm = (NotificationManager) mainActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        Context context = mainActivity.getApplicationContext();
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pending = PendingIntent.getActivity(context, 0, intent, 0);
+        Notification notification;
+        if (Build.VERSION.SDK_INT < 11) {
+            notification = new Notification(icon, title, when);
+            notification.setLatestEventInfo(context, title, text, pending);
+        } else {
+            notification = new Notification.Builder(context)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentIntent(pending)
+                    .setWhen(when)
+                    .setAutoCancel(true)
+                    .build();
+        }
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        nm.notify(0, notification);
+    }
+
+    private void getPresence() {
+        toast("getting presence!");
+        try {
+            ortcClient.presence(channelName, new OnPresence() {
+                        @Override
+                        public void run(final Exception exception, final Presence presenceData) {
+                            if (exception != null) {
+                                toast("Couldn't get presence! - " + exception.toString());
+                                Log.d("!", exception.toString());
+                            } else {
+                                //toast(String.valueOf(presenceData.getSubscriptions()) + " users are online!");
+                                if (!presenceData.getMetadata().isEmpty()) {
+                                    String receiver = presenceData.getMetadata().keySet().iterator().next();
+                                    //toast("Sending request to " + receiver);
+                                    ortcClient.send(channelName, ">" + receiver);
+                                }
+                            }
+                        }
+                    }
+            );
+        } catch (OrtcNotConnectedException e) {
+            toast("OrtcNotConnectedException!");
+            Log.d("!", e.toString());
+            //this cannot be because it's connected
+        }
+    }
+
 
     private void toast(final String s) {
         mainActivity.runOnUiThread(new Runnable() {
@@ -162,74 +224,9 @@ public class Client {
     }
 
     private String currentTime() {
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss:SS");
         Date now = new Date();
-        String strTime = sdfTime.format(now);
-        return strTime;
+        return sdfTime.format(now);
     }
 
-    public void disconnect() {
-        ortcClient.disconnect();
-    }
 }
-
-//Implementing Presence, max Metadata size is 256(!) that's why it's useless
-//            // try {
-//            // ortcClient.enablePresence(MainActivity.privateKey, MainActivity.channelName, true, new OnEnablePresence() {
-//            Ortc.enablePresence(MainActivity.serverUrl,
-//                    true,
-//                    MainActivity.applicationKey,
-//
-//                    MainActivity.privateKey,
-//                    MainActivity.channelName,
-//                    true,
-//                    new OnEnablePresence() {
-//                        @Override
-//                        public void run(final Exception exception, final String result) {
-//                            if (exception != null) {
-//                                toast("Couldn't enable presence! - " + exception);
-//                            } else {
-//                                toast(result);
-//                                //   try {
-//                                //ortcClient.presence(MainActivity.channelName,
-//                                Ortc.presence(MainActivity.serverUrl,
-//                                        true,
-//                                        MainActivity.applicationKey,
-//                                        MainActivity.privateKey,
-//                                        MainActivity.channelName,
-//                                        new OnPresence() {
-//                                            @Override
-//                                            public void run(final Exception exception, final Presence presenceData) {
-//                                                if (exception != null) {
-//                                                    toast("Couldn't get presence! - " + exception.toString());
-//                                                    Log.d("!", exception.toString());
-//                                                } else {
-//                                                    toast(String.valueOf(presenceData.getSubscriptions()));
-//                                                    if (presenceData.getMetadata().isEmpty())
-//                                                        toast("empty");
-//                                                    else {
-//                                                        updateMetadata(presenceData.getMetadata().keySet().iterator().next());
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                );
-////                                    } catch (OrtcNotConnectedException e) {
-////                                        Log.d("!", e.toString());
-////                                        //this cannot be because it's connected
-////                                    }
-//                            }
-//                        }
-//                    }
-//            );
-////            } catch (OrtcNotConnectedException e) {
-////                Log.d("!", e.toString());
-////                //this cannot be because it's connected
-////            }
-//                                    Iterator<?> metadataIterator = presenceData.getMetadata().entrySet().iterator();
-//                                    while (metadataIterator.hasNext()) {
-//                                        Map.Entry<String, Long> entry = (Map.Entry<String, Long>) metadataIterator
-//                                                .next();
-//                                        System.out.println(entry.getKey() + " - " + entry.getValue());
-//                                    }
-

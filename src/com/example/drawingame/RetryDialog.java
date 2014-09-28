@@ -21,7 +21,6 @@ public class RetryDialog {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 dialog.cancel();
-                                mainActivity.client.disconnect();
                                 mainActivity.finish();
                                 mainActivity.startActivity(new Intent(
                                         (Context) mainActivity,
@@ -32,8 +31,7 @@ public class RetryDialog {
                 .setNegativeButton("Exit",
                         new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                                 mainActivity.finish();
                             }
@@ -43,6 +41,8 @@ public class RetryDialog {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
+                        dialog.cancel();
+                        mainActivity.finish();
                     }
                 }).create();
     }

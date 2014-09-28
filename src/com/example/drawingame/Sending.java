@@ -8,29 +8,29 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sending {// implements Serializable {
-    // private static final long serialVersionUID = 1L;
-    public String clientName;
+public class Sending {
+//    public String clientName;
+//    public String clientId;
     public List<Line> lineList;
     public int lineNum;
-    public int lastLineNum;
-    public float strokeWidth;
     public int sourceDisplayWidth;
     public int sourceDisplayHeight;
 
-    public Sending(String clientName, DrawView drawView) {
-        this.clientName = clientName;
-        this.lineList = drawView.lineList;
-        this.lineNum = drawView.lineNum;
-        this.sourceDisplayHeight = drawView.displayHeight;
-        this.sourceDisplayWidth = drawView.displayWidth;
+    public Sending(MainActivity mainActivity) {
+//        this.clientName = mainActivity.client.clientName;
+//        this.clientId = mainActivity.client.clientId;
+        this.lineList = mainActivity.drawView.lineList;
+        this.lineNum = mainActivity.drawView.lineNum;
+        this.sourceDisplayHeight = mainActivity.drawView.displayHeight;
+        this.sourceDisplayWidth = mainActivity.drawView.displayWidth;
     }
 
     public Sending(String string) {
         try {
             JSONObject jsonSending;
             jsonSending = new JSONObject(string);
-            clientName = jsonSending.getString("clientName");
+//            clientName = jsonSending.getString("clientName");
+//            clientId = jsonSending.getString("clientId");
             lineNum = jsonSending.getInt("lineNum");
             sourceDisplayHeight = jsonSending.getInt("sourceDisplayHeight");
             sourceDisplayWidth = jsonSending.getInt("sourceDisplayWidth");
@@ -56,13 +56,14 @@ public class Sending {// implements Serializable {
         }
         JSONObject jsonSending = new JSONObject();
         try {
-            jsonSending.put("clientName", clientName);
+//            jsonSending.put("clientName", clientName);
+//            jsonSending.put("clientId", clientId);
             jsonSending.put("lineNum", lineNum);
             jsonSending.put("jsonLinesArray", jsonLinesArray);
             jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
             jsonSending.put("sourceDisplayWidth", sourceDisplayWidth);
         } catch (JSONException e) {
-            Log.d("!", "couldnt create json of Sending"+e.toString());
+            Log.d("!", "couldnt create json of Sending" + e.toString());
         }
         return jsonSending;
     }

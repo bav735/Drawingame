@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -177,7 +178,8 @@ public class DrawView extends View {
 
     public void recalcFromSending(Sending sending) {
         if (sending.lineNum == 0) {
-            toast("Empty drawing committed!");
+            //toast("Empty drawing committed!");
+            Log.d("!","Empty drawing committed!");
             return;
         }
         for (int i = 0; i < sending.lineNum; i++) {
