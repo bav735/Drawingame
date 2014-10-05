@@ -9,31 +9,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sending {
-//    public String clientName;
-//    public String clientId;
     public List<Line> lineList;
     public int lineNum;
     public int sourceDisplayWidth;
     public int sourceDisplayHeight;
+    public String senderId;
+    public boolean isRequest;
+    public boolean isAnswer;
+    public String receiverId;
+    public String senderName;
 
     public Sending(MainActivity mainActivity) {
-//        this.clientName = mainActivity.client.clientName;
-//        this.clientId = mainActivity.client.clientId;
-        this.lineList = mainActivity.drawView.lineList;
-        this.lineNum = mainActivity.drawView.lineNum;
-        this.sourceDisplayHeight = mainActivity.drawView.displayHeight;
-        this.sourceDisplayWidth = mainActivity.drawView.displayWidth;
+        senderId = mainActivity.client.ortcClient.getConnectionMetadata();
+        senderName = mainActivity.client.clientName;
+        lineList = mainActivity.drawView.lineList;
+        lineNum = mainActivity.drawView.lineNum;
+        sourceDisplayHeight = mainActivity.drawView.displayHeight;
+        sourceDisplayWidth = mainActivity.drawView.displayWidth;
+        isAnswer = false;
+        isRequest = false;
+        receiverId = "";
     }
 
     public Sending(String string) {
         try {
             JSONObject jsonSending;
             jsonSending = new JSONObject(string);
-//            clientName = jsonSending.getString("clientName");
-//            clientId = jsonSending.getString("clientId");
             lineNum = jsonSending.getInt("lineNum");
             sourceDisplayHeight = jsonSending.getInt("sourceDisplayHeight");
             sourceDisplayWidth = jsonSending.getInt("sourceDisplayWidth");
+            senderId = jsonSending.getString("senderId");
+            senderName = jsonSending.getString("senderName");
+            isRequest = jsonSending.getBoolean("isRequest");
+            isAnswer = jsonSending.getBoolean("isAnswer");
+            receiverId = jsonSending.getString("receiverId");
             JSONArray jsonLinesArray = jsonSending
                     .getJSONArray("jsonLinesArray");
             lineList = new ArrayList<Line>();
@@ -56,8 +65,11 @@ public class Sending {
         }
         JSONObject jsonSending = new JSONObject();
         try {
-//            jsonSending.put("clientName", clientName);
-//            jsonSending.put("clientId", clientId);
+            jsonSending.put("senderId", senderId);
+            jsonSending.put("senderName", senderName);
+            jsonSending.put("isRequest", isRequest);
+            jsonSending.put("isAnswer", isAnswer);
+            jsonSending.put("receiverId", receiverId);
             jsonSending.put("lineNum", lineNum);
             jsonSending.put("jsonLinesArray", jsonLinesArray);
             jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
@@ -67,5 +79,4 @@ public class Sending {
         }
         return jsonSending;
     }
-
 }

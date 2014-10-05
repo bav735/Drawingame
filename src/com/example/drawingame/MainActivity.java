@@ -50,7 +50,7 @@ public class MainActivity extends FragmentActivity {
                 return true;
 
             case R.id.menuCommitDrawing:
-                client.send();
+                client.commitDrawing();
                 if (drawView.isContinuous)
                     changeContinuous();
                 return true;
