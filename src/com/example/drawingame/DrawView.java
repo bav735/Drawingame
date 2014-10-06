@@ -1,12 +1,8 @@
 package com.example.drawingame;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public class DrawView extends View {
-    public static int maxWidth = 150;
+    public static int maxWidth = 100;
     public static int minWidth = 5;
     public static float e = (float) 0.1;
 
@@ -28,19 +24,21 @@ public class DrawView extends View {
     public int lastLineNum;
     public int drawingColor;
     public int backgroundColor;
-    public float strokeWidth;
+    public int strokeWidth;
     public int displayWidth;
     public int displayHeight;
 
     public List<Line> lineList;
     public MainActivity mainActivity;
     public Paint paint;
+//    public Path path;
 
     public boolean isEnabled;
     public boolean isRandomColor;
     public boolean isRandomWidth;
-    public boolean isContinuous;
+    //public boolean isContinuous;
     public boolean isInWidthDialog;
+    public boolean isOnEraser;
 
     public float lastX;
     public float lastY;
@@ -53,7 +51,7 @@ public class DrawView extends View {
         this.mainActivity = mainActivity;
         drawingColor = Color.BLACK;
         backgroundColor = Color.WHITE;
-        strokeWidth = (float) minWidth;
+        strokeWidth = minWidth;
         lineNum = 0;
         lastLineNum = 0;
         lineList = new ArrayList<Line>();
@@ -61,8 +59,9 @@ public class DrawView extends View {
         lastY = -1;
         isEnabled = true;
         isRandomColor = false;
-        isContinuous = false;
+        //isContinuous = false;
         isInWidthDialog = false;
+        isOnEraser = false;
         Display display = mainActivity.getWindowManager().getDefaultDisplay();
         displayHeight = display.getHeight();
         displayWidth = display.getWidth();
@@ -71,12 +70,12 @@ public class DrawView extends View {
         //displayWidth = size.x;
         //displayHeight = size.y;
         paint = new Paint();
-        //paint.setDither(true);                    // set the dither to true
-        //paint.setStyle(Paint.Style.STROKE);       // set to STOKE
-        //paint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        //paint.setStrokeCap(Paint.Cap.ROUND);      // set the paint cap to round too
-        //paint.setPathEffect(new CornerPathEffect(10) );   // set the path effect when they join.
-        //paint.setAntiAlias(true);
+        paint.setAntiAlias(true); // enable anti aliasing
+        paint.setDither(true); // enable dithering
+        paint.setStyle(Paint.Style.STROKE); // set to STOKE
+        paint.setStrokeJoin(Paint.Join.ROUND); // set the join to round you want
+        paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
+//        path = new Path();
     }
 
     public DrawView(Context context, AttributeSet attrs) {
@@ -94,30 +93,35 @@ public class DrawView extends View {
 
     private void drawCanvas(Canvas canvas) {
         canvas.drawColor(backgroundColor);
+//        path.reset();
         if (lineList != null && !lineList.isEmpty())
             for (Line line : lineList) {
                 paint.setColor(line.color);
                 paint.setStrokeWidth(line.strokeWidth);
-                //for (int i = 0; i < line.length; i++) {                    canvas.drawCircle(line.pointX.get(i), line.pointY.get(i), line.strokeWidth, paint);                }
-                if (isInWidthDialog)
+                paint.setPathEffect(new CornerPathEffect(line.strokeWidth));
+
+                if (isInWidthDialog) {
                     paint.setStrokeWidth(strokeWidth);
+                    paint.setPathEffect(new CornerPathEffect(strokeWidth));
+                }
+
+                Path path = new Path();
+                path.moveTo(line.pointX.get(0), line.pointY.get(0));
                 for (int i = 1; i < line.length; i++)
-                    canvas.drawLine(line.pointX.get(i - 1),
-                            line.pointY.get(i - 1), line.pointX.get(i),
-                            line.pointY.get(i), paint);
+                    //canvas.drawLine(line.pointX.get(i - 1),                            line.pointY.get(i - 1), line.pointX.get(i),                            line.pointY.get(i), paint);
+                    path.lineTo(line.pointX.get(i), line.pointY.get(i));
+                canvas.drawPath(path, paint);
             }
+
     }
 
-    public void save() {
+    public void save(String drawingName) {
         Bitmap toDisk = Bitmap.createBitmap(displayWidth, displayHeight, Bitmap.Config.ARGB_8888);
-        // Bitmap toDisk = Bitmap.createBitmap(canvas.getWidth(),
-        // canvas.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(toDisk);
         drawCanvas(canvas);
         try {
             toDisk.compress(Bitmap.CompressFormat.PNG, 100,
-                    new FileOutputStream(new File("/mnt/sdcard/Drawing.png")));
-            toast("Drawing was saved");
+                    new FileOutputStream(new File("/mnt/sdcard/" + drawingName + ".png")));
         } catch (FileNotFoundException e) {
             toast("Error while writing to disk");
             e.printStackTrace();
@@ -126,13 +130,14 @@ public class DrawView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // if (!isEnabled) return true;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Line newLine = new Line();
                 newLine.strokeWidth = strokeWidth;
                 if (isRandomColor)
                     drawingColor = randomColor();
+                if (isOnEraser)
+                    drawingColor = Color.WHITE;
                 if (isRandomWidth)
                     strokeWidth = randomWidth();
                 newLine.color = drawingColor;
@@ -150,12 +155,12 @@ public class DrawView extends View {
         return true;
     }
 
-    public void clear() {
-        lineNum = 0;
-        lastLineNum = 0;
-        lineList = new ArrayList<Line>();
-        invalidate();
-    }
+//    public void clear() {
+//        lineNum = 0;
+//        lastLineNum = 0;
+//        lineList = new ArrayList<Line>();
+//        invalidate();
+//    }
 
     public void undo() {
         if (lineNum > lastLineNum) {
@@ -178,8 +183,7 @@ public class DrawView extends View {
 
     public void recalcFromSending(Sending sending) {
         if (sending.lineNum == 0) {
-            //toast("Empty drawing committed!");
-            Log.d("!","Empty drawing committed!");
+            //we don't update our drawing if empty drawing was committed
             return;
         }
         for (int i = 0; i < sending.lineNum; i++) {
@@ -203,20 +207,20 @@ public class DrawView extends View {
         Toast.makeText(mainActivity, s, 0).show();
     }
 
-    private boolean isNotClose(float curX, float curY) {
-        if (lastX == -1 && lastY == -1) {
-            lastX = curX;
-            lastY = curY;
-        }
-        if ((curX - lastX) * (curX - lastX) + (curY - lastY) * (curY - lastY) > e) {
-            lastX = curX;
-            lastY = curY;
-            return true;
-        } else
-            return false;
-    }
-
-    public void changeStrokeWidth(float newSW) {
+    //    private boolean isNotClose(float curX, float curY) {
+//        if (lastX == -1 && lastY == -1) {
+//            lastX = curX;
+//            lastY = curY;
+//        }
+//        if ((curX - lastX) * (curX - lastX) + (curY - lastY) * (curY - lastY) > e) {
+//            lastX = curX;
+//            lastY = curY;
+//            return true;
+//        } else
+//            return false;
+//    }
+//
+    public void changeStrokeWidthFromDialog(int newSW) {
         strokeWidth = newSW;
         isInWidthDialog = true;
         invalidate();

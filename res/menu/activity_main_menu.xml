@@ -12,6 +12,9 @@
     <item android:id="@+id/menuUndo"
           android:title="Undo"/>
 
+    <item android:id="@+id/menuEraser"
+          android:title="Eraser is off"/>
+
     <item android:id="@+id/menuClearDrawing"
           android:title="Clear drawing"
           android:visible="false"/>
@@ -19,17 +22,16 @@
     <item android:id="@+id/menuCommitDrawing"
           android:title="Commit drawing"/>
 
-    <item android:id="@+id/menuContinuousCommit"
-          android:title="Enable continuous commit"/>
+    <!--<item android:id="@+id/menuContinuousCommit"          android:title="Enable continuous commit"/>-->
 
-    <item android:id="@+id/menuChooseColor"
-          android:title="Choose color"/>
+    <item android:id="@+id/menuChangeColor"
+          android:title="Change color"/>
 
     <item android:id="@+id/menuRandomColor"
           android:title="Enable random color"/>
 
-    <item android:id="@+id/menuChooseStrokeWidth"
-          android:title="Choose stroke width"/>
+    <item android:id="@+id/menuChangeStrokeWidth"
+          android:title="Change stroke width"/>
 
     <item android:id="@+id/menuRandomStrokeWidth"
           android:title="Enable random stroke width"/>

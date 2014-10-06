@@ -64,10 +64,10 @@ public class Client {
         public void run(final OrtcClient sender) {
             //toast("Client " + clientName + " connected!");
             if (!ortcClient.isSubscribed(channelName)) {
-                toast("was not subscribed!");
+             //   toast("was not subscribed!");
                 ortcClient.subscribe(channelName, true, onMessage);
             } else {
-                toast("was subscribed!");
+//                toast("was subscribed!");
                 getPresence();
             }
         }
@@ -77,7 +77,7 @@ public class Client {
     private OnDisconnected onDisconnected = new OnDisconnected() {
         @Override
         public void run(OrtcClient arg0) {
-            sendNotification("Drawingame", "You was disconnected");
+            //sendNotification("Drawingame", "You was disconnected");
         }
     };
 
@@ -85,10 +85,10 @@ public class Client {
         public void run(final OrtcClient sender) {
             //toast("Client reconnected!");
             if (!ortcClient.isSubscribed(channelName)) {
-                toast("was not subscribed!");
+//                toast("was not subscribed!");
                 ortcClient.subscribe(channelName, true, onMessage);
             } else {
-                toast("was subscribed!");
+//                toast("was subscribed!");
                 getPresence();
             }
         }
@@ -99,7 +99,7 @@ public class Client {
         @Override
         public void run(final OrtcClient sender, final String channel) {
             //toast("Subscribed to channel: " + channel);
-            toast("enabling presence!");
+            //toast("enabling presence!");
             try {
                 ortcClient.enablePresence(privateKey, channelName, true,
                         new OnEnablePresence() {
@@ -194,7 +194,7 @@ public class Client {
     }
 
     private void getPresence() {
-        toast("getting presence!");
+        //toast("getting presence!");
         try {
             ortcClient.presence(channelName, new OnPresence() {
                         @Override

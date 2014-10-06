@@ -166,7 +166,7 @@ public class TwitterActivity extends Activity {
             entity.addPart("status", new StringBody(
                     "A picture was posted by Android app Drawingame:"));
             entity.addPart("media", new FileBody(new File(
-                    "/mnt/sdcard/Drawing.png")));
+                    "/mnt/sdcard/tmpDrawing.png")));
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             entity.writeTo(out);

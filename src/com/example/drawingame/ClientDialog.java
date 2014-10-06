@@ -33,7 +33,7 @@ public class ClientDialog extends DialogFragment {
                                 String channelName = etChannelName.getText().toString();
                                 String clientName = etClientName.getText().toString();
                                 try {
-                                    mainActivity.client = new Client(mainActivity, channelName, clientName);
+                                    mainActivity.client = new Client(mainActivity, "channel_" + channelName, clientName);
                                 } catch (Exception e) {
                                     Log.d("!", "Client create error - " + e.toString());
                                     RetryDialog cd = new RetryDialog(mainActivity, "Couldn't create client on your device.");

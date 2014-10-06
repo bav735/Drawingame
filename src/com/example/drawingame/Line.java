@@ -13,7 +13,7 @@ public class Line {
     public List<Float> pointY;
     public int color;
     public int length;
-    public float strokeWidth;
+    public int strokeWidth;
 
     public Line() {
         pointX = new ArrayList<Float>();
@@ -25,7 +25,7 @@ public class Line {
         try {
             length = jsonLine.getInt("length");
             color = jsonLine.getInt("color");
-            strokeWidth = (float) jsonLine.getDouble("strokeWidth");
+            strokeWidth = jsonLine.getInt("strokeWidth");
             JSONArray jsonPointsArray = jsonLine
                     .getJSONArray("jsonPointsArray");
             pointX = new ArrayList<Float>();

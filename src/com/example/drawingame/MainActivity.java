@@ -1,13 +1,12 @@
 package com.example.drawingame;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,16 +17,21 @@ import android.widget.Toast;
 import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.example.drawingame.ChangeWidthDialog.OnChangeWidthListener;
 
+import java.io.File;
+
 public class MainActivity extends FragmentActivity {
     public DrawView drawView;
     public Client client;
 
     private MainActivity mainActivity = this;
     private Menu mainActivityMenu;
-    private MenuItem menuClearDrawing;
-    private MenuItem menuContinuousCommit;
+    //private MenuItem menuClearDrawing;
+    //private MenuItem menuContinuousCommit;
     private MenuItem menuRandomColor;
+    private MenuItem menuEraser;
+    private MenuItem menuChangeStrokeWidth;
     private MenuItem menuRandomStrokeWidth;
+    private MenuItem menuChangeColor;
     private boolean isServer = false;
 
     @Override
@@ -40,26 +44,39 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        menuRandomStrokeWidth = mainActivityMenu.findItem(R.id.menuRandomStrokeWidth);
+        menuEraser= mainActivityMenu.findItem(R.id.menuEraser);
+        menuChangeStrokeWidth= mainActivityMenu.findItem(R.id.menuChangeStrokeWidth);
+        menuRandomColor= mainActivityMenu.findItem(R.id.menuRandomColor);
+        menuChangeColor= mainActivityMenu.findItem(R.id.menuChangeColor);
+
         switch (item.getItemId()) {
             case R.id.menuUndo:
                 drawView.undo();
                 return true;
 
-            case R.id.menuClearDrawing:
-                drawView.clear();
+            case R.id.menuEraser:
+                changeEraser();
                 return true;
+
+//            case R.id.menuClearDrawing:
+//                drawView.clear();
+//                return true;
 
             case R.id.menuCommitDrawing:
-                client.commitDrawing();
-                if (drawView.isContinuous)
-                    changeContinuous();
+                if (client.ortcClient.getIsConnected()) {
+                    client.commitDrawing();
+                    toast("Drawing was sent");
+                } else
+                    toast("Client is not connected, check your network");
+                //if (drawView.isContinuous)                    changeContinuous();
                 return true;
 
-            case R.id.menuContinuousCommit:
-                changeContinuous();
-                return true;
+//            case R.id.menuContinuousCommit:
+//                changeContinuous();
+//                return true;
 
-            case R.id.menuChooseColor:
+            case R.id.menuChangeColor:
                 AmbilWarnaDialog dialog = new AmbilWarnaDialog(mainActivity,
                         drawView.drawingColor, new OnAmbilWarnaListener() {
                     @Override
@@ -83,11 +100,11 @@ public class MainActivity extends FragmentActivity {
                 changeRandomColor();
                 return true;
 
-            case R.id.menuChooseStrokeWidth:
+            case R.id.menuChangeStrokeWidth:
                 ChangeWidthDialog changeWidthDialog = new ChangeWidthDialog(
                         mainActivity, new OnChangeWidthListener() {
                     @Override
-                    public void onOk(float strokeWidth) {
+                    public void onOk(int strokeWidth) {
                         drawView.strokeWidth = strokeWidth;
                     }
                 }
@@ -102,11 +119,17 @@ public class MainActivity extends FragmentActivity {
                 return true;
 
             case R.id.menuSaveDrawing:
-                drawView.save();
+                drawView.save("Drawing");
+                toast("Drawing was saved to /sdcard as Drawing.png");
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                File file = new File("mnt/sdcard/Drawing.png");
+                intent.setDataAndType(Uri.fromFile(file), "image/*");
+                startActivity(intent);
                 return true;
 
             case R.id.menuPostDrawing:
-                drawView.save();
+                drawView.save("tmpDrawing");
                 startActivity(new Intent(mainActivity, TwitterActivity.class));
                 return true;
 
@@ -118,11 +141,11 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         if (!isNetworkAvailable()) {
             RetryDialog retryDialog = new RetryDialog(mainActivity, "Network is unavailable, check internet connection.");
             retryDialog.show();
         } else {
+            setContentView(R.layout.activity_main);
             drawView = (DrawView) findViewById(R.id.drawView1);
             drawView.init(mainActivity);
             DialogFragment dialogFragment = new ClientDialog();
@@ -166,7 +189,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void changeRandomColor() {
-        menuRandomColor = mainActivityMenu.findItem(R.id.menuRandomColor);
         if (drawView.isRandomColor) {
             menuRandomColor.setTitle("Enable random color");
             drawView.isRandomColor = false;
@@ -177,7 +199,6 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void changeRandomWidth() {
-        menuRandomStrokeWidth = mainActivityMenu.findItem(R.id.menuRandomStrokeWidth);
         if (drawView.isRandomWidth) {
             menuRandomStrokeWidth.setTitle("Enable random width");
             drawView.isRandomWidth = false;
@@ -187,14 +208,33 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void changeContinuous() {
-        menuContinuousCommit = mainActivityMenu.findItem(R.id.menuContinuousCommit);
-        if (drawView.isContinuous) {
-            menuContinuousCommit.setTitle("Enable continuous commit");
-            drawView.isContinuous = false;
+    private void changeEraser() {
+        if (drawView.isOnEraser) {
+            menuEraser.setTitle("Eraser is off");
+            menuRandomColor.setVisible(true);
+            menuRandomStrokeWidth.setVisible(true);
+            menuChangeColor.setVisible(true);
+            menuChangeStrokeWidth.setTitle("Change stroke width");
+            drawView.drawingColor = Color.BLACK;
+            drawView.isOnEraser= false;
         } else {
-            menuContinuousCommit.setTitle("Disable continuous commit");
-            drawView.isContinuous = true;
+            menuEraser.setTitle("Eraser is on");
+            menuRandomColor.setVisible(false);
+            menuRandomStrokeWidth.setVisible(false);
+            menuChangeColor.setVisible(false);
+            menuChangeStrokeWidth.setTitle("Change eraser size");
+            drawView.isOnEraser = true;
         }
     }
+
+//    private void changeContinuous() {
+//        menuContinuousCommit = mainActivityMenu.findItem(R.id.menuContinuousCommit);
+//        if (drawView.isContinuous) {
+//            menuContinuousCommit.setTitle("Enable continuous commit");
+//            drawView.isContinuous = false;
+//        } else {
+//            menuContinuousCommit.setTitle("Disable continuous commit");
+//            drawView.isContinuous = true;
+//        }
+//    }
 }
