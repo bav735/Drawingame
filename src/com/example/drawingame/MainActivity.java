@@ -32,7 +32,7 @@ public class MainActivity extends FragmentActivity {
     private MenuItem menuChangeStrokeWidth;
     private MenuItem menuRandomStrokeWidth;
     private MenuItem menuChangeColor;
-    private boolean isServer = false;
+//    private boolean isServer = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,7 +66,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.menuCommitDrawing:
                 if (client.ortcClient.getIsConnected()) {
                     client.commitDrawing();
-                    toast("Drawing was sent");
+                    toast("Commit was sent");
                 } else
                     toast("Client is not connected, check your network");
                 //if (drawView.isContinuous)                    changeContinuous();
@@ -215,15 +215,14 @@ public class MainActivity extends FragmentActivity {
             menuRandomStrokeWidth.setVisible(true);
             menuChangeColor.setVisible(true);
             menuChangeStrokeWidth.setTitle("Change stroke width");
-            drawView.drawingColor = Color.BLACK;
-            drawView.isOnEraser= false;
+            drawView.endEraser();
         } else {
             menuEraser.setTitle("Eraser is on");
             menuRandomColor.setVisible(false);
             menuRandomStrokeWidth.setVisible(false);
             menuChangeColor.setVisible(false);
             menuChangeStrokeWidth.setTitle("Change eraser size");
-            drawView.isOnEraser = true;
+            drawView.initEraser();
         }
     }
 

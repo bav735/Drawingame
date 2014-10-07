@@ -21,7 +21,7 @@ public class DrawView extends View {
     public static float e = (float) 0.1;
 
     public int lineNum;
-    public int lastLineNum;
+    public int lastCommitLineNum;
     public int drawingColor;
     public int backgroundColor;
     public int strokeWidth;
@@ -31,37 +31,56 @@ public class DrawView extends View {
     public List<Line> lineList;
     public MainActivity mainActivity;
     public Paint paint;
-//    public Path path;
 
-    public boolean isEnabled;
+//    public boolean isEnabled;
     public boolean isRandomColor;
     public boolean isRandomWidth;
     //public boolean isContinuous;
     public boolean isInWidthDialog;
     public boolean isOnEraser;
 
-    public float lastX;
-    public float lastY;
+//    public float lastX;
+//    public float lastY;
+
+    private int lastColor;
+    private int lastWidth;
+    private boolean eraserJustEnded;
 
     public DrawView(MainActivity mainActivity) {
         super((Context) mainActivity);
     }
 
+    public void endEraser() {
+        drawingColor = lastColor;
+        strokeWidth = lastWidth;
+        isOnEraser = false;
+        eraserJustEnded = true;
+    }
+
+    public void initEraser() {
+        lastColor = drawingColor;
+        lastWidth = strokeWidth;
+        strokeWidth = minWidth;
+        isOnEraser = true;
+    }
+
     public void init(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
-        drawingColor = Color.BLACK;
         backgroundColor = Color.WHITE;
+        drawingColor = Color.BLACK;
         strokeWidth = minWidth;
         lineNum = 0;
-        lastLineNum = 0;
+        lastCommitLineNum = 0;
         lineList = new ArrayList<Line>();
-        lastX = -1;
-        lastY = -1;
-        isEnabled = true;
+//        lastX = -1;
+//        lastY = -1;
+//        isEnabled = true;
         isRandomColor = false;
+        isRandomWidth = false;
         //isContinuous = false;
         isInWidthDialog = false;
         isOnEraser = false;
+        eraserJustEnded = false;
         Display display = mainActivity.getWindowManager().getDefaultDisplay();
         displayHeight = display.getHeight();
         displayWidth = display.getWidth();
@@ -75,7 +94,6 @@ public class DrawView extends View {
         paint.setStyle(Paint.Style.STROKE); // set to STOKE
         paint.setStrokeJoin(Paint.Join.ROUND); // set the join to round you want
         paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
-//        path = new Path();
     }
 
     public DrawView(Context context, AttributeSet attrs) {
@@ -93,7 +111,6 @@ public class DrawView extends View {
 
     private void drawCanvas(Canvas canvas) {
         canvas.drawColor(backgroundColor);
-//        path.reset();
         if (lineList != null && !lineList.isEmpty())
             for (Line line : lineList) {
                 paint.setColor(line.color);
@@ -132,14 +149,18 @@ public class DrawView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (!isOnEraser) {
+                    if (!eraserJustEnded) {
+                        if (isRandomColor)
+                            drawingColor = randomColor();
+                        if (isRandomWidth)
+                            strokeWidth = randomWidth();
+                    } else
+                        eraserJustEnded = false;
+                } else
+                    drawingColor = Color.WHITE;
                 Line newLine = new Line();
                 newLine.strokeWidth = strokeWidth;
-                if (isRandomColor)
-                    drawingColor = randomColor();
-                if (isOnEraser)
-                    drawingColor = Color.WHITE;
-                if (isRandomWidth)
-                    strokeWidth = randomWidth();
                 newLine.color = drawingColor;
                 newLine.addPoint(event.getX(), event.getY());
                 lineList.add(newLine);
@@ -157,13 +178,13 @@ public class DrawView extends View {
 
 //    public void clear() {
 //        lineNum = 0;
-//        lastLineNum = 0;
+//        lastCommitLineNum = 0;
 //        lineList = new ArrayList<Line>();
 //        invalidate();
 //    }
 
     public void undo() {
-        if (lineNum > lastLineNum) {
+        if (lineNum > lastCommitLineNum) {
             lineList.remove(lineNum - 1);
             lineNum--;
         }
@@ -194,12 +215,12 @@ public class DrawView extends View {
                 sending.lineList.get(i).pointY.set(j, py * (float) displayHeight / (float) sending.sourceDisplayHeight);
             }
         }
-        for (int i = lastLineNum; i < lineNum; i++) {
+        for (int i = lastCommitLineNum; i < lineNum; i++) {
             sending.lineList.add(lineList.get(i));
         }
         lineList = sending.lineList;
-        lineNum = sending.lineNum + lineNum - lastLineNum;
-        lastLineNum = sending.lineNum;
+        lineNum = sending.lineNum + lineNum - lastCommitLineNum;
+        lastCommitLineNum = sending.lineNum;
         invalidate();
     }
 

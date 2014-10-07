@@ -17,6 +17,7 @@ import ibt.ortc.extensibility.exception.OrtcNotConnectedException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Client {
     private final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
@@ -33,26 +34,29 @@ public class Client {
     private OnMessage onMessage = new OnMessage() {
         public void run(OrtcClient sender, String channel, String message) {
             Sending sending = new Sending(message);
+//            toast(sender.getConnectionMetadata());
+            if (ortcClient.getConnectionMetadata().equals(sending.senderId))
+                return;
             if (sending.isRequest) {//message.charAt(0) == '>') {
-                //String receiverId = message.substring(1);
-                //toast("Request from " + sender.getConnectionMetadata());
+                toast("Received request from " + sending.senderName);
                 if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
-//                    int lineNum = mainActivity.drawView.lineNum;
-//                    mainActivity.drawView.lineNum = mainActivity.drawView.lastLineNum;
+                    int currentLineNum = mainActivity.drawView.lineNum;
+                    mainActivity.drawView.lineNum = mainActivity.drawView.lastCommitLineNum;
                     Sending answer = new Sending(mainActivity);
                     answer.isAnswer = true;
                     answer.receiverId = sending.senderId;
+                    toast("Sending answer to " + answer.receiverId);
                     ortcClient.send(channelName, answer.toJsonObject().toString());
-                    //mainActivity.drawView.lineNum = lineNum;
+                    mainActivity.drawView.lineNum = currentLineNum;
                 }
             }
             if (sending.isAnswer) {
-                //String senderConnectionMetadata = sending.senderId;
                 if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
+                    toast("Received answer from " + sending.senderName);
                     updateDrawing(sending);
                 }
             }
-            if (!sending.isAnswer && !sending.isRequest && !ortcClient.getConnectionMetadata().equals(sending.senderId)) {
+            if (!sending.isAnswer && !sending.isRequest) {
                 sendNotification("Drawingame", "Received commit from " + sending.senderName);
                 updateDrawing(sending);
             }
@@ -64,7 +68,7 @@ public class Client {
         public void run(final OrtcClient sender) {
             //toast("Client " + clientName + " connected!");
             if (!ortcClient.isSubscribed(channelName)) {
-             //   toast("was not subscribed!");
+                //   toast("was not subscribed!");
                 ortcClient.subscribe(channelName, true, onMessage);
             } else {
 //                toast("was subscribed!");
@@ -154,13 +158,13 @@ public class Client {
     }
 
     private void updateDrawing(final Sending sending) {
+//        toast("updating");
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mainActivity.drawView.recalcFromSending(sending);//new Sending(json));
             }
         });
-        // toast("updated");
     }
 
     void sendNotification(String title, String text) {
@@ -191,10 +195,11 @@ public class Client {
 
     public void commitDrawing() {
         ortcClient.send(channelName, (new Sending(mainActivity)).toJsonObject().toString());
+        mainActivity.drawView.lastCommitLineNum = mainActivity.drawView.lineNum;
     }
 
     private void getPresence() {
-        //toast("getting presence!");
+//        toast("getting presence!");
         try {
             ortcClient.presence(channelName, new OnPresence() {
                         @Override
@@ -203,12 +208,20 @@ public class Client {
                                 toast("Couldn't get presence! - " + exception.toString());
                                 Log.d("!", exception.toString());
                             } else {
-                                //toast(String.valueOf(presenceData.getSubscriptions()) + " users are online!");
-                                if (!presenceData.getMetadata().isEmpty()) {
-                                    //toast("Sending request to " + receiverId);
+                                Iterator<String> iterator = presenceData.getMetadata().keySet().iterator();
+                                String receiverId = null;
+                                while (iterator.hasNext()) {
+                                    receiverId = iterator.next();
+                                    if (!receiverId.equals(ortcClient.getConnectionMetadata()))
+                                        break;
+//                                    else
+//                                        toast("FOUND!!!");
+                                }
+                                if (receiverId != null) {
                                     Sending sending = new Sending(mainActivity);
                                     sending.isRequest = true;
-                                    sending.receiverId = presenceData.getMetadata().keySet().iterator().next();
+                                    sending.receiverId = receiverId;
+                                    toast("Sending request to " + sending.receiverId);
                                     ortcClient.send(channelName, sending.toJsonObject().toString());
                                 }
                             }

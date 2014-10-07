@@ -7,10 +7,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter nickname..."
-            android:id="@+id/etClientName" android:inputType="text"/>
+            android:id="@+id/etClientName" />
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter channel name..."
-            android:id="@+id/etChannelName" android:inputType="text"/>
+            android:hint="Enter channel name (english letters and numbers)..."
+            android:digits="0123456789qwertzuiopasdfghjklyxcvbnm"
+            android:id="@+id/etChannelName"/>
 </LinearLayout>
