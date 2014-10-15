@@ -2,8 +2,36 @@
 <resources>
 
     <string name="app_name">Drawingame</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_twitter">TwitterActivity</string>
+    <string name="title_activity_twitter">Twitter</string>
+
+    <string name="noInternet">Network is unavailable, check internet connection</string>
+    <string name="noClient">Couldn\'t create appication client on your device</string>
+
+    <string name="enterInitialData">Enter initial data</string>
+    <string name="exit">Exit</string>
+    <string name="ok">Ok</string>
+    <string name="retry">Retry</string>
+
+    <string name="sendDrawing">Drawing was sent</string>
+    <string name="receivedDrawing">Received drawing from</string>
+    <string name="saveDrawing">Drawing was saved as to /sdcard Drawing.png</string>
+    <string name="repostDrawingSuccess">Drawing was posted</string>
+    <string name="repostDrawingFail">Drawing wasn\'t posted</string>
+
+    <string name="dialogClientNameHint">Enter nickname...</string>
+    <string name="dialogChannelNameHint">Enter room name (english letters and numbers)...</string>
+    <string name="menuUndo">Undo</string>
+    <string name="menuEraserEnable">Enable eraser</string>
+    <string name="menuEraserDisable">Disable eraser</string>
+    <string name="menuChangeEraserSize">Change eraser size</string>
+    <string name="menuCommitDrawing">Commit drawing</string>
+    <string name="menuChangeColor">Change color</string>
+    <string name="menuRandomColorEnable">Enable random color</string>
+    <string name="menuRandomColorDisable">Disable random color</string>
+    <string name="menuChangeStrokeWidth">Change stroke width</string>
+    <string name="menuRandomStrokeWidthEnable">Enable random stroke width</string>
+    <string name="menuRandomStrokeWidthDisable">Disable random stroke width</string>
+    <string name="menuSaveDrawing">Save drawing</string>
+    <string name="menuPostDrawing">Post drawing to Twitter</string>
 
 </resources>

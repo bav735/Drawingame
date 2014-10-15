@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/linearLayoutChangeWidthDialog"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
+
+    <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+    <com.example.drawingame.DrawView
+            android:id="@+id/drawViewChangeWidthDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <!--<RelativeLayout-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent">-->
+    <!--<com.example.drawingame.DrawView-->
+    <!--android:id="@+id/drawViewChangeWidthDialog"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"/>-->
+    <!--</RelativeLayout>-->
+
+</LinearLayout>

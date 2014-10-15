@@ -38,26 +38,26 @@ public class Client {
             if (ortcClient.getConnectionMetadata().equals(sending.senderId))
                 return;
             if (sending.isRequest) {//message.charAt(0) == '>') {
-                toast("Received request from " + sending.senderName);
+//                toast("Received request from " + sending.senderName);
                 if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
                     int currentLineNum = mainActivity.drawView.lineNum;
                     mainActivity.drawView.lineNum = mainActivity.drawView.lastCommitLineNum;
                     Sending answer = new Sending(mainActivity);
                     answer.isAnswer = true;
                     answer.receiverId = sending.senderId;
-                    toast("Sending answer to " + answer.receiverId);
+//                    toast("Sending answer to " + answer.receiverId);
                     ortcClient.send(channelName, answer.toJsonObject().toString());
                     mainActivity.drawView.lineNum = currentLineNum;
                 }
             }
             if (sending.isAnswer) {
                 if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
-                    toast("Received answer from " + sending.senderName);
+//                    toast("Received answer from " + sending.senderName);
                     updateDrawing(sending);
                 }
             }
             if (!sending.isAnswer && !sending.isRequest) {
-                sendNotification("Drawingame", "Received commit from " + sending.senderName);
+                sendNotification("Drawingame", mainActivity.getString(R.string.receivedDrawing) + " " + sending.senderName);
                 updateDrawing(sending);
             }
         }
@@ -135,9 +135,9 @@ public class Client {
         ortcClient.disconnect();
     }
 
-    public void connect() {
-        ortcClient.connect(applicationKey, privateKey);
-    }
+//    public void connect() {
+//        ortcClient.connect(applicationKey, privateKey);
+//    }
 
     public Client(MainActivity mainActivity, String channelName, String clientName) throws Exception {
         this.mainActivity = mainActivity;
@@ -214,14 +214,12 @@ public class Client {
                                     receiverId = iterator.next();
                                     if (!receiverId.equals(ortcClient.getConnectionMetadata()))
                                         break;
-//                                    else
-//                                        toast("FOUND!!!");
                                 }
                                 if (receiverId != null) {
                                     Sending sending = new Sending(mainActivity);
                                     sending.isRequest = true;
                                     sending.receiverId = receiverId;
-                                    toast("Sending request to " + sending.receiverId);
+//                                    toast("Sending request to " + sending.receiverId);
                                     ortcClient.send(channelName, sending.toJsonObject().toString());
                                 }
                             }

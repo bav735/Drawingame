@@ -1,7 +1,6 @@
 package com.example.drawingame;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
@@ -13,9 +12,9 @@ public class RetryDialog {
     public RetryDialog(MainActivity ma, String message) {
         mainActivity = ma;
 
-        dialog = new AlertDialog.Builder((Context) mainActivity)
+        dialog = new AlertDialog.Builder(mainActivity)
                 .setMessage(message)
-                .setPositiveButton("Retry",
+                .setPositiveButton(mainActivity.getString(R.string.retry),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
@@ -23,12 +22,12 @@ public class RetryDialog {
                                 dialog.cancel();
                                 mainActivity.finish();
                                 mainActivity.startActivity(new Intent(
-                                        (Context) mainActivity,
+                                        mainActivity,
                                         MainActivity.class));
                             }
                         }
                 )
-                .setNegativeButton("Exit",
+                .setNegativeButton(mainActivity.getString(R.string.exit),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

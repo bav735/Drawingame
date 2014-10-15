@@ -10,37 +10,30 @@
     <!--<group android:id="@+id/actionBar"           android:visible="true">-->
 
     <item android:id="@+id/menuUndo"
-          android:title="Undo"/>
+          android:title="@string/menuUndo"/>
 
     <item android:id="@+id/menuEraser"
-          android:title="Eraser is off"/>
-
-    <item android:id="@+id/menuClearDrawing"
-          android:title="Clear drawing"
-          android:visible="false"/>
+          android:title="@string/menuEraserEnable"/>
 
     <item android:id="@+id/menuCommitDrawing"
-          android:title="Commit drawing"/>
-
-    <!--<item android:id="@+id/menuContinuousCommit"          android:title="Enable continuous commit"/>-->
+          android:title="@string/menuCommitDrawing"/>
 
     <item android:id="@+id/menuChangeColor"
-          android:title="Change color"/>
+          android:title="@string/menuChangeColor"/>
 
     <item android:id="@+id/menuRandomColor"
-          android:title="Enable random color"/>
+          android:title="@string/menuRandomColorEnable"/>
 
     <item android:id="@+id/menuChangeStrokeWidth"
-          android:title="Change stroke width"/>
+          android:title="@string/menuChangeStrokeWidth"/>
 
     <item android:id="@+id/menuRandomStrokeWidth"
-          android:title="Enable random stroke width"/>
+          android:title="@string/menuRandomStrokeWidthEnable"/>
 
     <item android:id="@+id/menuSaveDrawing"
-          android:title="Save drawing to disk"/>
+          android:title="@string/menuSaveDrawing"/>
 
     <item android:id="@+id/menuPostDrawing"
-          android:title="Post drawing to Twitter"/>
-    <!--</group>-->
+          android:title="@string/menuPostDrawing"/>
 
 </menu>

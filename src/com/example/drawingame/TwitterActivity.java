@@ -15,8 +15,6 @@ import android.widget.Toast;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.TwitterApi;
 import org.scribe.model.*;
@@ -101,7 +99,7 @@ public class TwitterActivity extends Activity {
                 .build();
 
         setContentView(R.layout.activity_twitter);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.seekBar);
         //progressBar.setVisibility(View.INVISIBLE);
         webView = (WebView) findViewById(R.id.webView);
         webView.setVisibility(View.INVISIBLE);
@@ -147,26 +145,26 @@ public class TwitterActivity extends Activity {
     }
 
     private void getInformation() {
-        OAuthRequest request = new OAuthRequest(Verb.GET,
-                "https://api.twitter.com/1.1/account/verify_credentials.json");
-        service.signRequest(accessToken, request);
-        Response response = request.send();
-        try {
-            JSONObject jsonUserInfo = new JSONObject(response.getBody());
-            toast("You logged in as " + jsonUserInfo.getString("name"));
-        } catch (JSONException e) {
-            toast(e.toString());
-            Log.d("!", e.toString() + "| LINE 190");
-        }
+//        OAuthRequest request = new OAuthRequest(Verb.GET,
+//                "https://api.twitter.com/1.1/account/verify_credentials.json");
+//        service.signRequest(accessToken, request);
+//        Response response = request.send();
+//        try {
+//            JSONObject jsonUserInfo = new JSONObject(response.getBody());
+//            toast("You logged in as " + jsonUserInfo.getString("name"));
+//        } catch (JSONException e) {
+//            toast(e.toString());
+//            Log.d("!", e.toString());
+//        }
 
-        request = new OAuthRequest(Verb.POST,
+        OAuthRequest request = new OAuthRequest(Verb.POST,
                 "https://api.twitter.com/1.1/statuses/update_with_media.json");
         try {
             MultipartEntity entity = new MultipartEntity();
             entity.addPart("status", new StringBody(
                     "A picture was posted by Android app Drawingame:"));
             entity.addPart("media", new FileBody(new File(
-                    "/mnt/sdcard/tmpDrawing.png")));
+                    "/mnt/sdcard/" + DrawView.tmpDrawingName + ".png")));
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             entity.writeTo(out);
@@ -176,11 +174,11 @@ public class TwitterActivity extends Activity {
                     .getContentType().getValue());
 
             service.signRequest(accessToken, request);
-            response = request.send();
+            Response response = request.send();
             if (response.isSuccessful()) {
-                toast("Drawing was posted");
+                toast(getString(R.string.repostDrawingSuccess));
             } else {
-                toast("Error while posting drawing");
+                toast(getString(R.string.repostDrawingFail));
                 Log.d("!", response.getBody());
             }
 

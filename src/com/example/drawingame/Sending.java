@@ -11,8 +11,9 @@ import java.util.List;
 public class Sending {
     public List<Line> lineList;
     public int lineNum;
-    public int sourceDisplayWidth;
-    public int sourceDisplayHeight;
+    //    public int sourceDisplayWidth;
+//    public int sourceDisplayHeight;
+    public int drawingWidth;
     public String senderId;
     public boolean isRequest;
     public boolean isAnswer;
@@ -24,8 +25,9 @@ public class Sending {
         senderName = mainActivity.client.clientName;
         lineList = mainActivity.drawView.lineList;
         lineNum = mainActivity.drawView.lineNum;
-        sourceDisplayHeight = mainActivity.drawView.displayHeight;
-        sourceDisplayWidth = mainActivity.drawView.displayWidth;
+//        sourceDisplayHeight = mainActivity.drawView.displayHeight;
+//        sourceDisplayWidth = mainActivity.drawView.displayWidth;
+        drawingWidth = mainActivity.drawView.drawingWidth;
         isAnswer = false;
         isRequest = false;
         receiverId = "";
@@ -36,8 +38,9 @@ public class Sending {
             JSONObject jsonSending;
             jsonSending = new JSONObject(string);
             lineNum = jsonSending.getInt("lineNum");
-            sourceDisplayHeight = jsonSending.getInt("sourceDisplayHeight");
-            sourceDisplayWidth = jsonSending.getInt("sourceDisplayWidth");
+//            sourceDisplayHeight = jsonSending.getInt("sourceDisplayHeight");
+//            sourceDisplayWidth = jsonSending.getInt("sourceDisplayWidth");
+            drawingWidth = jsonSending.getInt("drawingWidth");
             senderId = jsonSending.getString("senderId");
             senderName = jsonSending.getString("senderName");
             isRequest = jsonSending.getBoolean("isRequest");
@@ -72,8 +75,9 @@ public class Sending {
             jsonSending.put("receiverId", receiverId);
             jsonSending.put("lineNum", lineNum);
             jsonSending.put("jsonLinesArray", jsonLinesArray);
-            jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
-            jsonSending.put("sourceDisplayWidth", sourceDisplayWidth);
+//            jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
+//            jsonSending.put("sourceDisplayWidth", sourceDisplayWidth);
+            jsonSending.put("drawingWidth", drawingWidth);
         } catch (JSONException e) {
             Log.d("!", "couldnt create json of Sending" + e.toString());
         }

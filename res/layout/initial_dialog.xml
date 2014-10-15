@@ -6,12 +6,12 @@
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter nickname..."
+            android:hint="@string/dialogClientNameHint"
             android:id="@+id/etClientName" />
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter channel name (english letters and numbers)..."
+            android:hint="@string/dialogChannelNameHint"
             android:digits="0123456789qwertzuiopasdfghjklyxcvbnm"
             android:id="@+id/etChannelName"/>
 </LinearLayout>

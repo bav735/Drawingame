@@ -3,9 +3,8 @@ package com.example.drawingame;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -16,78 +15,49 @@ import java.util.List;
 import java.util.Random;
 
 public class DrawView extends View {
-    public static int maxWidth = 100;
-    public static int minWidth = 5;
-    public static float e = (float) 0.1;
+    public static int maxWidth;//= 100;
+    public static int minWidth;// = 5;
+    public static float idealDrawingRatio = (float) 14 / (float) 9;
+    public static String tmpDrawingName = "tmpDraw";
+
+    public int drawingWidth;
+    public int drawingHeight;
 
     public int lineNum;
     public int lastCommitLineNum;
     public int drawingColor;
     public int backgroundColor;
     public int strokeWidth;
-    public int displayWidth;
-    public int displayHeight;
 
     public List<Line> lineList;
     public MainActivity mainActivity;
     public Paint paint;
 
-//    public boolean isEnabled;
     public boolean isRandomColor;
     public boolean isRandomWidth;
-    //public boolean isContinuous;
     public boolean isInWidthDialog;
     public boolean isOnEraser;
-
-//    public float lastX;
-//    public float lastY;
 
     private int lastColor;
     private int lastWidth;
     private boolean eraserJustEnded;
 
-    public DrawView(MainActivity mainActivity) {
-        super((Context) mainActivity);
-    }
-
-    public void endEraser() {
-        drawingColor = lastColor;
-        strokeWidth = lastWidth;
-        isOnEraser = false;
-        eraserJustEnded = true;
-    }
-
-    public void initEraser() {
-        lastColor = drawingColor;
-        lastWidth = strokeWidth;
-        strokeWidth = minWidth;
-        isOnEraser = true;
-    }
-
-    public void init(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public void init(MainActivity ma, boolean iiwd) {
+        mainActivity = ma;
         backgroundColor = Color.WHITE;
         drawingColor = Color.BLACK;
-        strokeWidth = minWidth;
         lineNum = 0;
         lastCommitLineNum = 0;
         lineList = new ArrayList<Line>();
-//        lastX = -1;
-//        lastY = -1;
-//        isEnabled = true;
         isRandomColor = false;
         isRandomWidth = false;
-        //isContinuous = false;
-        isInWidthDialog = false;
+        isInWidthDialog = iiwd;
+        scaleDrawing();
+        maxWidth = drawingWidth / 4;
+        minWidth = drawingWidth / 80;
+        strokeWidth = minWidth;
         isOnEraser = false;
         eraserJustEnded = false;
-        Display display = mainActivity.getWindowManager().getDefaultDisplay();
-        displayHeight = display.getHeight();
-        displayWidth = display.getWidth();
-        //Point size = new Point();
-        //display.getSize(size);
-        //displayWidth = size.x;
-        //displayHeight = size.y;
         paint = new Paint();
         paint.setAntiAlias(true); // enable anti aliasing
         paint.setDither(true); // enable dithering
@@ -102,6 +72,47 @@ public class DrawView extends View {
 
     public DrawView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public DrawView(MainActivity mainActivity) {
+        super((Context) mainActivity);
+    }
+
+    public void initEraser() {
+        lastColor = drawingColor;
+        lastWidth = strokeWidth;
+        strokeWidth = minWidth;
+        isOnEraser = true;
+    }
+
+    public void endEraser() {
+        drawingColor = lastColor;
+        strokeWidth = lastWidth;
+        isOnEraser = false;
+        eraserJustEnded = true;
+    }
+
+    private void scaleDrawing() {
+        if (isInWidthDialog) {
+            WindowManager wm = (WindowManager) mainActivity.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            drawingWidth = display.getWidth();
+            drawingHeight = display.getWidth();
+        } else {
+            drawingWidth = this.getRight();
+            drawingHeight = this.getBottom();
+            if (drawingWidth * idealDrawingRatio < drawingHeight) {
+                drawingHeight = (int) (drawingWidth * idealDrawingRatio);
+            } else {
+                drawingWidth = (int) (drawingHeight / idealDrawingRatio);
+            }
+        }
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(drawingWidth, drawingHeight);
+        layoutParams.gravity = Gravity.CENTER;
+//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(drawingWidth, drawingHeight);
+//        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        this.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -125,7 +136,6 @@ public class DrawView extends View {
                 Path path = new Path();
                 path.moveTo(line.pointX.get(0), line.pointY.get(0));
                 for (int i = 1; i < line.length; i++)
-                    //canvas.drawLine(line.pointX.get(i - 1),                            line.pointY.get(i - 1), line.pointX.get(i),                            line.pointY.get(i), paint);
                     path.lineTo(line.pointX.get(i), line.pointY.get(i));
                 canvas.drawPath(path, paint);
             }
@@ -133,7 +143,7 @@ public class DrawView extends View {
     }
 
     public void save(String drawingName) {
-        Bitmap toDisk = Bitmap.createBitmap(displayWidth, displayHeight, Bitmap.Config.ARGB_8888);
+        Bitmap toDisk = Bitmap.createBitmap(drawingWidth, drawingHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(toDisk);
         drawCanvas(canvas);
         try {
@@ -169,8 +179,6 @@ public class DrawView extends View {
             case MotionEvent.ACTION_MOVE:
                 lineList.get(lineNum - 1).addPoint(event.getX(), event.getY());
                 invalidate();
-//                if (isContinuous)// && isNotClose(event.getX(), event.getY()))
-//                    mainActivity.client.send();
                 break;
         }
         return true;
@@ -207,14 +215,19 @@ public class DrawView extends View {
             //we don't update our drawing if empty drawing was committed
             return;
         }
+
+        float k = (float) drawingWidth / (float) sending.drawingWidth;
+        toast("k = " + String.valueOf(k));
         for (int i = 0; i < sending.lineNum; i++) {
             for (int j = 0; j < sending.lineList.get(i).length; j++) {
-                float px = sending.lineList.get(i).pointX.get(j).floatValue();
-                sending.lineList.get(i).pointX.set(j, px * (float) displayWidth / (float) sending.sourceDisplayWidth);
-                float py = sending.lineList.get(i).pointY.get(j).floatValue();
-                sending.lineList.get(i).pointY.set(j, py * (float) displayHeight / (float) sending.sourceDisplayHeight);
+                float newX = sending.lineList.get(i).pointX.get(j).floatValue() * k;
+                sending.lineList.get(i).pointX.set(j, newX);
+                float newY = sending.lineList.get(i).pointY.get(j).floatValue() * k;
+                sending.lineList.get(i).pointY.set(j, newY);
             }
+            sending.lineList.get(i).strokeWidth *= k;
         }
+
         for (int i = lastCommitLineNum; i < lineNum; i++) {
             sending.lineList.add(lineList.get(i));
         }
@@ -228,22 +241,8 @@ public class DrawView extends View {
         Toast.makeText(mainActivity, s, 0).show();
     }
 
-    //    private boolean isNotClose(float curX, float curY) {
-//        if (lastX == -1 && lastY == -1) {
-//            lastX = curX;
-//            lastY = curY;
-//        }
-//        if ((curX - lastX) * (curX - lastX) + (curY - lastY) * (curY - lastY) > e) {
-//            lastX = curX;
-//            lastY = curY;
-//            return true;
-//        } else
-//            return false;
-//    }
-//
     public void changeStrokeWidthFromDialog(int newSW) {
         strokeWidth = newSW;
-        isInWidthDialog = true;
         invalidate();
     }
 }

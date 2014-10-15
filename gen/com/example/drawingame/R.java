@@ -44,10 +44,10 @@ public final class R {
         public static final int ambilwarna_warnaBaru=0x7f08000f;
         public static final int ambilwarna_warnaLama=0x7f08000e;
         public static final int btnOpenBar=0x7f080002;
-        public static final int drawView1=0x7f080001;
+        public static final int drawViewMain =0x7f080001;
         public static final int linearLayout=0x7f080004;
-        public static final int progressBar=0x7f080006;
-        public static final int relativeLayout=0x7f080000;
+        public static final int seekBar =0x7f080006;
+        public static final int LinearLayoutMain =0x7f080000;
         public static final int scrollView1=0x7f080003;
         public static final int webView=0x7f080005;
     }

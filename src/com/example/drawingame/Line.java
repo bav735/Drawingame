@@ -13,7 +13,7 @@ public class Line {
     public List<Float> pointY;
     public int color;
     public int length;
-    public int strokeWidth;
+    public float strokeWidth;
 
     public Line() {
         pointX = new ArrayList<Float>();
@@ -25,7 +25,7 @@ public class Line {
         try {
             length = jsonLine.getInt("length");
             color = jsonLine.getInt("color");
-            strokeWidth = jsonLine.getInt("strokeWidth");
+            strokeWidth = (float) jsonLine.getDouble("strokeWidth");
             JSONArray jsonPointsArray = jsonLine
                     .getJSONArray("jsonPointsArray");
             pointX = new ArrayList<Float>();
@@ -65,7 +65,7 @@ public class Line {
         try {
             jsonLine.put("length", length);
             jsonLine.put("color", color);
-            jsonLine.put("strokeWidth", strokeWidth);
+            jsonLine.put("strokeWidth", (double) strokeWidth);
             jsonLine.put("jsonPointsArray", jsonPointsArray);
         } catch (JSONException e) {
             Log.d("!", "couldnt write to jsonLine");

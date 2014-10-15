@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Drawingame</string>
+    <string name="title_activity_twitter">Твиттер</string>
+
+    <string name="noInternet">Нет доступа к сети, проверьте соединение с интернетом</string>
+    <string name="noClient">Не удалось создать клиент приложения на вашем устройстве</string>
+
+    <string name="enterInitialData">Введите начальные данные</string>
+    <string name="exit">Выйти</string>
+    <string name="ok">Ок</string>
+    <string name="retry">Повтор</string>
+
+    <string name="sendDrawing">Рисунок отправлен</string>
+    <string name="receivedDrawing">Получен рисунок от</string>
+    <string name="saveDrawing">Рисунок сохранен на /sdcard как Drawing.png</string>
+    <string name="repostDrawingSuccess">Репост успешен</string>
+    <string name="repostDrawingFail">Ошибка во время репоста</string>
+
+    <string name="dialogClientNameHint">Введите никнейм...</string>
+    <string name="dialogChannelNameHint">Введите название комнаты (цифры и английские буквы)...</string>
+
+    <string name="menuUndo">Отменить</string>
+    <string name="menuEraserEnable">Включить ластик</string>
+    <string name="menuEraserDisable">Выключить ластик</string>
+    <string name="menuChangeEraserSize">Изменить размер ластика</string>
+    <string name="menuCommitDrawing">Отправить рисунок</string>
+    <string name="menuChangeColor">Изменить цвет</string>
+    <string name="menuRandomColorEnable">Включить случайный цвет</string>
+    <string name="menuRandomColorDisable">Выключить случайный цвет</string>
+    <string name="menuChangeStrokeWidth">Изменить толщину</string>
+    <string name="menuRandomStrokeWidthEnable">Включить случайную толщину</string>
+    <string name="menuRandomStrokeWidthDisable">Выключить случайную толщину</string>
+    <string name="menuSaveDrawing">Сохранить рисунок</string>
+    <string name="menuPostDrawing">Репост рисунка в твиттер</string>
+
+</resources>

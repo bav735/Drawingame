@@ -1,34 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/LinearLayoutMain"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
+
+    <!--<RelativeLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent">-->
+        <!--<com.example.drawingame.DrawView-->
+                <!--android:id="@+id/drawViewMain"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"/>-->
+    <!--</RelativeLayout>-->
 
     <com.example.drawingame.DrawView
-        android:id="@+id/drawView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:id="@+id/drawViewMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <!--<Button
-        android:id="@+id/btnOpenBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Open\nBar" />-->
-
-    <HorizontalScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true" >
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" >
-        </LinearLayout>
-    </HorizontalScrollView>
-
-</RelativeLayout>
+</LinearLayout>
