@@ -8,6 +8,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Realizes drawing line,
+ * has methods of convertion to
+ * Json and from
+ */
+
 public class Line {
     public List<Float> pointX;
     public List<Float> pointY;

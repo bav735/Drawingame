@@ -13,6 +13,10 @@ import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * Realizes palitra
+ */
+
 public class AmbilWarnaKotak extends View {
 	Paint paint;
 	Shader luar;

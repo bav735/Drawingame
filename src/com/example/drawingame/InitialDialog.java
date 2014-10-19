@@ -9,26 +9,32 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+/**
+ * Appears at the very beginning,
+ * needs for further app initialization
+ * (inits client, DrawView)
+ */
+
 public class InitialDialog extends DialogFragment {
-    private MainActivity mainActivity;
+    private DrawingActivity drawingActivity;
     private View view;
     private EditText etClientName;
     private EditText etChannelName;
 
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
-        mainActivity = (MainActivity) getActivity();
-        view = mainActivity.getLayoutInflater().inflate(R.layout.initial_dialog, null);
+        drawingActivity = (DrawingActivity) getActivity();
+        view = drawingActivity.getLayoutInflater().inflate(R.layout.initial_dialog, null);
         etClientName = (EditText) view.findViewById(R.id.etClientName);
         etChannelName = (EditText) view.findViewById(R.id.etChannelName);
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity)
+        AlertDialog.Builder builder = new AlertDialog.Builder(drawingActivity)
                 .setView(view)
                 .setTitle(getString(R.string.enterInitialData))
                 .setNegativeButton(getString(R.string.exit),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
-                                mainActivity.finish();
+                                drawingActivity.finish();
                             }
                         }
                 )
@@ -38,13 +44,13 @@ public class InitialDialog extends DialogFragment {
                                 String channelName = etChannelName.getText().toString();
                                 String clientName = etClientName.getText().toString();
                                 try {
-                                    mainActivity.client = new Client(mainActivity, "channel_" + channelName, clientName);
-                                    DrawView dv = (DrawView) mainActivity.findViewById(R.id.drawViewMain);
-                                    dv.init(mainActivity, false);
-                                    mainActivity.drawView = dv;
+                                    drawingActivity.client = new Client(drawingActivity, "channel_" + channelName, clientName);
+                                    DrawView dv = (DrawView) drawingActivity.findViewById(R.id.drawViewMain);
+                                    dv.init(drawingActivity, false);
+                                    drawingActivity.drawView = dv;
                                 } catch (Exception e) {
                                     Log.d("!", "Client create error - " + e.toString());
-                                    RetryDialog cd = new RetryDialog(mainActivity, getString(R.string.noClient));
+                                    RetryDialog cd = new RetryDialog(drawingActivity, getString(R.string.noClient));
                                     cd.show();
                                 }
                             }

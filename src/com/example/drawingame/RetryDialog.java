@@ -4,35 +4,41 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+/**
+ * Prompts user for action if
+ * something gone wrong (for
+ * example, it's no internet)
+ **/
+
 public class RetryDialog {
 
     private AlertDialog dialog;
-    private MainActivity mainActivity;
+    private DrawingActivity drawingActivity;
 
-    public RetryDialog(MainActivity ma, String message) {
-        mainActivity = ma;
+    public RetryDialog(DrawingActivity ma, String message) {
+        drawingActivity = ma;
 
-        dialog = new AlertDialog.Builder(mainActivity)
+        dialog = new AlertDialog.Builder(drawingActivity)
                 .setMessage(message)
-                .setPositiveButton(mainActivity.getString(R.string.retry),
+                .setPositiveButton(drawingActivity.getString(R.string.retry),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 dialog.cancel();
-                                mainActivity.finish();
-                                mainActivity.startActivity(new Intent(
-                                        mainActivity,
-                                        MainActivity.class));
+                                drawingActivity.finish();
+                                drawingActivity.startActivity(new Intent(
+                                        drawingActivity,
+                                        DrawingActivity.class));
                             }
                         }
                 )
-                .setNegativeButton(mainActivity.getString(R.string.exit),
+                .setNegativeButton(drawingActivity.getString(R.string.exit),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                mainActivity.finish();
+                                drawingActivity.finish();
                             }
                         }
                 )
@@ -41,7 +47,7 @@ public class RetryDialog {
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
                         dialog.cancel();
-                        mainActivity.finish();
+                        drawingActivity.finish();
                     }
                 }).create();
     }

@@ -19,6 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
+/**
+ * Realizes interaction with server
+ */
+
 public class Client {
     private final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
     private final static String ortcType = "IbtRealtimeSJ";
@@ -29,36 +33,36 @@ public class Client {
     public OrtcClient ortcClient;
     public String channelName;
 
-    private MainActivity mainActivity;
+    private DrawingActivity drawingActivity;
 
     private OnMessage onMessage = new OnMessage() {
         public void run(OrtcClient sender, String channel, String message) {
-            Sending sending = new Sending(message);
+            DrawingSending drawingSending = new DrawingSending(message);
 //            toast(sender.getConnectionMetadata());
-            if (ortcClient.getConnectionMetadata().equals(sending.senderId))
+            if (ortcClient.getConnectionMetadata().equals(drawingSending.senderId))
                 return;
-            if (sending.isRequest) {//message.charAt(0) == '>') {
-//                toast("Received request from " + sending.senderName);
-                if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
-                    int currentLineNum = mainActivity.drawView.lineNum;
-                    mainActivity.drawView.lineNum = mainActivity.drawView.lastCommitLineNum;
-                    Sending answer = new Sending(mainActivity);
+            if (drawingSending.isRequest) {//message.charAt(0) == '>') {
+//                toast("Received request from " + drawingSending.senderName);
+                if (ortcClient.getConnectionMetadata().equals(drawingSending.receiverId)) {
+                    int currentLineNum = drawingActivity.drawView.lineNum;
+                    drawingActivity.drawView.lineNum = drawingActivity.drawView.lastCommitLineNum;
+                    DrawingSending answer = new DrawingSending(drawingActivity);
                     answer.isAnswer = true;
-                    answer.receiverId = sending.senderId;
-//                    toast("Sending answer to " + answer.receiverId);
+                    answer.receiverId = drawingSending.senderId;
+//                    toast("DrawingSending answer to " + answer.receiverId);
                     ortcClient.send(channelName, answer.toJsonObject().toString());
-                    mainActivity.drawView.lineNum = currentLineNum;
+                    drawingActivity.drawView.lineNum = currentLineNum;
                 }
             }
-            if (sending.isAnswer) {
-                if (ortcClient.getConnectionMetadata().equals(sending.receiverId)) {
-//                    toast("Received answer from " + sending.senderName);
-                    updateDrawing(sending);
+            if (drawingSending.isAnswer) {
+                if (ortcClient.getConnectionMetadata().equals(drawingSending.receiverId)) {
+//                    toast("Received answer from " + drawingSending.senderName);
+                    updateDrawing(drawingSending);
                 }
             }
-            if (!sending.isAnswer && !sending.isRequest) {
-                sendNotification("Drawingame", mainActivity.getString(R.string.receivedDrawing) + " " + sending.senderName);
-                updateDrawing(sending);
+            if (!drawingSending.isAnswer && !drawingSending.isRequest) {
+                sendNotification("Drawingame", drawingActivity.getString(R.string.receivedDrawing) + " " + drawingSending.senderName);
+                updateDrawing(drawingSending);
             }
         }
     };
@@ -139,14 +143,14 @@ public class Client {
 //        ortcClient.connect(applicationKey, privateKey);
 //    }
 
-    public Client(MainActivity mainActivity, String channelName, String clientName) throws Exception {
-        this.mainActivity = mainActivity;
+    public Client(DrawingActivity drawingActivity, String channelName, String clientName) throws Exception {
+        this.drawingActivity = drawingActivity;
         this.channelName = channelName;
         this.clientName = clientName;
         Ortc ortc = new Ortc();
         OrtcFactory factory = ortc.loadOrtcFactory(ortcType);
         ortcClient = factory.createClient();
-        ortcClient.setApplicationContext(mainActivity.getApplicationContext());
+        ortcClient.setApplicationContext(drawingActivity.getApplicationContext());
         ortcClient.setClusterUrl(serverUrl);
         ortcClient.setConnectionMetadata(currentTime() + clientName);
         ortcClient.onConnected = onConnected;
@@ -157,12 +161,12 @@ public class Client {
         ortcClient.connect(applicationKey, privateKey);
     }
 
-    private void updateDrawing(final Sending sending) {
+    private void updateDrawing(final DrawingSending drawingSending) {
 //        toast("updating");
-        mainActivity.runOnUiThread(new Runnable() {
+        drawingActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mainActivity.drawView.recalcFromSending(sending);//new Sending(json));
+                drawingActivity.drawView.recalcFromSending(drawingSending);//new DrawingSending(json));
             }
         });
     }
@@ -170,9 +174,9 @@ public class Client {
     void sendNotification(String title, String text) {
         int icon = R.drawable.ic_launcher;
         long when = System.currentTimeMillis();
-        NotificationManager nm = (NotificationManager) mainActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        Context context = mainActivity.getApplicationContext();
-        Intent intent = new Intent(context, MainActivity.class);
+        NotificationManager nm = (NotificationManager) drawingActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        Context context = drawingActivity.getApplicationContext();
+        Intent intent = new Intent(context, DrawingActivity.class);
         PendingIntent pending = PendingIntent.getActivity(context, 0, intent, 0);
         Notification notification;
         if (Build.VERSION.SDK_INT < 11) {
@@ -194,8 +198,8 @@ public class Client {
     }
 
     public void commitDrawing() {
-        ortcClient.send(channelName, (new Sending(mainActivity)).toJsonObject().toString());
-        mainActivity.drawView.lastCommitLineNum = mainActivity.drawView.lineNum;
+        ortcClient.send(channelName, (new DrawingSending(drawingActivity)).toJsonObject().toString());
+        drawingActivity.drawView.lastCommitLineNum = drawingActivity.drawView.lineNum;
     }
 
     private void getPresence() {
@@ -216,11 +220,11 @@ public class Client {
                                         break;
                                 }
                                 if (receiverId != null) {
-                                    Sending sending = new Sending(mainActivity);
-                                    sending.isRequest = true;
-                                    sending.receiverId = receiverId;
-//                                    toast("Sending request to " + sending.receiverId);
-                                    ortcClient.send(channelName, sending.toJsonObject().toString());
+                                    DrawingSending drawingSending = new DrawingSending(drawingActivity);
+                                    drawingSending.isRequest = true;
+                                    drawingSending.receiverId = receiverId;
+//                                    toast("DrawingSending request to " + drawingSending.receiverId);
+                                    ortcClient.send(channelName, drawingSending.toJsonObject().toString());
                                 }
                             }
                         }
@@ -235,10 +239,10 @@ public class Client {
 
 
     private void toast(final String s) {
-        mainActivity.runOnUiThread(new Runnable() {
+        drawingActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mainActivity, s, Toast.LENGTH_LONG).show();
+                Toast.makeText(drawingActivity, s, Toast.LENGTH_LONG).show();
             }
         });
     }

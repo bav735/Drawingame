@@ -25,6 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Realizes proccess of posting
+ * drawing to Twitter (using
+ * scribe lib)
+ **/
+
 public class TwitterActivity extends Activity {
     private final static String API_KEY = "R186VuHyi4iIgRwY5bwQ9YpKH";
     private final static String API_SECRET = "nkhldkKFqbizBabWBL1fQ8yPBF7WMCqam8dkS0lqjm9TjPm2Q7";
@@ -145,18 +151,6 @@ public class TwitterActivity extends Activity {
     }
 
     private void getInformation() {
-//        OAuthRequest request = new OAuthRequest(Verb.GET,
-//                "https://api.twitter.com/1.1/account/verify_credentials.json");
-//        service.signRequest(accessToken, request);
-//        Response response = request.send();
-//        try {
-//            JSONObject jsonUserInfo = new JSONObject(response.getBody());
-//            toast("You logged in as " + jsonUserInfo.getString("name"));
-//        } catch (JSONException e) {
-//            toast(e.toString());
-//            Log.d("!", e.toString());
-//        }
-
         OAuthRequest request = new OAuthRequest(Verb.POST,
                 "https://api.twitter.com/1.1/statuses/update_with_media.json");
         try {

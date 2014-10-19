@@ -17,11 +17,17 @@ import com.example.drawingame.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 import java.io.File;
 
-public class MainActivity extends FragmentActivity {
+/**
+ * Realizes interaction of user and draw
+ * view by options menu, has methods to
+ * check internet availability
+ */
+
+public class DrawingActivity extends FragmentActivity {
     public DrawView drawView;
     public Client client;
 
-    private MainActivity mainActivity = this;
+    private DrawingActivity drawingActivity = this;
     private Menu mainActivityMenu;
     private MenuItem menuRandomColor;
     private MenuItem menuEraser;
@@ -63,7 +69,7 @@ public class MainActivity extends FragmentActivity {
                 return true;
 
             case R.id.menuChangeColor:
-                AmbilWarnaDialog dialog = new AmbilWarnaDialog(mainActivity,
+                AmbilWarnaDialog dialog = new AmbilWarnaDialog(drawingActivity,
                         drawView.drawingColor, new OnAmbilWarnaListener() {
                     @Override
                     public void onOk(AmbilWarnaDialog dialog, int color) {
@@ -109,7 +115,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.menuPostDrawing:
                 drawView.save(DrawView.tmpDrawingName);
                 if (isNetworkAvailable())
-                    startActivity(new Intent(mainActivity, TwitterActivity.class));
+                    startActivity(new Intent(drawingActivity, TwitterActivity.class));
                 else
                     toast(getString(R.string.noInternet));
                 return true;
@@ -123,10 +129,10 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!isNetworkAvailable()) {
-            RetryDialog retryDialog = new RetryDialog(mainActivity, getString(R.string.noInternet));
+            RetryDialog retryDialog = new RetryDialog(drawingActivity, getString(R.string.noInternet));
             retryDialog.show();
         } else {
-            setContentView(R.layout.activity_main);
+            setContentView(R.layout.activity_drawing);
             getWindow().getDecorView().setBackgroundColor(Color.BLACK);
             showDialogFragment(new InitialDialog());
         }
@@ -147,10 +153,10 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void toast(final String s) {
-        mainActivity.runOnUiThread(new Runnable() {
+        drawingActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mainActivity, s, 0).show();
+                Toast.makeText(drawingActivity, s, 0).show();
             }
         });
 

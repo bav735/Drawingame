@@ -20,6 +20,8 @@
 
     <string name="dialogClientNameHint">Введите никнейм...</string>
     <string name="dialogChannelNameHint">Введите название комнаты (цифры и английские буквы)...</string>
+    <string name="dialogChangeWidthHint">Рисуйте здесь, чтобы проверить выбранную толщину</string>
+    <string name="dialogChangeWidthHintOnEraser">Рисуйте здесь, чтобы проверить выбранный размер ластика</string>
 
     <string name="menuUndo">Отменить</string>
     <string name="menuEraserEnable">Включить ластик</string>

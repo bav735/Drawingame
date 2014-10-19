@@ -20,6 +20,9 @@
 
     <string name="dialogClientNameHint">Enter nickname...</string>
     <string name="dialogChannelNameHint">Enter room name (english letters and numbers)...</string>
+    <string name="dialogChangeWidthHint">Draw here to prove selected stroke width</string>
+    <string name="dialogChangeWidthHintOnEraser">Draw here to prove selected eraser size</string>
+
     <string name="menuUndo">Undo</string>
     <string name="menuEraserEnable">Enable eraser</string>
     <string name="menuEraserDisable">Disable eraser</string>

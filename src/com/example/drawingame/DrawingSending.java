@@ -8,11 +8,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sending {
+/**
+ * Realizes covertion of
+ * DrawingSending to Json object
+ * Json object to DrawingSending
+ * constructs from main activity
+ * drawing
+ **/
+
+public class DrawingSending {
     public List<Line> lineList;
     public int lineNum;
-    //    public int sourceDisplayWidth;
-//    public int sourceDisplayHeight;
     public int drawingWidth;
     public String senderId;
     public boolean isRequest;
@@ -20,26 +26,22 @@ public class Sending {
     public String receiverId;
     public String senderName;
 
-    public Sending(MainActivity mainActivity) {
-        senderId = mainActivity.client.ortcClient.getConnectionMetadata();
-        senderName = mainActivity.client.clientName;
-        lineList = mainActivity.drawView.lineList;
-        lineNum = mainActivity.drawView.lineNum;
-//        sourceDisplayHeight = mainActivity.drawView.displayHeight;
-//        sourceDisplayWidth = mainActivity.drawView.displayWidth;
-        drawingWidth = mainActivity.drawView.drawingWidth;
+    public DrawingSending(DrawingActivity drawingActivity) {
+        senderId = drawingActivity.client.ortcClient.getConnectionMetadata();
+        senderName = drawingActivity.client.clientName;
+        lineList = drawingActivity.drawView.lineList;
+        lineNum = drawingActivity.drawView.lineNum;
+        drawingWidth = drawingActivity.drawView.drawingWidth;
         isAnswer = false;
         isRequest = false;
         receiverId = "";
     }
 
-    public Sending(String string) {
+    public DrawingSending(String string) {
         try {
             JSONObject jsonSending;
             jsonSending = new JSONObject(string);
             lineNum = jsonSending.getInt("lineNum");
-//            sourceDisplayHeight = jsonSending.getInt("sourceDisplayHeight");
-//            sourceDisplayWidth = jsonSending.getInt("sourceDisplayWidth");
             drawingWidth = jsonSending.getInt("drawingWidth");
             senderId = jsonSending.getString("senderId");
             senderName = jsonSending.getString("senderName");
@@ -55,7 +57,7 @@ public class Sending {
                 lineList.add(line);
             }
         } catch (JSONException e) {
-            Log.d("!", "couldnt create Sending" + e.toString());
+            Log.d("!", "couldnt create DrawingSending" + e.toString());
         }
 
     }
@@ -75,11 +77,9 @@ public class Sending {
             jsonSending.put("receiverId", receiverId);
             jsonSending.put("lineNum", lineNum);
             jsonSending.put("jsonLinesArray", jsonLinesArray);
-//            jsonSending.put("sourceDisplayHeight", sourceDisplayHeight);
-//            jsonSending.put("sourceDisplayWidth", sourceDisplayWidth);
             jsonSending.put("drawingWidth", drawingWidth);
         } catch (JSONException e) {
-            Log.d("!", "couldnt create json of Sending" + e.toString());
+            Log.d("!", "couldnt create json of DrawingSending" + e.toString());
         }
         return jsonSending;
     }

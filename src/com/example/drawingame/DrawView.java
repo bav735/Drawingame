@@ -3,8 +3,11 @@ package com.example.drawingame;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.view.*;
-import android.widget.LinearLayout;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -13,6 +16,10 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+/**
+ * Realizes canvas drawing view
+ */
 
 public class DrawView extends View {
     public static int maxWidth;//= 100;
@@ -30,7 +37,7 @@ public class DrawView extends View {
     public int strokeWidth;
 
     public List<Line> lineList;
-    public MainActivity mainActivity;
+    public DrawingActivity drawingActivity;
     public Paint paint;
 
     public boolean isRandomColor;
@@ -42,8 +49,8 @@ public class DrawView extends View {
     private int lastWidth;
     private boolean eraserJustEnded;
 
-    public void init(MainActivity ma, boolean iiwd) {
-        mainActivity = ma;
+    public void init(DrawingActivity ma, boolean iiwd) {
+        drawingActivity = ma;
         backgroundColor = Color.WHITE;
         drawingColor = Color.BLACK;
         lineNum = 0;
@@ -54,7 +61,7 @@ public class DrawView extends View {
         isInWidthDialog = iiwd;
         scaleDrawing();
         maxWidth = drawingWidth / 4;
-        minWidth = drawingWidth / 80;
+        minWidth = 5;//drawingWidth / 80;
         strokeWidth = minWidth;
         isOnEraser = false;
         eraserJustEnded = false;
@@ -74,8 +81,8 @@ public class DrawView extends View {
         super(context, attrs, defStyle);
     }
 
-    public DrawView(MainActivity mainActivity) {
-        super((Context) mainActivity);
+    public DrawView(DrawingActivity drawingActivity) {
+        super((Context) drawingActivity);
     }
 
     public void initEraser() {
@@ -94,7 +101,7 @@ public class DrawView extends View {
 
     private void scaleDrawing() {
         if (isInWidthDialog) {
-            WindowManager wm = (WindowManager) mainActivity.getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager) drawingActivity.getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
             drawingWidth = display.getWidth();
             drawingHeight = display.getWidth();
@@ -108,10 +115,10 @@ public class DrawView extends View {
             }
         }
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(drawingWidth, drawingHeight);
-        layoutParams.gravity = Gravity.CENTER;
-//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(drawingWidth, drawingHeight);
-//        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(drawingWidth, drawingHeight);
+//        layoutParams.gravity = Gravity.CENTER;
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(drawingWidth, drawingHeight);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         this.setLayoutParams(layoutParams);
     }
 
@@ -210,35 +217,35 @@ public class DrawView extends View {
         return random.nextInt(maxWidth + 1 - minWidth) + minWidth;
     }
 
-    public void recalcFromSending(Sending sending) {
-        if (sending.lineNum == 0) {
+    public void recalcFromSending(DrawingSending drawingSending) {
+        if (drawingSending.lineNum == 0) {
             //we don't update our drawing if empty drawing was committed
             return;
         }
 
-        float k = (float) drawingWidth / (float) sending.drawingWidth;
-        toast("k = " + String.valueOf(k));
-        for (int i = 0; i < sending.lineNum; i++) {
-            for (int j = 0; j < sending.lineList.get(i).length; j++) {
-                float newX = sending.lineList.get(i).pointX.get(j).floatValue() * k;
-                sending.lineList.get(i).pointX.set(j, newX);
-                float newY = sending.lineList.get(i).pointY.get(j).floatValue() * k;
-                sending.lineList.get(i).pointY.set(j, newY);
+        float k = (float) drawingWidth / (float) drawingSending.drawingWidth;
+//        toast("k = " + String.valueOf(k));
+        for (int i = 0; i < drawingSending.lineNum; i++) {
+            for (int j = 0; j < drawingSending.lineList.get(i).length; j++) {
+                float newX = drawingSending.lineList.get(i).pointX.get(j).floatValue() * k;
+                drawingSending.lineList.get(i).pointX.set(j, newX);
+                float newY = drawingSending.lineList.get(i).pointY.get(j).floatValue() * k;
+                drawingSending.lineList.get(i).pointY.set(j, newY);
             }
-            sending.lineList.get(i).strokeWidth *= k;
+            drawingSending.lineList.get(i).strokeWidth *= k;
         }
 
         for (int i = lastCommitLineNum; i < lineNum; i++) {
-            sending.lineList.add(lineList.get(i));
+            drawingSending.lineList.add(lineList.get(i));
         }
-        lineList = sending.lineList;
-        lineNum = sending.lineNum + lineNum - lastCommitLineNum;
-        lastCommitLineNum = sending.lineNum;
+        lineList = drawingSending.lineList;
+        lineNum = drawingSending.lineNum + lineNum - lastCommitLineNum;
+        lastCommitLineNum = drawingSending.lineNum;
         invalidate();
     }
 
     private void toast(String s) {
-        Toast.makeText(mainActivity, s, 0).show();
+        Toast.makeText(drawingActivity, s, 0).show();
     }
 
     public void changeStrokeWidthFromDialog(int newSW) {

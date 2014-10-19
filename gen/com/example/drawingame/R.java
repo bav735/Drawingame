@@ -52,7 +52,7 @@ public final class R {
         public static final int webView=0x7f080005;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
+        public static final int activity_drawing =0x7f030000;
         public static final int activity_twitter=0x7f030001;
         public static final int ambilwarna_dialog=0x7f030002;
     }

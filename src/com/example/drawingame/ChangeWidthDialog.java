@@ -8,26 +8,31 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
+
+/**
+ * Prompts user to choose stroke width
+ */
 
 public class ChangeWidthDialog extends DialogFragment {
 
-    private MainActivity mainActivity;
+    private DrawingActivity drawingActivity;
     private View view;
     private SeekBar seekBar;
-    private int strokeWidth;
+    private int endStrokeWidth;
     private DrawView dialogDrawView;
 
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
-        mainActivity = (MainActivity) getActivity();
-        view = mainActivity.getLayoutInflater().inflate(R.layout.change_width_dialog, null);
+        drawingActivity = (DrawingActivity) getActivity();
+        view = drawingActivity.getLayoutInflater().inflate(R.layout.change_width_dialog, null);
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
-        seekBar.setProgress(mainActivity.drawView.strokeWidth);
+        seekBar.setProgress(drawingActivity.drawView.strokeWidth);
         seekBar.setMax(DrawView.maxWidth);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                strokeWidth = seekBar.getProgress();
+                endStrokeWidth = seekBar.getProgress();
             }
 
             @Override
@@ -41,15 +46,19 @@ public class ChangeWidthDialog extends DialogFragment {
         });
 
         dialogDrawView = (DrawView) view.findViewById(R.id.drawViewChangeWidthDialog);
-        dialogDrawView.init(mainActivity, true);
-        dialogDrawView.strokeWidth = mainActivity.drawView.strokeWidth;
-        dialogDrawView.drawingColor = mainActivity.drawView.drawingColor;
-        if (mainActivity.drawView.isOnEraser) {
+        dialogDrawView.init(drawingActivity, true);
+        dialogDrawView.strokeWidth = drawingActivity.drawView.strokeWidth;
+        endStrokeWidth = drawingActivity.drawView.strokeWidth;
+        dialogDrawView.drawingColor = drawingActivity.drawView.drawingColor;
+        if (drawingActivity.drawView.isOnEraser) {
             dialogDrawView.backgroundColor = Color.BLACK;
             dialogDrawView.isOnEraser = true;
+            TextView tv = (TextView) view.findViewById(R.id.textViewChangeWidthDialog);
+            tv.setText(R.string.dialogChangeWidthHintOnEraser);
+            tv.setTextColor(Color.WHITE);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity)
+        AlertDialog.Builder builder = new AlertDialog.Builder(drawingActivity)
                 .setView(view)
                 .setNegativeButton(getString(R.string.exit),
                         new DialogInterface.OnClickListener() {
@@ -61,7 +70,7 @@ public class ChangeWidthDialog extends DialogFragment {
                 .setPositiveButton(getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mainActivity.drawView.strokeWidth = strokeWidth;
+                                drawingActivity.drawView.strokeWidth = endStrokeWidth;
                             }
                         }
                 );
