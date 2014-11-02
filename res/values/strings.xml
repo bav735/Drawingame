@@ -2,26 +2,33 @@
 <resources>
 
     <string name="app_name">Drawingame</string>
+
     <string name="title_activity_twitter">Twitter</string>
+    <string name="repostMessage">A picture was posted by Android app Drawingame</string>
+    <string name="repostDrawingSuccess">Drawing was posted</string>
+    <string name="repostDrawingFail">Drawing wasn\'t posted</string>
+    <string name="repostNetworkTime">This option requires network-provided time to be used, select Automatic date and time in the Settings</string>
 
     <string name="noInternet">Network is unavailable, check internet connection</string>
     <string name="noClient">Couldn\'t create appication client on your device</string>
 
+    <string name="presenceGettingError">Couldn\'t get present room\'s drawing, check internet connection</string>
+    <string name="usersOnline">You have successully connected to the room and now number of room\'s members =</string>
+
     <string name="enterInitialData">Enter initial data</string>
+    <string name="initialDataError">Neither nickname nor room name can be empty</string>
     <string name="exit">Exit</string>
     <string name="ok">Ok</string>
     <string name="retry">Retry</string>
 
     <string name="sendDrawing">Drawing was sent</string>
     <string name="receivedDrawing">Received drawing from</string>
-    <string name="saveDrawing">Drawing was saved as to /sdcard Drawing.png</string>
-    <string name="repostDrawingSuccess">Drawing was posted</string>
-    <string name="repostDrawingFail">Drawing wasn\'t posted</string>
+    <string name="saveDrawing">Drawing was saved as to /sdcard</string>
 
     <string name="dialogClientNameHint">Enter nickname...</string>
     <string name="dialogChannelNameHint">Enter room name (english letters and numbers)...</string>
-    <string name="dialogChangeWidthHint">Draw here to prove selected stroke width</string>
-    <string name="dialogChangeWidthHintOnEraser">Draw here to prove selected eraser size</string>
+    <string name="dialogChangeWidthHint">Draw here to check selected stroke width</string>
+    <string name="dialogChangeWidthHintOnEraser">Draw here to check selected eraser size</string>
 
     <string name="menuUndo">Undo</string>
     <string name="menuEraserEnable">Enable eraser</string>
@@ -36,5 +43,8 @@
     <string name="menuRandomStrokeWidthDisable">Disable random stroke width</string>
     <string name="menuSaveDrawing">Save drawing</string>
     <string name="menuPostDrawing">Post drawing to Twitter</string>
+
+    <string name="instructionCheckBox">Don\'t show on start</string>
+    <string name="menuInstruction">About app</string>
 
 </resources>

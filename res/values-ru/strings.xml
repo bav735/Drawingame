@@ -2,21 +2,30 @@
 <resources>
 
     <string name="app_name">Drawingame</string>
+
     <string name="title_activity_twitter">Твиттер</string>
+    <string name="repostMessage">Рисунок выложен через Android приложение Drawingame:</string>
+    <string name="repostDrawingSuccess">Репост выполнен успешно</string>
+    <string name="repostDrawingFail">Ошибка во время репоста</string>
+    <string name="repostNetworkTime">Для использования этой опции необходимо использовать время сети, выберите Автоматические дата и время в настройках даты и времени</string>
 
     <string name="noInternet">Нет доступа к сети, проверьте соединение с интернетом</string>
     <string name="noClient">Не удалось создать клиент приложения на вашем устройстве</string>
 
+    <string name="presenceGettingError">Не удалось получить текущий рисунок вашей комнаты, проверьте соединение с
+        интернетом
+    </string>
+    <string name="usersOnline">Вы успешно подключились к комнате, теперь количество пользователей комнаты =</string>
+
     <string name="enterInitialData">Введите начальные данные</string>
+    <string name="initialDataError">Поле никнейма или названия комнаты не заполнено</string>
     <string name="exit">Выйти</string>
     <string name="ok">Ок</string>
     <string name="retry">Повтор</string>
 
     <string name="sendDrawing">Рисунок отправлен</string>
     <string name="receivedDrawing">Получен рисунок от</string>
-    <string name="saveDrawing">Рисунок сохранен на /sdcard как Drawing.png</string>
-    <string name="repostDrawingSuccess">Репост успешен</string>
-    <string name="repostDrawingFail">Ошибка во время репоста</string>
+    <string name="saveDrawing">Рисунок сохранен на /sdcard как</string>
 
     <string name="dialogClientNameHint">Введите никнейм...</string>
     <string name="dialogChannelNameHint">Введите название комнаты (цифры и английские буквы)...</string>
@@ -35,6 +44,9 @@
     <string name="menuRandomStrokeWidthEnable">Включить случайную толщину</string>
     <string name="menuRandomStrokeWidthDisable">Выключить случайную толщину</string>
     <string name="menuSaveDrawing">Сохранить рисунок</string>
-    <string name="menuPostDrawing">Репост рисунка в твиттер</string>
+    <string name="menuPostDrawing">Репост рисунка в Твиттер</string>
+
+    <string name="instructionCheckBox">Больше не показывать при старте</string>
+    <string name="menuInstruction">О приложении</string>
 
 </resources>

@@ -1,0 +1,15 @@
+Short instruction:
+
+After the app starts, you will see the initial dialog, which has two fields:
+1) Your nickname
+2) Room name
+Users are divided to rooms. All users of a particular room draw joint picture. It means that you will draw together with all the users that have selected the same room as you.
+
+Drawing:
+Click on the icon at the right upper corner of the screen to open menu. Some options are needed to be explained:
+1) Commit drawing
+The changes made by you will be fixed on the joint image.
+2) Post drawing to Twitter
+You will be redirected to Twitter authentication dialog. Pass your credentials and the image will be posted to your wall.
+
+Welcome to begin!
