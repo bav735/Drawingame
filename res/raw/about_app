@@ -1,8 +1,8 @@
-Drawingame is the app that implements interactive drawing. It allows multiple users unite to draw collective pictures. Image is drawn on device's screen by finger. The drawing can be saved to memory or shared through social networks.
+Drawingame is an app that implements interactive drawing. It allows multiple users to unite to draw collective pictures. An image is drawn on a device screen by finger. A drawing can be saved to memory or shared through social networks.
 
 After the app starts, you will see the initial dialog, which has two fields:
 1) Nickname
-It's the alias, the other users will associate you with.
+It's the alias the other users will associate you with.
 2) Room name
 Users are divided to rooms. All users of a particular room draw conjoint picture. It means that you will draw together with all the users that have selected the same room as you. If you want to play with friends, arrange in advance which room name you will use.
 

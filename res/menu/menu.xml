@@ -32,4 +32,6 @@
     <item android:id="@+id/menuInstruction"
           android:title="@string/menuInstruction"/>
 
+    <item android:id="@+id/menuFinish"
+        android:title="Finish"/>
 </menu>

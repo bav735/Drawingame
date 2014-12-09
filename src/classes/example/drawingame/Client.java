@@ -1,19 +1,19 @@
 package classes.example.drawingame;
 
 import android.app.Notification;
+import android.support.v4.app.NotificationCompat;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.CountDownTimer;
+
+import classes.example.drawingame.activities.DrawingActivity;
 import ibt.ortc.api.*;
 import ibt.ortc.extensibility.*;
 import ibt.ortc.extensibility.exception.OrtcNotConnectedException;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -21,10 +21,10 @@ import java.util.Iterator;
  */
 
 public class Client {
-    private final static String serverUrl = "http://ortc-developers.realtime.co/server/2.1/";
-    private final static String ortcType = "IbtRealtimeSJ";
-    private final static String applicationKey = "XEQyNG";
-    private final static String privateKey = "m8vUKz6sRvzw";
+    private final static String SERVER_URL = "http://ortc-developers.realtime.co/server/2.1/";
+    private final static String ORTC_TYPE = "IbtRealtimeSJ";
+    private final static String APPLICATION_KEY = "XEQyNG";
+    private final static String PRIVATE_KEY = "m8vUKz6sRvzw";
 
     public String clientName;
     public OrtcClient ortcClient;
@@ -47,7 +47,7 @@ public class Client {
                     answer.isAnswer = true;
                     answer.receiverId = receivedSending.senderId;
                     ortcClient.send(channelName, answer.toJsonObject().toString());
-                    drawingActivity.toast("received request, sending answer to" + answer.receiverId);
+                    Show.toast(drawingActivity, "received request, sending answer to" + answer.receiverId);
                 }
             }
             if (receivedSending.isAnswer) {
@@ -92,7 +92,7 @@ public class Client {
         public void run(final OrtcClient sender, final String channel) {
             if (isOnFirstConnection)
                 try {
-                    ortcClient.enablePresence(privateKey, channelName, true,
+                    ortcClient.enablePresence(PRIVATE_KEY, channelName, true,
                             new OnEnablePresence() {
                                 @Override
                                 public void run(final Exception exception, final String result) {
@@ -133,11 +133,11 @@ public class Client {
 
     public void destroy() {
         try {
-            ortcClient.disablePresence(privateKey, channelName, onDisablePresence);
+            ortcClient.disablePresence(PRIVATE_KEY, channelName, onDisablePresence);
             ortcClient.unsubscribe(channelName);
             ortcClient.disconnect();
         } catch (OrtcNotConnectedException e) {
-            drawingActivity.toast("OrtcNotConnectedException");
+            Show.toast(drawingActivity, "OrtcNotConnectedException");
         }
     }
 
@@ -147,17 +147,17 @@ public class Client {
         this.clientName = clientName;
         isOnFirstConnection = true;
         Ortc ortc = new Ortc();
-        OrtcFactory factory = ortc.loadOrtcFactory(ortcType);
+        OrtcFactory factory = ortc.loadOrtcFactory(ORTC_TYPE);
         ortcClient = factory.createClient();
         ortcClient.setApplicationContext(drawingActivity.getApplicationContext());
-        ortcClient.setClusterUrl(serverUrl);
-        ortcClient.setConnectionMetadata(currentTime() + clientName);
+        ortcClient.setClusterUrl(SERVER_URL);
+        ortcClient.setConnectionMetadata(Generator.id());
         ortcClient.onConnected = onConnected;
         ortcClient.onDisconnected = onDisconnected;
         ortcClient.onReconnected = onReconnected;
         ortcClient.onSubscribed = onSubscribed;
         ortcClient.onUnsubscribed = onUnsubscribed;
-        ortcClient.connect(applicationKey, privateKey);
+        ortcClient.connect(APPLICATION_KEY, PRIVATE_KEY);
     }
 
     private void updateDrawingFromSending(final DrawingSending drawingSending) {
@@ -177,20 +177,21 @@ public class Client {
         Intent intent = new Intent(context, DrawingActivity.class);
         PendingIntent pending = PendingIntent.getActivity(context, 0, intent, 0);
         Notification notification;
-        if (Build.VERSION.SDK_INT < 11) {
-            notification = new Notification(icon, title, when);
-            notification.setLatestEventInfo(context, title, text, pending);
-        } else {
-            notification = new Notification.Builder(context)
+//        if (Build.VERSION.SDK_INT < 11) {
+//            notification = new Notification(icon, title, when);
+//            notification.setLatestEventInfo(context, title, text, pending);
+//        } else {
+            notification = new NotificationCompat.Builder(context)
                     .setContentTitle(title)
                     .setContentText(text)
                     .setSmallIcon(icon)
                     .setContentIntent(pending)
                     .setWhen(when)
                     .setAutoCancel(true)
+//                    .setDefaults()
                     .build();
-        }
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//        }
+//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults |= Notification.DEFAULT_SOUND;
         nm.notify(0, notification);
     }
@@ -235,12 +236,6 @@ public class Client {
         } catch (OrtcNotConnectedException e) {
 //            drawingActivity.toast(drawingActivity.getString(R.string.presenceGettingError));
         }
-    }
-
-    private String currentTime() {
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss:SS");
-        Date now = new Date();
-        return sdfTime.format(now);
     }
 
 }

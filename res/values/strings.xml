@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Drawingame</string>
+    <string name="appName">Drawingame</string>
+    <string name="appDirectory">/mnt/sdcard/DrawingameImages/</string>
 
-    <string name="title_activity_twitter">Twitter</string>
+    <string name="titleActivityTwitter">Twitter</string>
     <string name="repostMessage">A picture was posted by Android app Drawingame</string>
     <string name="repostDrawingSuccess">Drawing was posted</string>
     <string name="repostDrawingFail">Drawing wasn\'t posted</string>
@@ -46,5 +47,6 @@
 
     <string name="instructionCheckBox">Don\'t show on start</string>
     <string name="menuInstruction">About app</string>
+
 
 </resources>

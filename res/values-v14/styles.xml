@@ -9,4 +9,8 @@
         <!-- API 14 theme customizations can go here. -->
     </style>
 
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_overflow</item>
+    </style>
+
 </resources>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Drawingame</string>
+    <string name="appName">Drawingame</string>
 
-    <string name="title_activity_twitter">Твиттер</string>
+    <string name="titleActivityTwitter">Твиттер</string>
     <string name="repostMessage">Рисунок выложен через Android приложение Drawingame:</string>
     <string name="repostDrawingSuccess">Репост выполнен успешно</string>
     <string name="repostDrawingFail">Ошибка во время репоста</string>
