@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lltmp0"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_room_create_frame">
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="@dimen/room_create_dialog_title_text_size"
+        android:textColor="@color/ui_color_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialogRoomCreateTitle" />
+
+    <LinearLayout
+        android:id="@+id/lltmp2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:id="@+id/roomCreateDialogBtnCamera"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/room_create_dialog_camera_btn_selector" />
+
+        <ImageView
+            android:id="@+id/roomCreateDialogIv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_room_create_frame" />
+
+        <Button
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/roomCreateDialogBtnGallery"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/room_create_dialog_gallery_btn_selector" />
+    </LinearLayout>
+
+    <EditText
+        android:textColor="@color/ui_color_main"
+        android:textColorHint="@color/ui_color_main"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:background="@drawable/room_create_dialog_et_underline"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/roomCreateDialogEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/dialogRoomCreateHint" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:textSize="@dimen/room_create_dialog_btns_text_size"
+            android:layout_weight="1"
+            android:textColor="@drawable/dialog_btn_selector"
+            android:id="@+id/roomCreateDialogBtnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="@string/dialogRoomCreateNeg" />
+
+        <Button
+            android:layout_weight="1"
+            android:textSize="@dimen/room_create_dialog_btns_text_size"
+            android:textColor="@drawable/dialog_btn_selector"
+            android:id="@+id/roomCreateDialogBtnCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="@string/dialogRoomCreatePos" />
+    </LinearLayout>
+
+</LinearLayout>

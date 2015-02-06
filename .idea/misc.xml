@@ -3,9 +3,8 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="IdProvider" IDEtalkID="5E6B8CD0D4C53300C84AF0E8B532E1EB" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/classes" />
+    <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
 </project>
 

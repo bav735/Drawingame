@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/llHolder"
+              android:layout_width="@dimen/holder_width"
+              android:layout_height="@dimen/holder_9_10_height"
+              android:orientation="vertical"
+              android:background="@drawable/listview_item_selector">
+
+    <LinearLayout
+        android:id="@+id/llHolderButtons"
+        android:layout_marginTop="10px"
+        android:layout_marginBottom="10px"
+        android:layout_marginLeft="5px"
+        android:layout_width="@dimen/holder_width"
+        android:layout_height="20px"
+        android:gravity="start"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:visibility="invisible"
+            android:id="@+id/btnHolderRefresh"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:background="@drawable/holder_refresh_btn_selector"/>
+
+        <ImageButton
+            android:visibility="invisible"
+            android:id="@+id/btnHolderEdit"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:background="@drawable/holder_edit_btn_selector"/>
+
+        <ImageButton
+            android:visibility="invisible"
+            android:id="@+id/btnHolderRemove"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:background="@drawable/holder_remove_btn_selector"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:background="@color/black"
+        android:id="@+id/rlHolder"
+        android:layout_width="@dimen/holder_width"
+        android:layout_height="@dimen/holder_9_10_height_rl"
+        android:gravity="center"
+        android:layout_gravity="center">
+
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:id="@+id/pbHolderDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:background="@color/transparent"
+            android:layout_centerInParent="true"
+            android:id="@+id/ivHolderRoomDrawing"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_width="@dimen/holder_width"
+            android:layout_height="@dimen/holder_9_10_height_rl"/>
+
+        <LinearLayout
+            android:id="@+id/llHolderError"
+            android:layout_width="@dimen/holder_width"
+            android:layout_height="@dimen/holder_9_10_height_rl"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:visibility="invisible"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:id="@+id/tvHolderError"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/holderError"/>
+
+            <TextView
+                android:background="@drawable/holder_tv_underline"
+                android:visibility="invisible"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:clickable="true"
+                android:id="@+id/tvHolderRetry"
+                android:textColor="@drawable/holder_btns_selector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/holderRetry"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:gravity="center"
+        android:id="@+id/tvHolderRoomName"
+        android:textColor="@android:color/white"
+        android:layout_width="@dimen/holder_width"
+        android:layout_height="40px"
+        android:textSize="15px"/>
+
+</LinearLayout>

@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
+
+    defaultConfig {
+        applicationId "classes.example.drawingame"
+        minSdkVersion 11
+        targetSdkVersion 19
+        versionCode 2
+        versionName "2.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("KeyStore")
+            storePassword "111111"
+            keyAlias "ф"
+            keyPassword "111111"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:19.0.+'
+    compile 'com.android.support:support-v4:19.0.+'
+    compile 'org.apache.httpcomponents:httpmime:4.4-beta1'
+    compile 'org.apache.httpcomponents:httpcore:4.4'
+}

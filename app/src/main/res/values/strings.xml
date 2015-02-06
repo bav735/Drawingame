@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">Drawingame</string>
+    <string name="appExit">You will exit the app and won\'t be able to receive notifications</string>
+
+    <string name="toastDialogRetryTitle">Error occurred(... Retry?</string>
+    <string name="toastDialogRetry">Retry</string>
+    <string name="toastDialogDeny">Cancel</string>
+    <string name="toastDialogConfirm">Are you sure?</string>
+    <string name="toastDialogErrorTitle">Something gone wrong :(</string>
+    <string name="toastDialogOk">Ok</string>
+    <string name="toastDialogNo">No</string>
+    <string name="toastDialogGotIt">Got it</string>
+
+    <string name="banMessage">Congratulations, you were banned</string>
+    <string name="errorRefreshOne">The picture wasn\'t refreshed, check connection to network</string>
+    <string name="errorRefreshAll">Some of pictures weren\'t refreshed, check connection to network</string>
+    <string name="errorDownload">The picture wasn\'t loaded from data base</string>
+    <string name="errorUpload">Your picture wasn\'t loaded to data base, it will be lost after cancel</string>
+    <string name="errorDb">Pictures data base is unavailable, check connection to network</string>
+    <string name="removeMessage">The picture will be deleted from data base, forever</string>
+    <string name="errorNotFound">Couldn\'t find the picture in data base, it will be deleted from list automatically</string>
+
+    <string name="repostMessage">A picture was posted by Android app Drawingame</string>
+    <string name="repostDrawingSuccess">Drawing was posted</string>
+    <string name="repostDrawingFail">Drawing wasn\'t posted, check internet connection</string>
+    <string name="repostNetworkTime">This option requires network-provided time to be used, select "Automatic date and time" in the Settings</string>
+
+    <string name="holderError">Data loading failed, check connection to network</string>
+    <string name="holderRetry">Retry</string>
+
+    <string name="dialogRoomCreateError">Enter picture\'s name</string>
+    <string name="dialogRoomCreateHint">Enter name...</string>
+    <string name="dialogRoomCreateNeg">Cancel</string>
+    <string name="dialogRoomCreatePos">Create</string>
+    <string name="dialogRoomCreateTitle">New Picture</string>
+    <string name="dialogChangeWidthHint">Draw here to check selected stroke width</string>
+    <string name="dialogChangeWidthHintOnEraser">Draw here to check selected eraser size</string>
+    <string name="dialogChangeWidthOk">Ok</string>
+
+    <string name="menuUndo">Undo</string>
+    <string name="menuEraserEnable">Enable eraser</string>
+    <string name="menuEraserDisable">Disable eraser</string>
+    <string name="menuChangeEraserSize">Change eraser size</string>
+    <string name="menuChangeColor">Change color</string>
+    <string name="menuRandomColorEnable">Enable random color</string>
+    <string name="menuRandomColorDisable">Disable random color</string>
+    <string name="menuChangeStrokeWidth">Change stroke width</string>
+    <string name="menuRandomStrokeWidthEnable">Enable random stroke width</string>
+    <string name="menuRandomStrokeWidthDisable">Disable random stroke width</string>
+    <string name="menuSaveDrawing">Save drawing to disk</string>
+    <string name="savedDrawing">Drawing was saved to</string>
+    <string name="menuPostDrawing">Post drawing to Twitter</string>
+    <string name="menuEndEdit">End editing</string>
+
+    <string name="menuAddRoom">Add picture</string>
+    <string name="menuRefreshList">Refresh list</string>
+    <string name="menuExit">Exit</string>
+
+    <string name="serviceStartMessage">Pictures updating service is running</string>
+    <!--<string name="serviceNotificationText11">Picture</string>-->
+    <!--<string name="serviceNotificationText21">was modified!</string>-->
+    <!--<string name="serviceNotificationText12">Pictures</string>-->
+    <!--<string name="serviceNotificationText22">were modified!</string>-->
+    <string name="serviceNotificationText">Someone modified your picture!</string>
+    <!--<string name="serviceNotificationText2">Pictures were modified:</string>-->
+</resources>
