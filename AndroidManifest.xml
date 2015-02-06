@@ -5,7 +5,7 @@
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="21"/>
+        android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -14,32 +14,49 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
+        android:name=".utils.MyApplication"
         android:allowBackup="true"
         android:label="@string/appName"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppBaseTheme"
         android:icon="@drawable/ic_launcher_complete">
+
         <activity
-            android:name=".activities.ChooseRoomActivity"
-            android:label="@string/appName"
-            android:launchMode="singleTask"
+            android:theme="@style/AppBaseTheme"
+            android:name=".room_activity.RoomActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
+
         <activity
-            android:name=".activities.DrawingActivity"
-            android:label="@string/appName"
+            android:theme="@style/DrawingActivityTheme"
+            android:name=".drawing_activity.DrawingActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
+
         </activity>
+
+
         <activity
-            android:name=".activities.TwitterActivity"
-            android:label="@string/titleActivityTwitter"
+            android:name=".drawing_activity.TwitterActivity"
+            android:theme="@style/TwitterActivityTheme"
             android:screenOrientation="portrait">
+
         </activity>
+
+        <service
+            android:name=".room_activity.service.ListService"
+            android:enabled="true">
+
+        </service>
     </application>
 
 </manifest>

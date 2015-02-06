@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+
+        android:id="@+id/menuActivityRoomAdd"
+        android:title="@string/menuAddRoom" />
+
+    <item
+        android:id="@+id/menuActivityRoomRefresh"
+        android:title="@string/menuRefreshList" />
+
+    <item
+        android:id="@+id/menuActivityRoomExit"
+        android:title="@string/menuExit" />
+
+</menu>

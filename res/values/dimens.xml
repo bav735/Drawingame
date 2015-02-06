@@ -4,4 +4,26 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="btns_holder_size">20px</dimen>
+    <dimen name="holder_tv_underline_size">1dp</dimen>
+
+    <dimen name="holder_iv_underline_size">1px</dimen>
+    <dimen name="holder_iv_underline_frame_size">0px</dimen>
+
+    <dimen name="holder_rl_underline_size">1px</dimen>
+
+    <dimen name="underline">5px</dimen>
+    <dimen name="holder_item_selected_frame_size">-5px</dimen>
+    <dimen name="holder_item_selected_size">@dimen/underline</dimen>
+    <dimen name="room_activity_divider_size">@dimen/underline</dimen>
+    <dimen name="room_activity_action_bar_underline_size">@dimen/underline</dimen>
+    <dimen name="drawing_activity_dv_underline_size">@dimen/underline</dimen>
+
+    <dimen name="iv_frame_padding">1dp</dimen>
+
+    <dimen name="dialog_room_create_frame_size">2dp</dimen>
+    <dimen name="dialog_room_create_iv_frame_size">0.5dp</dimen>
+    <dimen name="room_create_dialog_et_underline_size">1dp</dimen>
+    <dimen name="room_create_dialog_title_text_size">25dp</dimen>
+    <dimen name="room_create_dialog_btns_text_size">20dp</dimen>
 </resources>

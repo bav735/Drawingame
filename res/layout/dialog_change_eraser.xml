@@ -16,7 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <classes.example.drawingame.views.DrawView
+        <classes.example.drawingame.drawing_activity.draw_view.DrawView
             android:id="@+id/drawViewChangeWidthDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

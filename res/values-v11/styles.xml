@@ -4,13 +4,35 @@
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
-        <!-- API 11 theme customizations can go here. -->
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
-    </style>
+    <!--<style name="RoomActivityTheme" parent="android:Theme.Holo.Light">-->
+        <!--<item name="android:actionBarStyle">@style/RoomActivityActionBar</item>-->
+        <!--<item name="android:actionOverflowButtonStyle">@style/RoomActivityOverFlow</item>-->
+    <!--</style>-->
 
-    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_overflow</item>
-    </style>
+    <!--<style name="DrawingActivityTheme" parent="android:Theme.Holo.Light">-->
+        <!--<item name="android:actionBarStyle">@style/DrawingActivityActionBar</item>-->
+        <!--<item name="android:actionOverflowButtonStyle">@style/DrawingActivityOverFlow</item>-->
+    <!--</style>-->
+
+    <!--<style name="DrawingActivityOverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">-->
+        <!--<item name="android:background">@drawable/drawing_activity_btn_selector</item>-->
+    <!--</style>-->
+
+    <!--<style name="RoomActivityOverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">-->
+        <!--<item name="android:background">@drawable/room_activity_overflow_selector</item>-->
+    <!--</style>-->
+
+    <!--<style name="RoomActivityActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">-->
+        <!--<item name="android:icon">@drawable/app_icon_placeholder</item>-->
+        <!--<item name="android:background">@drawable/ab_transparent_example</item>-->
+    <!--</style>-->
+
+    <!--<style name="DrawingActivityActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">-->
+        <!--<item name="android:icon">@drawable/app_icon_placeholder</item>-->
+        <!--<item name="android:background">@color/black</item>-->
+        <!--&lt;!&ndash;<item name="background">@styles</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:src">@drawable/blackimg_black</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:windowContentOverlay">@drawable/dialog_room_create_iv_frame</item>&ndash;&gt;-->
+    <!--</style>-->
 
 </resources>

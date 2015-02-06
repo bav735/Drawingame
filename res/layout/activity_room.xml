@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rlActivityRoom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:focusable="true">
+    <!--android:focusableInTouchMode="true">-->
+
+    <ListView
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:listSelector="@drawable/listview_selector"
+        android:choiceMode="singleChoice"
+        android:id="@+id/roomListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="@dimen/room_activity_divider_size"
+        android:divider="@color/white">
+    </ListView>
+
+    <ProgressBar
+        android:visibility="invisible"
+        android:id="@+id/pbActivityRoom"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/roomActivityLlUnderline"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/room_activity_action_bar_underline_size"
+        android:background="@drawable/room_activity_action_bar_underline">
+    </LinearLayout>
+
+</RelativeLayout>

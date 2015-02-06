@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llHolder"
+    android:layout_width="match_parent"
+    android:layout_height="4px"
+    android:orientation="vertical"
+    android:background="@drawable/listview_item_selector">
+    <!--android:focusableInTouchMode="true"-->
+    <!--android:descendantFocusability="blocksDescendants">-->
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/llHolderButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="horizontal">
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/btnHolderRefresh"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:src="@drawable/ic_action_refresh"
+            android:background="@drawable/holder_refresh_btn_selector" />
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/btnHolderEdit"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:src="@drawable/ic_action_edit"
+            android:background="@drawable/holder_edit_btn_selector" />
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/btnHolderRemove"
+            android:layout_width="@dimen/btns_holder_size"
+            android:layout_height="@dimen/btns_holder_size"
+            android:src="@drawable/ic_action_delete"
+            android:background="@drawable/holder_remove_btn_selector" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlHolder"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="3px"
+        android:layout_height="4px"
+        android:gravity="center"
+        android:layout_gravity="center">
+
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:id="@+id/pbHolderDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!--android:background="@drawable/holder_iv_frame"-->
+        <ImageView
+            android:clickable="true"
+            android:visibility="invisible"
+            android:id="@+id/ivHolderRoomDrawing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:visibility="invisible"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:id="@+id/tvHolderError"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/holderError" />
+
+            <TextView
+                android:visibility="invisible"
+                android:background="@drawable/holder_tv_underline"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_marginTop="5dp"
+                android:clickable="true"
+                android:id="@+id/tvHolderRetry"
+                android:textColor="@drawable/room_create_dialog_key_btns_selector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/holderRetry" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/tvHolderRoomName"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28sp" />
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="2dp"-->
+        <!--android:background="@drawable/room_create_dialog_et_underline">-->
+    <!--</LinearLayout>-->
+
+</LinearLayout>
