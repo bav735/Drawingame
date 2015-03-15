@@ -20,12 +20,12 @@ import java.io.File;
 import java.io.IOException;
 
 import classes.example.drawingame.R;
-import classes.example.drawingame.data_base.DataBase;
 import classes.example.drawingame.drawing_activity.draw_view.DrawView;
 import classes.example.drawingame.drawing_activity.from_ambilwarna.AmbilWarnaDialog;
 import classes.example.drawingame.drawing_activity.from_ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
-import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
+import classes.example.drawingame.room_activity.list_view.Memory;
+import classes.example.drawingame.room_activity.service.ListService;
 import classes.example.drawingame.utils.Utils;
 
 /**
@@ -33,8 +33,6 @@ import classes.example.drawingame.utils.Utils;
  */
 
 public class DrawingActivity extends FragmentActivity {
-   public static DrawingActivity drawingActivity = null;
-   //   private LinearLayout llBtn;
    private LinearLayout llBottom;
    public DrawView drawView;
    public Button drawBtn;
@@ -47,7 +45,7 @@ public class DrawingActivity extends FragmentActivity {
 //   private MenuItem menuChangeStrokeWidth;
 //   private MenuItem menuRandomStrokeWidth;
 //   private MenuItem menuChangeColor;
-   private Item item;
+   private int pos;
 
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,10 +73,10 @@ public class DrawingActivity extends FragmentActivity {
          public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                case R.id.menuFinish:
-                  Utils.showProgress();
-                  item.itemBitmap = Utils.getResizedBitmap(drawView.getBitmap());
-                  item.lastEditorDeviceId = DataBase.thisDeviceId;
-                  ItemList.updateItem(item);
+//                  Item item = new Item(ItemList.list.get(pos));
+//                  item.lastEditorDeviceId = DataBase.thisDeviceId;
+                  ItemList.startUpdateItemToDB(ItemList.list.get(pos),
+                          Utils.getResizedBitmap(drawView.getBitmap()));
                   finish();
                   return true;
 
@@ -91,7 +89,7 @@ public class DrawingActivity extends FragmentActivity {
                   return true;
 
                case R.id.menuChangeColor:
-                  AmbilWarnaDialog dialog = new AmbilWarnaDialog(drawingActivity,
+                  AmbilWarnaDialog dialog = new AmbilWarnaDialog(DrawingActivity.this,
                           drawView.drawingColor, new OnAmbilWarnaListener() {
                      @Override
                      public void onOk(AmbilWarnaDialog dialog, int color) {
@@ -126,7 +124,8 @@ public class DrawingActivity extends FragmentActivity {
                case R.id.menuSaveDrawing:
                   try {
                      File file = new File(Utils.saveByTime(drawView.getBitmap()));
-                     Utils.toast(drawingActivity, Utils.stringFromRes(R.string.savedDrawing) + " " + Utils.getSavedDir());
+                     Utils.toast(DrawingActivity.this, Utils.stringFromRes(getApplicationContext(),
+                             R.string.savedDrawing) + " " + Utils.getSavedDir());
                      Intent intentActionView = new Intent();
                      intentActionView.setAction(Intent.ACTION_VIEW);
                      intentActionView.setDataAndType(Uri.fromFile(file), "image/*");
@@ -139,15 +138,16 @@ public class DrawingActivity extends FragmentActivity {
                case R.id.menuPostDrawing:
                   if (!isAutoTimeEnabled()) {
                      startActivity(new Intent(Settings.ACTION_DATE_SETTINGS));
-                     Utils.showErrorDialog(Utils.stringFromRes(R.string.repostNetworkTime));
+                     ListService.sendMessageShowErrorDialog(R.string.repostNetworkTime);
                   } else {
                      try {
                         String pathImgTwitter = Utils.saveByTime(drawView.getBitmap());
-                        Intent intentTwitter = new Intent(drawingActivity, TwitterActivity.class);
+                        Intent intentTwitter = new Intent(DrawingActivity.this,
+                                TwitterActivity.class);
                         intentTwitter.putExtra("path", pathImgTwitter);
                         startActivity(intentTwitter);
                      } catch (IOException e) {
-                        Utils.toast(drawingActivity, e.toString());
+                        Utils.toast(DrawingActivity.this, e.toString());
                      }
                   }
                   return true;
@@ -198,6 +198,7 @@ public class DrawingActivity extends FragmentActivity {
 
    @Override
    public void onBackPressed() {
+      ItemList.setBusyState(ItemList.list.get(pos), null);
       finish();
       super.onBackPressed();
    }
@@ -207,10 +208,8 @@ public class DrawingActivity extends FragmentActivity {
       getWindow().getDecorView().setBackgroundColor(Color.BLACK);
       super.onCreate(savedInstanceState);
 
-      drawingActivity = this;
       Intent intent = getIntent();
-      int pos = intent.getIntExtra("pos", -1);
-      item = new Item(ItemList.list.get(pos));
+      pos = intent.getIntExtra("pos", 0);
 
       if (getActionBar() != null) getActionBar().hide();
       setContentView(R.layout.activity_drawing);
@@ -226,7 +225,8 @@ public class DrawingActivity extends FragmentActivity {
          }
       });
       drawView = (DrawView) findViewById(R.id.drawingActivityDrawView);
-      drawView.init(drawingActivity, false, item.itemBitmap);
+      drawView.init(DrawingActivity.this, false,
+              Memory.cache.get(ItemList.list.get(pos).getImgFileName()));
    }
 
    @Override

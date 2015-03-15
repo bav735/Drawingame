@@ -22,10 +22,10 @@ public class RoomUpdater {
         this.listener = listener;
     }
 
-    public void start(Item item) {
+    public void start(Item item, String newUrl) {
         LinkedHashMap<String, ItemAttribute> dbItem = item.dbItem();
-//        dbItem.put(DataBase.ATTRIBUTE_ROOM_IMG_URL, new ItemAttribute(url));
-//        dbItem.put(DataBase.ATTRIBUTE_LAST_EDITOR_DEVICE_ID, new ItemAttribute(DataBase.thisDeviceId));
+        dbItem.put(DataBase.ATTRIBUTE_ROOM_IMG_URL, new ItemAttribute(newUrl));
+        dbItem.put(DataBase.ATTRIBUTE_LAST_EDITOR_DEVICE_ID, new ItemAttribute(DataBase.thisDeviceId));
         DataBase.roomTableRef.item(dbItem.get(DataBase.ATTRIBUTE_ROOM_ID)).set(dbItem, new OnItemSnapshot() {
             @Override
             public void run(ItemSnapshot itemSnapshot) {

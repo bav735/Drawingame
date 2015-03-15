@@ -1,78 +1,47 @@
 package classes.example.drawingame.room_activity.list_view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import classes.example.drawingame.R;
+import classes.example.drawingame.data_base.DataBase;
 import classes.example.drawingame.data_base.RoomAdder;
 import classes.example.drawingame.data_base.RoomGetter;
 import classes.example.drawingame.data_base.RoomRemover;
 import classes.example.drawingame.data_base.RoomUpdater;
+import classes.example.drawingame.data_base.RoomsGetter;
 import classes.example.drawingame.imgur.ImgurDownload;
 import classes.example.drawingame.imgur.ImgurUpload;
-import classes.example.drawingame.utils.MyAlertDialog;
-import classes.example.drawingame.utils.Utils;
+import classes.example.drawingame.room_activity.service.ListService;
 
 /**
  * Created by A on 25.12.2014.
  */
 public class ItemList {
+   public static final String ITEM_PROGRESS = "progress";
+   public static final String ITEM_ERROR_DB = "error_db";
+   public static final String ITEM_ERROR_IMGUR = "error_imgur";
+   public static final String ITEM_ERROR_DISK_ADD = "error_disk_add";
+   public static final String ITEM_ERROR_MEMORY_ADD = "error_memory_add";
+
    public static ArrayList<Item> list = new ArrayList<Item>();
    public static boolean listIsSetting = false;
-
-   public static void setItem(final int pos, final Item item) {
-      if (Utils.roomActivityExists())
-         Utils.roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               list.get(pos).itemBitmap = null;
-               list.set(pos, item);
-               Utils.notifyAdapter();
-            }
-         });
-      else {
-         list.get(pos).itemBitmap = null;
-         list.set(pos, item);
-      }
-   }
-
-   public static void setProgressToPos(final int pos, final boolean value) {
-      if (list.get(pos).onProgress == value) return;
-      if (Utils.roomActivityExists())
-         Utils.roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               list.get(pos).onProgress = value;
-               Utils.notifyAdapter();
-            }
-         });
-      else
-         list.get(pos).onProgress = value;
-   }
-
-   public static int size() {
-      return list.size();
-   }
+//   public static ConcurrentHashMap<String, String> busyItems = new ConcurrentHashMap<>();
 
    private static void addItemToList(final Item itemAdd) {
-      Utils.roomActivity.runOnUiThread(new Runnable() {
-         @Override
-         public void run() {
-            for (int i = 0; i < list.size(); i++)
-               list.get(i).pos++;
-            itemAdd.pos = 0;
-            list.add(0, itemAdd);
-            Utils.notifyAdapter();
-         }
-      });
+      for (int i = 0; i < list.size(); i++)
+         list.get(i).pos++;
+      itemAdd.pos = 0;
+      list.add(0, itemAdd);
+      ListService.sendMessageNotifyAdapter();
    }
 
 //   private static void removeItemFromList(final int pos) {
@@ -87,112 +56,64 @@ public class ItemList {
 //      });
 //   }
 
-   private static void saveToPref(final ArrayList<Item> saveList) {
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            try {
-               JSONArray jsonList = new JSONArray();
-               for (Item item : saveList) {
-                  JSONObject jsonItem = new JSONObject();
-                  jsonItem.put("roomId", item.roomId);
-                  jsonItem.put("roomName", item.roomName);
-                  jsonItem.put("roomImgUrl", item.roomImgUrl);
-                  jsonItem.put("lastEditorDeviceId", item.lastEditorDeviceId);
-                  jsonList.put(jsonItem);
-               }
-               Utils.preferences.edit().putString("list", jsonList.toString()).commit();
-            } catch (JSONException e) {
-               //
-            }
-         }
-      }).start();
-   }
-
-   public static void getFromPref(final String s) {
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            try {
-               JSONArray jsonList = new JSONArray(s);
-               ArrayList<Item> listFromJson = new ArrayList<Item>();
-               for (int i = 0; i < jsonList.length(); i++) {
-                  Item item = new Item();
-                  JSONObject jsonItem = jsonList.getJSONObject(i);
-                  item.roomId = jsonItem.getString("roomId");
-                  item.roomName = jsonItem.getString("roomName");
-                  item.roomImgUrl = jsonItem.getString("roomImgUrl");
-                  item.lastEditorDeviceId = jsonItem.getString("lastEditorDeviceId");
-                  item.pos = i;
-                  listFromJson.add(item.pos, item);
-               }
-               setNewList(listFromJson);
-            } catch (JSONException e) {
-               //
-            }
-         }
-      }).start();
-   }
-
-   public static void setNewList(final ArrayList<Item> newList) {
-//      Log.d("!", "seting new list");
-      listIsSetting = true;
-      if (Utils.roomActivityExists())
-         setNewListOnUI(newList);
-      else {
-         list = newList;
-         listIsSetting = false;
-      }
-      removeItemsFromMemory(getListToRemove(newList));
-      saveToPref(newList);
-   }
-
-   public static void setNewListOnUI(final ArrayList<Item> newList) {
+   private static void saveToPref(final Context context, final ArrayList<Item> saveList, final OnReloadListener listener) {
 //      new Thread(new Runnable() {
 //         @Override
 //         public void run() {
-      Utils.roomActivity.runOnUiThread(new Runnable() {
-         @Override
-         public void run() {
-            list = newList;
-            Utils.notifyAdapter();
-            Utils.showList();
-            listIsSetting = false;
-            reloadItems();
+      try {
+         JSONArray jsonList = new JSONArray();
+         for (Item item : saveList) {
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("roomId", item.roomId);
+            jsonItem.put("roomName", item.roomName);
+            jsonItem.put("roomImgUrl", item.roomImgUrl);
+            jsonItem.put("lastEditorDeviceId", item.lastEditorDeviceId);
+            jsonList.put(jsonItem);
          }
-      });
+         SharedPreferences preferences = context.
+                 getSharedPreferences("preferences", Context.MODE_PRIVATE);
+         preferences.edit().putString("list", jsonList.toString()).commit();
+         listIsSetting = false;
+         if (listener != null) listener.onReloaded(true);
+      } catch (JSONException e) {
+//         Log.d("!", "couldn't save new list to prefs");
+         listIsSetting = false;
+         if (listener != null) listener.onReloaded(false);
+      }
 //         }
 //      }).start();
    }
 
-   private static ArrayList<Item> getListToRemove(ArrayList<Item> newList) {
-      final ArrayList<Item> toRemove = new ArrayList<Item>();
-      LinkedHashMap<String, Item> newMap = getMap(newList);
-      for (int i = 0; i < list.size(); i++) {
-         Item item = list.get(i);
-         if (!newMap.containsKey(item.roomId)) {
-            item.itemBitmap = null;
-            toRemove.add(new Item(item));
-         } else {
-            Item newItem = newList.get(newMap.get(item.roomId).pos);
-            if (newItem.roomImgUrl.equals(item.roomImgUrl))
-               newItem.itemBitmap = item.itemBitmap;
+   public static void getFromPref(final Context context, final String s, final OnReloadListener listener) {
+      try {
+//         Log.d("!", "getting list from prefs");
+         JSONArray jsonList = new JSONArray(s);
+         ArrayList<Item> listFromJson = new ArrayList<Item>();
+         for (int i = 0; i < jsonList.length(); i++) {
+            Item item = new Item();
+            JSONObject jsonItem = jsonList.getJSONObject(i);
+            item.roomId = jsonItem.getString("roomId");
+            item.roomName = jsonItem.getString("roomName");
+            item.roomImgUrl = jsonItem.getString("roomImgUrl");
+            item.lastEditorDeviceId = jsonItem.getString("lastEditorDeviceId");
+            item.pos = i;
+            listFromJson.add(item.pos, item);
          }
+         setNewList(context, listFromJson, listener);
+      } catch (JSONException e) {
+         ItemList.listIsSetting = false;
+         if (listener != null) listener.onReloaded(false);
       }
-      return toRemove;
    }
 
-   private static void removeItemsFromMemory(final ArrayList<Item> toRemove) {
-//      Log.d("!", "removing - " + String.valueOf(toRemove.size()) + " items");
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            for (Item item : toRemove) {
-               Utils.preferences.edit().remove(item.roomId).commit();
-               Utils.deleteFile(item.getImgFilePath());
-            }
-         }
-      }).start();
+   public static void setNewList(Context context, ArrayList<Item> newList, OnReloadListener listener) {
+//      Log.d("!", "setting new list!");
+      list = newList;
+      if (listener == null) {
+         ListService.sendMessageNotifyAdapter();
+         ListService.sendMessageShowList();
+      }
+      saveToPref(context, newList, listener);
    }
 
    public static LinkedHashMap<String, Item> getMap() {
@@ -208,84 +129,73 @@ public class ItemList {
 
    public static boolean isOnProgress() {
       for (Item item : list)
-         if (item.onProgress)
+         if (item.busyState != null && item.busyState.equals(ITEM_PROGRESS))
             return true;
       return false;
    }
 
-   public static void refreshItems() {
-//      MyAlertDialog.isShown = false;
-      for (Item item : list)
-         if (!item.onProgress)
-            refreshItem(item, "menu_item");
-   }
-
-   public static void refreshItem(final Item item, final String from) {
-      setProgressToPos(item.pos, true);
+   public static void refreshItemFromDB(final Item item) {
+      if (item.busyState != null) return;
+      ItemList.setBusyState(item, ITEM_PROGRESS);
       new RoomGetter(new RoomGetter.OnRoomGotListener() {
          @Override
          public void onRoomGot(final Item dbItem, boolean isError) {
             if (isError) {
-               showErrorDialog(from);
-               setProgressToPos(item.pos, false);
+               ItemList.setBusyState(item, ITEM_ERROR_DB);
+               showErrorDialog("holder_refresh");
                return;
             }
             if (dbItem == null) {
-               if (from.equals("holder_refresh"))
-                  Utils.showErrorDialog(Utils.stringFromRes(R.string.errorNotFound));
-               setProgressToPos(item.pos, false);
+               ListService.sendMessageShowErrorDialog(R.string.errorNotFound);
+               ItemList.setBusyState(item, null);
                return;
             }
             if (!item.roomImgUrl.equals(dbItem.roomImgUrl)) {
+               ItemList.setBusyState(item, null);
                item.roomImgUrl = dbItem.roomImgUrl;
                item.lastEditorDeviceId = dbItem.lastEditorDeviceId;
-               downloadItemFromImgur(item, from);
-            } else {
-               reloadItem(item);
-            }
+               downloadItemFromImgur(item, "holder_refresh");
+            } else
+               setBusyState(item, null);
          }
       }).start(item.roomId);
    }
 
-   public static void reloadItems() {
-      for (Item item : list) {
-         if (!item.onProgress && item.itemBitmap == null)
-            reloadItem(item);
-      }
-   }
-
-   private static void reloadItem(Item item) {
-      setProgressToPos(item.pos, true);
-      if (item.isImgSaved())
-         loadItemFromDisk(item.pos);
-      else
-         downloadItemFromImgur(item, "set_list");
+   public static void setBusyState(Item item, String state) {
+      item.busyState = state;
+      ListService.sendMessageNotifyAdapter();
    }
 
    public static void downloadItemFromImgur(final Item item, final String from) {
-      setProgressToPos(item.pos, true);
+      setBusyState(item, ITEM_PROGRESS);
       new ImgurDownload(new ImgurDownload.OnImgReceivedListener() {
          @Override
          public void onImgReceived(Bitmap bitmap) {
-            if (bitmap == null)
+            if (bitmap == null) {
+               setBusyState(item, ITEM_ERROR_IMGUR);
                showErrorDialog(from);
-            else {
-               item.itemBitmap = null;
-               item.itemBitmap = bitmap;
-               saveItem(item);
+            } else {
+               Disk.add(item, bitmap, new Disk.OnAddListener() {
+                  @Override
+                  public void OnAdd(boolean isError) {
+                     if (isError)
+                        setBusyState(item, ITEM_ERROR_DISK_ADD);
+                     else
+                        setBusyState(item, null);
+                  }
+               });
             }
-            setProgressToPos(item.pos, false);
          }
       }).start(item.roomImgUrl);
    }
 
    private static void showErrorDialog(String from) {
       if (from.equals("holder_refresh")) {
-         Utils.showErrorDialog(Utils.stringFromRes(R.string.errorRefreshOne));
+         ListService.sendMessageShowErrorDialog(R.string.errorRefreshOne);
          return;
       }
       if (from.equals("holder_retry")) {
-         Utils.showErrorDialog(Utils.stringFromRes(R.string.errorDownload));
+         ListService.sendMessageShowErrorDialog(R.string.errorDownload);
       }
 //      if (from.equals("menu_item") && !MyAlertDialog.isShown) {
 //         MyAlertDialog.isShown = true;
@@ -293,199 +203,154 @@ public class ItemList {
 //      }
    }
 
-   public static void removeItem(final Item item) {
-      setProgressToPos(item.pos, true);
-      Utils.showConfirmActionDialog(Utils.stringFromRes(R.string.removeMessage), new MyAlertDialog.OnDismissedListener() {
+   public static void removeItem(final Item item, Context context) {
+      listIsSetting = true;
+      new RoomRemover(new RoomRemover.OnRoomRemovedListener() {
          @Override
-         public void onDismissed(boolean isPositive) {
-            if (isPositive)
-               new RoomRemover(new RoomRemover.OnRoomRemovedListener() {
-                  @Override
-                  public void onRoomRemoved(String response) {
-                     if (response.equals("error")) {
-                        Utils.showErrorDialog(Utils.stringFromRes(R.string.errorDb));
-                     }
-                     if (response.equals("not found")) {
-                        Utils.showErrorDialog(Utils.stringFromRes(R.string.errorNotFound));
-                     }
-                     if (response.equals("removed")) {
-                        Utils.toast(Utils.roomActivity, "removed");
-//                        removeItemFromList(pos);
-                     }
-                     setProgressToPos(item.pos, false);
-                  }
-               }).start(item);
-            else {
-               setProgressToPos(item.pos, false);
+         public void onRoomRemoved(String response) {
+            if (response.equals("error")) {
+               ListService.sendMessageShowErrorDialog(R.string.errorDb);
             }
+            if (response.equals("not found")) {
+               ListService.sendMessageShowErrorDialog(R.string.errorNotFound);
+            }
+//            if (response.equals("removed")) {
+//            }
+            listIsSetting = false;
          }
-      });
+      }).start(item, context);
    }
 
-   public static void updateItem(final Item item) {
-      setProgressToPos(item.pos,true);
+   public static void startUpdateItemToDB(Item item, Bitmap bitmap) {
+      updateItemToDBCheckFromDB(item, bitmap);
+   }
+
+   private static void updateItemToDBCheckFromDB(final Item item, final Bitmap bitmap) {
       new RoomGetter(new RoomGetter.OnRoomGotListener() {
          @Override
          public void onRoomGot(Item dbItem, boolean isError) {
             if (isError) {
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorUpload),
-                       new MyAlertDialog.OnDismissedListener() {
-                          @Override
-                          public void onDismissed(boolean isPositive) {
-                             if (isPositive)
-                                updateItem(item);
-                             else {
-                                setProgressToPos(item.pos, false);
-                                Utils.showList();
-                             }
-                          }
-                       });
-              return;
+               ListService.sendMessageShowErrorDialog(R.string.errorUpload);
+               setBusyState(item, null);
+            } else {
+               if (dbItem == null) {
+                  ListService.sendMessageShowErrorDialog(R.string.errorNotFound);
+                  setBusyState(item, null);
+               } else
+                  updateItemToDBUploadToImgur(item, bitmap);
             }
-            if (dbItem == null) {
-               Utils.showErrorDialog(Utils.stringFromRes(R.string.errorNotFound));
-               setProgressToPos(item.pos, false);
-               Utils.showList();
-            } else
-               updateItemImgurUpload(item);
          }
       }).start(item.roomId);
    }
 
-   private static void updateItemImgurUpload(final Item item) {
-      setProgressToPos(item.pos, true);
+   private static void updateItemToDBUploadToImgur(final Item item, final Bitmap bitmap) {
       new ImgurUpload(new ImgurUpload.OnImgUrlReceivedListener() {
          @Override
          public void onImgUrlReceived(final String newImgUrl) {
             if (newImgUrl != null) {
-               item.roomImgUrl = newImgUrl;
-               updateItemToDB(item);
+               finishUpdateItemToDB(item, bitmap, newImgUrl);
             } else {
-               //сказать что возможно эта картинка уже обновилась извне
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorUpload),
-                       new MyAlertDialog.OnDismissedListener() {
-                          @Override
-                          public void onDismissed(boolean isPositive) {
-                             if (isPositive)
-                                updateItemImgurUpload(item);
-                             else {
-                                item.itemBitmap = null;
-                                setProgressToPos(item.pos, false);
-                                Utils.showList();
-                             }
-                          }
-                       });
+               ListService.sendMessageShowErrorDialog(R.string.errorUpload);
+               setBusyState(item, null);
             }
          }
-      }).start(item.itemBitmap);
+      }).start(bitmap);
    }
 
-   private static void updateItemToDB(final Item item) {
-      setProgressToPos(item.pos, true);
+   private static void finishUpdateItemToDB(final Item item, final Bitmap bitmap, final String newUrl) {
       new RoomUpdater(new RoomUpdater.onRoomUpdatedListener() {
          @Override
          public void onRoomUpdated(boolean isUpdated) {
             if (isUpdated) {
-               setItem(item.pos, item);
-               Utils.showList();
-            } else
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorUpload),
-                       new MyAlertDialog.OnDismissedListener() {
-                          @Override
-                          public void onDismissed(boolean isPositive) {
-                             if (isPositive)
-                                updateItemToDB(item);
-                             else {
-                                item.itemBitmap = null;
-                                setProgressToPos(item.pos, false);
-                                Utils.showList();
-                             }
-                          }
-                       });
+               item.roomImgUrl = newUrl;
+               item.lastEditorDeviceId = DataBase.thisDeviceId;
+               Disk.add(item, bitmap, new Disk.OnAddListener() {
+                  @Override
+                  public void OnAdd(boolean isError) {
+                     list.set(item.pos, item);
+                     if (isError)
+                        setBusyState(item, ITEM_ERROR_DISK_ADD);
+                     else
+                        setBusyState(item, null);
+                  }
+               });
+            } else {
+               ListService.sendMessageShowErrorDialog(R.string.errorUpload);
+               setBusyState(item, null);
+            }
          }
-      }).start(item);
+      }).start(item, newUrl);
    }
 
-   public static void addNewItem(final Item item) {
+   public static void startAddItemToDB(Item item, Bitmap bitmap) {
+      uploadItemToImgur(item, bitmap);
+   }
+
+   public static void uploadItemToImgur(final Item item, final Bitmap bitmap) {
       new ImgurUpload(new ImgurUpload.OnImgUrlReceivedListener() {
          @Override
          public void onImgUrlReceived(final String newImgUrl) {
             if (newImgUrl != null) {
                item.roomImgUrl = newImgUrl;
-               addItemToDB(item);
+               finishAddItemToDB(item, bitmap);
             } else {
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorUpload),
-                       new MyAlertDialog.OnDismissedListener() {
-                          @Override
-                          public void onDismissed(boolean isPositive) {
-                             if (isPositive)
-                                addNewItem(item);
-                             else {
-                                item.itemBitmap = null;
-                                Utils.showList();
-                             }
-                          }
-                       });
+               ListService.sendMessageShowErrorDialog(R.string.errorUpload);
+               ListService.sendMessageShowList();
             }
          }
-      }).start(item.itemBitmap);
+      }).start(bitmap);
    }
 
-   private static void addItemToDB(final Item item) {
+   private static void finishAddItemToDB(final Item item, final Bitmap bitmap) {
       new RoomAdder(new RoomAdder.onRoomAddedListener() {
          @Override
          public void onRoomAdded(boolean isAdded) {
             if (isAdded) {
-               ItemList.addItemToList(item);
-               saveItem(item);
-               Utils.showList();
-            } else
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorUpload),
-                       new MyAlertDialog.OnDismissedListener() {
-                          @Override
-                          public void onDismissed(boolean isPositive) {
-                             if (isPositive)
-                                addItemToDB(item);
-                             else {
-                                item.itemBitmap = null;
-                                Utils.showList();
-                             }
-                          }
-                       });
+               Disk.add(item, bitmap, new Disk.OnAddListener() {
+                  @Override
+                  public void OnAdd(boolean isError) {
+                     if (isError)
+                        item.busyState = ITEM_ERROR_DISK_ADD;
+                     ItemList.addItemToList(item);
+                     ListService.sendMessageShowList();
+                  }
+               });
+            } else {
+               ListService.sendMessageShowErrorDialog(R.string.errorUpload);
+               ListService.sendMessageShowList();
+            }
          }
       }).start(item);
    }
 
-   public static void loadItemFromDisk(final int pos) {
-      setProgressToPos(pos, true);
+   public static void reloadItems(final OnReloadListener listener, final Context context) {
       new Thread(new Runnable() {
          @Override
          public void run() {
-            final Bitmap bitmap = Utils.getBitmapByItem(list.get(pos));
-            if (Utils.roomActivityExists())
-               Utils.roomActivity.runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     list.get(pos).itemBitmap = null;
-                     list.get(pos).itemBitmap = bitmap;
-                     setProgressToPos(pos, false);
-                  }
-               });
+//            if (!ItemList.listIsSetting) {
+//               ItemList.listIsSetting = true;
+            SharedPreferences preferences = context.
+                    getSharedPreferences("preferences", Context.MODE_PRIVATE);
+            if (preferences.contains("list"))
+               getFromPref(context, preferences.getString("list", null), listener);
             else {
-               list.get(pos).itemBitmap = null;
-               list.get(pos).itemBitmap = bitmap;
-               setProgressToPos(pos, false);
+//               Log.d("!", "getting from web");
+               new RoomsGetter(new RoomsGetter.OnRoomsGotListener() {
+                  @Override
+                  public void onRoomsGot(final ArrayList<Item> dbList) {
+                     if (dbList == null) {
+                        if (listener != null) listener.onReloaded(false);
+                     } else
+                        ItemList.setNewList(context, dbList, listener);
+                  }
+               }).start(context);
             }
+//            } else if (listener != null) listener.onReloaded(false);
          }
       }).start();
    }
 
-   private static void saveItem(Item item) {
-      try {
-         Utils.saveBitmap(item.itemBitmap, Utils.getCachedDir(), item.getImgFileName());
-         Utils.preferences.edit().putString(item.roomId, item.roomImgUrl).commit();
-      } catch (IOException e) {
-         Log.d("!", "picture wasn't saved - " + e.toString());
-      }
+   public interface OnReloadListener {
+      void onReloaded(boolean isReloaded);
    }
 }

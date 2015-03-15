@@ -68,7 +68,7 @@ public class DrawView extends View {
     }
 
     public DrawView(Activity drawingActivity) {
-        super((Context) drawingActivity);
+        super(drawingActivity);
     }
 
     public void init(Activity ma, boolean iiwd, final Bitmap bitmap) {
@@ -96,7 +96,7 @@ public class DrawView extends View {
         paint.setStrokeJoin(Paint.Join.ROUND); // set the join to round you want
         paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
         if (!isInWidthDialog) {
-//            LinearLayout.LayoutParams params = Utils.scaleToLl(itemBitmap.getWidth(), itemBitmap.getHeight(),
+//            LinearLayout.LayoutParams params = Utils.scaleToLl(bitmapSoftReference.getWidth(), bitmapSoftReference.getHeight(),
 //                    metrics.widthPixels, metrics.heightPixels - Utils.dpToPx(100));
 //            params.gravity = Gravity.CENTER;
 //            setLayoutParams(params);
@@ -108,7 +108,7 @@ public class DrawView extends View {
                     dv.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     int width = dv.getMeasuredWidth();
                     int height = dv.getMeasuredHeight();
-//                   RelativeLayout.LayoutParams params = Utils.scaleToRl(itemBitmap.getWidth(), itemBitmap.getHeight(), width, height);
+//                   RelativeLayout.LayoutParams params = Utils.scaleToRl(bitmapSoftReference.getWidth(), bitmapSoftReference.getHeight(), width, height);
 //                   params.addRule(RelativeLayout.CENTER_IN_PARENT);
                     LinearLayout.LayoutParams params = Utils.scaleToLl(bitmap.getWidth(), bitmap.getHeight(), width, height);
                     params.gravity = Gravity.CENTER;

@@ -1,10 +1,10 @@
 package classes.example.drawingame.data_base;
 
+import android.content.Context;
+
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import classes.example.drawingame.room_activity.list_view.Item;
-import classes.example.drawingame.room_activity.list_view.ItemList;
 import classes.example.drawingame.utils.Utils;
 import co.realtime.storage.ItemSnapshot;
 import co.realtime.storage.ext.OnError;
@@ -21,8 +21,12 @@ public class RoomsGetter {
       this.listener = listener;
    }
 
-   public void start() {
-      if (!Utils.isNetworkAvailable()) {
+   public void start(final Context context) {
+//      new Thread(new Runnable() {
+//         @Override
+//         public void run() {
+//            Looper.prepare();
+      if (!Utils.isNetworkAvailable(context)) {
          listener.onRoomsGot(null);
          return;
       }
@@ -43,6 +47,9 @@ public class RoomsGetter {
             listener.onRoomsGot(null);
          }
       });
+//            Looper.loop();
+//         }
+//      }).start();
    }
 
    public interface OnRoomsGotListener {

@@ -1,7 +1,9 @@
 package classes.example.drawingame.room_activity.list_view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,17 +23,20 @@ import classes.example.drawingame.room_activity.RoomActivity;
 import classes.example.drawingame.utils.Utils;
 
 public class ListAdapter extends ArrayAdapter<Item> {
-
+   private RoomActivity roomActivity;
+   private ListView listView;
    private LayoutInflater inflater;
 
-   public ListAdapter() {
-      super(Utils.appContext, RoomActivity.holderLayoutId, ItemList.list);
-      inflater = Utils.roomActivity.getLayoutInflater();
+   public ListAdapter(Context context, RoomActivity roomActivity, ListView listView) {
+      super(context, RoomActivity.holderLayoutId, ItemList.list);
+      inflater = roomActivity.getLayoutInflater();
+      this.roomActivity = roomActivity;
+      this.listView = listView;
    }
 
    @Override
    public int getCount() {
-      return ItemList.size();
+      return ItemList.list.size();
    }
 
    @Override
@@ -47,7 +53,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
    public View getView(final int pos, View convertView, ViewGroup parent) {
       final ItemHolder holder;
       if (convertView == null) {
-         convertView = inflater.inflate(RoomActivity.holderLayoutId, Utils.roomActivity.roomListView, false);
+         convertView = inflater.inflate(RoomActivity.holderLayoutId, listView, false);
          scaleViewAndChildren(convertView, convertView.getLayoutParams(),
                  new ViewGroup.LayoutParams(Utils.displayWidth, Utils.displayHeight));
          holder = new ItemHolder();
@@ -62,7 +68,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
       holder.ibHolderEdit = (ImageButton) convertView.findViewById(R.id.btnHolderEdit);
 
       holder.ibHolderRemove = (ImageButton) convertView.findViewById(R.id.btnHolderRemove);
-      if (DataBase.thisDeviceId.equals("353719057506667"))
+      if (DataBase.thisDeviceId.equals(DataBase.DEVELOPER_DEVICE_ID))
          holder.ibHolderRemove.setVisibility(View.VISIBLE);
 
       holder.ibHolderRefresh = (ImageButton) convertView.findViewById(R.id.btnHolderRefresh);
@@ -80,7 +86,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
 
       holder.ibHolderRemove.setOnClickListener(new View.OnClickListener() {
          public void onClick(View v) {
-            ItemList.removeItem(ItemList.list.get(pos));
+            ItemList.removeItem(ItemList.list.get(pos), getContext());
          }
       });
 
@@ -101,7 +107,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
       holder.ibHolderRefresh.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-            ItemList.refreshItem(ItemList.list.get(pos), "holder_refresh");
+            ItemList.refreshItemFromDB(ItemList.list.get(pos));
          }
       });
 
@@ -110,14 +116,20 @@ public class ListAdapter extends ArrayAdapter<Item> {
    }
 
    private void showHolder(ItemHolder holder, Item item) {
-      if (item.onProgress) {
-         showProgress(holder);
-         return;
-      }
-      if (item.itemBitmap == null) {
-         showError(holder);
-      } else {
-         showImage(holder, item.itemBitmap);
+      String state = item.busyState;
+      if (state == null) state = "";
+      switch (state) {
+         case ItemList.ITEM_PROGRESS:
+            showProgress(holder);
+            break;
+         case "":
+            if (Memory.cache.containsKey(item.getImgFileName()))
+               showImage(holder, Memory.cache.get(item.getImgFileName()));
+            else
+               Memory.add(item);
+            break;
+         default:
+            showError(holder);
       }
    }
 
@@ -155,10 +167,11 @@ public class ListAdapter extends ArrayAdapter<Item> {
       holder.tvHolderRetry.setVisibility(View.VISIBLE);
    }
 
-   private void editImg(final int pos) {
-      Intent intent = new Intent(Utils.appContext, DrawingActivity.class);
+   private void editImg(int pos) {
+      ItemList.setBusyState(ItemList.list.get(pos), ItemList.ITEM_PROGRESS);
+      Intent intent = new Intent(roomActivity, DrawingActivity.class);
       intent.putExtra("pos", pos);
-      Utils.roomActivity.startActivity(intent);
+      roomActivity.startActivity(intent);
    }
 
    // Scale the given view, its contents, and all of its children by its container params

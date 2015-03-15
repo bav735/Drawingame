@@ -6,30 +6,39 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Timer;
 
 import classes.example.drawingame.R;
 import classes.example.drawingame.data_base.DataBase;
-import classes.example.drawingame.data_base.RoomsGetter;
 import classes.example.drawingame.room_activity.RoomActivity;
-import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
-import classes.example.drawingame.utils.MyAlertDialog;
 import classes.example.drawingame.utils.Utils;
 
 /**
  * Created by A on 25.12.2014.
  */
 public class ListService extends Service {
+   public static final int MESSAGE_SHOW_PB = 0;
+   public static final int MESSAGE_SHOW_LIST = 1;
+   public static final int MESSAGE_NOTIFY_ADAPTER = 2;
+   public static final int MESSAGE_SHOW_ERROR_DIALOG = 3;
+   public static final int MESSAGE_SHOW_RETRY_DIALOG = 4;
+   public static final int MESSAGE_INIT = 5;
+   public static final int MESSAGE_NOTIFY_SCROLL = 6;
    public static final int TIMER_MSEC = 10 * 1000;
    private static Timer timer;
    private static ServiceTimer task;
    private static NotificationManager notificationManager;
+   private static Context context;
+   private static Messenger messageHandler;
 
    public static void sendNotification(String msg, String id) {
       NotificationCompat.Builder builder = getBuilder(id);
@@ -44,19 +53,16 @@ public class ListService extends Service {
    private static NotificationCompat.Builder getBuilder(String id) {
       int icon = R.drawable.ic_launcher;
       long when = System.currentTimeMillis();
-      Intent intent = new Intent(Utils.appContext, RoomActivity.class);
+      Intent intent = new Intent(context, RoomActivity.class);
       intent.putExtra("id", id);
-//        intent.setAction(Intent.ACTION_MAIN);
-//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
               Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-      PendingIntent pending = PendingIntent.getActivity(Utils.appContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+      PendingIntent pending = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-      return new NotificationCompat.Builder(Utils.appContext)
-              .setContentTitle(Utils.stringFromRes(R.string.appName))
-              .setContentText(Utils.stringFromRes(R.string.serviceStartMessage))
+      return new NotificationCompat.Builder(context)
+              .setContentTitle(Utils.stringFromRes(context, R.string.appName))
+              .setContentText(Utils.stringFromRes(context, R.string.serviceStartMessage))
               .setSmallIcon(icon)
               .setContentIntent(pending)
               .setWhen(when)
@@ -70,41 +76,14 @@ public class ListService extends Service {
 
    public static void startTimer() {
       timer = new Timer();
-      task = new ServiceTimer();
+      task = new ServiceTimer(context, Utils.stringFromRes(context, R.string.serviceNotificationText));
       timer.scheduleAtFixedRate(task, TIMER_MSEC, TIMER_MSEC);
    }
 
-    @Override
-    public void onDestroy() {
-//       ItemList.saveToPref();
-//        stopForeground(true);
-        super.onDestroy();
-        Log.d("!", "onDestroy");
-    }
-
-   public void onCreate() {
-      super.onCreate();
-      Log.d("!", "onCreate service");
-      if (!Utils.roomActivityExists()) {
-         Utils.init(getApplicationContext(), null);
-         DataBase.init();
-      }
-      if (ItemList.list.isEmpty()) {
-         if (Utils.preferences.contains("list")) {
-//            Log.d("!", "setting list after fromjson");
-            ItemList.getFromPref(Utils.preferences.getString("list", null));
-         } else
-            getRooms();
-      }
-      notificationManager = (NotificationManager) Utils.appContext.getSystemService(Context.NOTIFICATION_SERVICE);
-      startTimer();
-   }
-
    @Override
-   public int onStartCommand(Intent intent, int flags, int startId) {
-      Log.d("!", "onStartCommand");
-      return START_STICKY;
-      //startForeground(SERVICE_ID, getBuilder().build());
+   public void onDestroy() {
+      super.onDestroy();
+      Log.d("!", "onDestroy Service");
    }
 
    @Override
@@ -112,26 +91,104 @@ public class ListService extends Service {
       return (null);
    }
 
-   private static void getRooms() {
-      new RoomsGetter(new RoomsGetter.OnRoomsGotListener() {
-         @Override
-         public void onRoomsGot(final ArrayList<Item> dbList) {
-            if (dbList == null) {
-//               Log.d("!", "retrying dialog..");
-               if (Utils.roomActivityExists()) ServiceTimer.isDialogShown = true;
-               Utils.showRetryActionDialog(Utils.stringFromRes(R.string.errorDb), new MyAlertDialog.OnDismissedListener() {
-                  @Override
-                  public void onDismissed(boolean isPositive) {
-                     ServiceTimer.isDialogShown = false;
-                     if (!isPositive)
-                        Utils.roomActivity.finish();
-                  }
-               });
-            } else {
-//               Log.d("!", "setting list after getrooms");
-               ItemList.setNewList(dbList);
-            }
-         }
-      }).start();
+//   public ListService() {
+//      super("ListService");
+//   }
+
+   public void onCreate() {
+      super.onCreate();
+      Log.d("!", "onCreate service");
+      context = getApplicationContext();
+      SharedPreferences preferences = context.
+              getSharedPreferences("preferences", Context.MODE_PRIVATE);
+      if (preferences.getBoolean("destroyed", true)) {
+         DataBase.init(context);
+         ItemList.reloadItems(null, context);
+         Log.d("!", "reloading from service");
+      }
+      notificationManager = (NotificationManager) context
+              .getSystemService(Context.NOTIFICATION_SERVICE);
+      startTimer();
+   }
+
+   @Override
+   public int onStartCommand(Intent intent, int flags, int startId) {
+      Log.d("!", "onStartCommand Service");
+      super.onStartCommand(intent, flags, startId);
+      if (intent != null) {
+         Bundle extras = intent.getExtras();
+         messageHandler = (Messenger) extras.get("MESSENGER");
+         sendMessageInit();
+      }
+      return START_STICKY;
+   }
+
+//   @Override
+//   protected void onHandleIntent(Intent intent) {
+//      Log.d("!", "handling intent");
+//      Bundle extras = intent.getExtras();
+//      messageHandler = (Messenger) extras.get("MESSENGER");
+//      sendMessageInit();
+//   }
+
+   public static void sendMessageShowPb() {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_SHOW_PB;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void sendMessageShowList() {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_SHOW_LIST;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void sendMessageNotifyAdapter() {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_NOTIFY_ADAPTER;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void sendMessageShowErrorDialog(int resId) {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_SHOW_ERROR_DIALOG;
+      message.arg2 = resId;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void sendMessageInit() {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_INIT;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         Log.d("!", e.toString());
+      }
+   }
+
+   public static void sendMessageNotifyScroll() {
+      Message message = Message.obtain();
+      message.arg1 = MESSAGE_NOTIFY_SCROLL;
+      try {
+         messageHandler.send(message);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 }

@@ -12,14 +12,14 @@
     <string name="toastDialogNo">No</string>
     <string name="toastDialogGotIt">Got it</string>
 
-    <string name="banMessage">Congratulations, you were banned</string>
+    <string name="banMessage">Congratulations, you were banned.</string>
     <string name="errorRefreshOne">The picture wasn\'t refreshed, check connection to network</string>
     <string name="errorRefreshAll">Some of pictures weren\'t refreshed, check connection to network</string>
     <string name="errorDownload">The picture wasn\'t loaded from data base</string>
-    <string name="errorUpload">Your picture wasn\'t loaded to data base, it will be lost after cancel</string>
+    <string name="errorUpload">Unfortunately, your picture wasn\'t loaded to data base</string>
     <string name="errorDb">Pictures data base is unavailable, check connection to network</string>
     <string name="removeMessage">The picture will be deleted from data base, forever</string>
-    <string name="errorNotFound">Couldn\'t find the picture in data base, it will be deleted from list automatically</string>
+    <string name="errorNotFound">Couldn\'t find the picture in data base, try to update the list</string>
 
     <string name="repostMessage">A picture was posted by Android app Drawingame</string>
     <string name="repostDrawingSuccess">Drawing was posted</string>

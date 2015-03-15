@@ -39,7 +39,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Random;
 
-import classes.example.drawingame.drawing_activity.DrawingActivity;
 import classes.example.drawingame.room_activity.RoomActivity;
 import classes.example.drawingame.room_activity.list_view.Item;
 
@@ -101,9 +100,9 @@ public class Utils {
                  f2.getName().toLowerCase());
       }
    };
-   public static Context appContext = null;
-   public static RoomActivity roomActivity = null;
-   public static SharedPreferences preferences;
+   //   public static Context appContext = null;
+//   public static RoomActivity roomActivity = null;
+//   public static SharedPreferences preferences;
 
    private Utils() {
    } //private constructor to enforce Singleton pattern
@@ -203,8 +202,8 @@ public class Utils {
    /**
     * @return The MIME type for the give Uri.
     */
-   public static String getMimeType(Uri uri) {
-      File file = new File(getPath(uri));
+   public static String getMimeType(Context context, Uri uri) {
+      File file = new File(getPath(context, uri));
       return getMimeType(file);
    }
 
@@ -262,7 +261,7 @@ public class Utils {
     * @return The value of the _data column, which is typically a file path.
     * @author paulburke
     */
-   public static String getDataColumn(Uri uri, String selection,
+   public static String getDataColumn(Context context, Uri uri, String selection,
                                       String[] selectionArgs) {
 
       Cursor cursor = null;
@@ -272,7 +271,7 @@ public class Utils {
       };
 
       try {
-         cursor = appContext.getContentResolver().query(uri, projection, selection, selectionArgs,
+         cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
                  null);
          if (cursor != null && cursor.moveToFirst()) {
             if (DEBUG)
@@ -300,7 +299,7 @@ public class Utils {
     * @author paulburke
     * @see #isLocal(String)
     */
-   public static String getPath(final Uri uri) {
+   public static String getPath(Context context, final Uri uri) {
 
       if (DEBUG)
          Log.d(TAG + " File -",
@@ -316,7 +315,7 @@ public class Utils {
       final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
       // DocumentProvider
-      if (isKitKat && DocumentsContract.isDocumentUri(appContext, uri)) {
+      if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
          // LocalStorageProvider
          if (isLocalStorageDocument(uri)) {
             // The path is the id
@@ -341,7 +340,7 @@ public class Utils {
             final Uri contentUri = ContentUris.withAppendedId(
                     Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
-            return getDataColumn(contentUri, null, null);
+            return getDataColumn(context, contentUri, null, null);
          }
          // MediaProvider
          else if (isMediaDocument(uri)) {
@@ -363,7 +362,7 @@ public class Utils {
                     split[1]
             };
 
-            return getDataColumn(contentUri, selection, selectionArgs);
+            return getDataColumn(context, contentUri, selection, selectionArgs);
          }
       }
       // MediaStore (and general)
@@ -373,7 +372,7 @@ public class Utils {
          if (isGooglePhotosUri(uri))
             return uri.getLastPathSegment();
 
-         return getDataColumn(uri, null, null);
+         return getDataColumn(context, uri, null, null);
       }
       // File
       else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -390,9 +389,9 @@ public class Utils {
     * Uri is unsupported or pointed to a remote resource.
     * @author paulburke
     */
-   public static File getFile(Uri uri) {
+   public static File getFile(Context context, Uri uri) {
       if (uri != null) {
-         String path = getPath(uri);
+         String path = getPath(context, uri);
          if (path != null && isLocal(path)) {
             return new File(path);
          }
@@ -431,10 +430,10 @@ public class Utils {
       return String.valueOf(dec.format(fileSize) + suffix);
    }
 
-//    public static Uri getUri(Context appContext, Bitmap itemBitmap) {
+//    public static Uri getUri(Context appContext, Bitmap bitmapSoftReference) {
 //        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//        itemBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-//        String path = MediaStore.Images.Media.insertImage(appContext.getContentResolver(), itemBitmap, "img", null);
+//        bitmapSoftReference.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//        String path = MediaStore.Images.Media.insertImage(appContext.getContentResolver(), bitmapSoftReference, "img", null);
 //        return Uri.parse(path);
 //    }
 
@@ -446,8 +445,8 @@ public class Utils {
     * @return
     * @author paulburke
     */
-   public static Bitmap getThumbnail(File file) {
-      return getThumbnail(getUri(file), getMimeType(file));
+   public static Bitmap getThumbnail(Context context, File file) {
+      return getThumbnail(context, getUri(file), getMimeType(file));
    }
 
    /**
@@ -458,8 +457,8 @@ public class Utils {
     * @return
     * @author paulburke
     */
-   public static Bitmap getThumbnail(Uri uri) {
-      return getThumbnail(uri, getMimeType(uri));
+   public static Bitmap getThumbnail(Context context, Uri uri) {
+      return getThumbnail(context, uri, getMimeType(context, uri));
    }
 
    /**
@@ -471,7 +470,7 @@ public class Utils {
     * @return
     * @author paulburke
     */
-   public static Bitmap getThumbnail(Uri uri, String mimeType) {
+   public static Bitmap getThumbnail(Context context, Uri uri, String mimeType) {
       if (DEBUG)
          Log.d(TAG, "Attempting to get thumbnail");
 
@@ -482,7 +481,7 @@ public class Utils {
 
       Bitmap bm = null;
       if (uri != null) {
-         final ContentResolver resolver = appContext.getContentResolver();
+         final ContentResolver resolver = context.getContentResolver();
          Cursor cursor = null;
          try {
             cursor = resolver.query(uri, null, null, null, null);
@@ -537,7 +536,7 @@ public class Utils {
       return getSavedDir() + "/" + getTime() + ".png";
    }
 
-   public static void saveBitmap(Bitmap bitmap, String dirPath, String fileName) throws IOException {
+   public static File saveBitmap(Bitmap bitmap, String dirPath, String fileName) throws IOException {
       File dir = new File(dirPath);
       dir.mkdirs();
       File file = new File(dir, fileName + ".png");
@@ -547,40 +546,20 @@ public class Utils {
       bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
       fOut.flush();
       fOut.close();
+      return file;
    }
 
-   public static void deleteFile(String path) {
-      File file = new File(path);
-      if (file.exists())
-         file.delete();
+   public static Bitmap getBitmapByPath(String path) throws Exception {
+      BitmapFactory.Options options = new BitmapFactory.Options();
+      options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+      return BitmapFactory.decodeFile(path, options);
    }
 
-   public static Bitmap getBitmapByItem(Item item) {
-      return getBitmapByPath(item.getImgFilePath());
-   }
-
-//    public static void startRoomActivity() {
-//        appContext.startActivity(new Intent(Utils.appContext, RoomActivity.class));
-//    }
-
-   public static Bitmap getBitmapByPath(String path) {
-      try {
-         BitmapFactory.Options options = new BitmapFactory.Options();
-         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-         return BitmapFactory.decodeFile(path, options);
-      } catch (Exception e) {
-         Log.d("!", "couldn't get img from disk!");
-         return null;
-      }
-   }
-
-   public static boolean roomActivityExists() {
-      return (roomActivity != null && !roomActivity.isDestroyed);
-   }
-
-   public static boolean drawingActivityExists() {
-      return (DrawingActivity.drawingActivity != null && !DrawingActivity.drawingActivity.isDestroyed);
-   }
+//   public static boolean roomActivityExists(Context context) {
+//      SharedPreferences preferences = context.
+//              getSharedPreferences("preferences", Context.MODE_PRIVATE);
+//      return Utils.preferences.getBoolean("destroyed", true);
+//   }
 
    public static String getSavedDir() {
       return Environment.getExternalStorageDirectory().getAbsolutePath() + "/Drawingame/saved";
@@ -590,71 +569,73 @@ public class Utils {
       return Environment.getExternalStorageDirectory().getAbsolutePath() + "/Drawingame/cached";
    }
 
-   public static void toast(final RoomActivity activity, final String s) {
-      if (activity == null || activity.isDestroyed)
-         return;
-      activity.runOnUiThread(new Runnable() {
-         @Override
-         public void run() {
-            Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
-         }
-      });
+   public static void toast(final Context context, final String s) {
+//      if (activity == null) //|| activity.isDestroyed)
+//         return;
+//      activity.runOnUiThread(new Runnable() {
+//         @Override
+//         public void run() {
+      Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+//         }
+//      });
    }
 
-   public static void toast(final DrawingActivity activity, final String s) {
-      if (activity == null || activity.isDestroyed)
-         return;
-      activity.runOnUiThread(new Runnable() {
-         @Override
-         public void run() {
-            Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
-         }
-      });
-   }
+//   public static void toast(final DrawingActivity activity, final String s) {
+//      if (activity == null || activity.isDestroyed)
+//         return;
+//      activity.runOnUiThread(new Runnable() {
+//         @Override
+//         public void run() {
+//            Toast.makeText(activity, s, Toast.LENGTH_SHORT).show();
+//         }
+//      });
+//   }
 
-   public static void showErrorWithListenerDialog(final String message,
-                                                  final MyAlertDialog.OnDismissedListener onDismissedListener) {
-      if (roomActivityExists())
+   public static void showErrorWithListenerDialog(final String message, final
+   MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
+//      if (roomActivityExists())
          roomActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-               MyAlertDialog.showErrorWithListener(message, onDismissedListener);
+               MyAlertDialog.showErrorWithListener(message, onDismissedListener, roomActivity);
             }
          });
    }
 
-   public static void showErrorDialog(final String message) {
-      if (roomActivityExists())
+   public static void showErrorDialog(final String message, final RoomActivity roomActivity) {
+//      if (roomActivityExists())
          roomActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-               MyAlertDialog.showError(message);
+               MyAlertDialog.showError(message, roomActivity);
             }
          });
    }
 
-   public static void showConfirmActionDialog(final String message, final MyAlertDialog.OnDismissedListener onDismissedListener) {
-      if (roomActivityExists())
+   public static void showConfirmActionDialog(final String message, final
+   MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
+//      if (roomActivityExists())
          roomActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-               MyAlertDialog.showConfirmAction(message, onDismissedListener);
+               MyAlertDialog.showConfirmAction(message, onDismissedListener, roomActivity);
             }
          });
    }
 
-   public static void showRetryActionDialog(final String message, final MyAlertDialog.OnDismissedListener onDismissedListener) {
-      if (roomActivityExists())
+   public static void showRetryActionDialog(final String message, final
+   MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
+//      if (roomActivityExists())
          roomActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-               MyAlertDialog.showRetryAction(message, onDismissedListener);
+               MyAlertDialog.showRetryAction(message, onDismissedListener, roomActivity);
             }
          });
    }
 
-   public static boolean isNetworkAvailable() {
-      ConnectivityManager conMgr = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+   public static boolean isNetworkAvailable(Context context) {
+      ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
       NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
       if (activeNetwork == null || !activeNetwork.isAvailable()
               || !activeNetwork.isConnected()) {
@@ -663,8 +644,8 @@ public class Utils {
       return true;
    }
 
-   public static int dpToPx(int dp) {
-      return Math.round(dp * (appContext.getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
+   public static int dpToPx(int dp, Context context) {
+      return Math.round(dp * (context.getResources().getDisplayMetrics().xdpi / DisplayMetrics.DENSITY_DEFAULT));
    }
 
    //picture of w*h -> picture of W*h1 or w1*H (proportional scaling)
@@ -692,19 +673,10 @@ public class Utils {
 //      return layoutParams;
 //   }
 
-   public static void init(Context appContext, RoomActivity roomActivity) {
-      Utils.appContext = appContext;
-      if (roomActivity != null) {
-         Utils.roomActivity = roomActivity;
-         getDisplaySize();
-      }
-      preferences = appContext.getSharedPreferences("preferences", Context.MODE_PRIVATE);
-   }
-
    public static int displayWidth;
    public static int displayHeight;
 
-   private static void getDisplaySize() {
+   public static void getDisplaySize(RoomActivity roomActivity) {
       Display display = roomActivity.getWindowManager().getDefaultDisplay();
 
       if (Build.VERSION.SDK_INT >= 17) {
@@ -725,7 +697,7 @@ public class Utils {
             //this may not be 100% accurate, but it's all we've got
             displayWidth = display.getWidth();
             displayHeight = display.getHeight();
-            Log.d("!", "Couldn't use reflection to get the real display metrics.");
+//            Log.d("!", "Couldn't use reflection to get the real display metrics.");
          }
 
       } else {
@@ -738,7 +710,7 @@ public class Utils {
    public static Bitmap getResizedBitmap(Bitmap bitmap) {
       if (bitmap == null)
          return null;
-      int maxSize = 500;
+      int maxSize = 1000;
       int width = bitmap.getWidth();
       int height = bitmap.getHeight();
 
@@ -763,15 +735,15 @@ public class Utils {
       return sdfTime.format(now);
    }
 
-   public static void notifyAdapter() {
-      if (roomActivityExists())
-         roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               roomActivity.tcAdapter.notifyDataSetChanged();
-            }
-         });
-   }
+//   public static void notifyAdapter(final RoomActivity roomActivity) {
+//      if (roomActivityExists())
+//      roomActivity.runOnUiThread(new Runnable() {
+//         @Override
+//         public void run() {
+//            roomActivity.tcAdapter.notifyDataSetChanged();
+//         }
+//      });
+//   }
 
    public static String nameToCodes(String s) {
       JSONArray charCodes = new JSONArray();
@@ -810,17 +782,17 @@ public class Utils {
       return s;
    }
 
-   public static String stringFromRes(int id) {
-      return appContext.getString(id);
+   public static String stringFromRes(Context context, int id) {
+      return context.getString(id);
    }
 
-   public static void showList() {
-      if (roomActivityExists())
-         roomActivity.showList();
-   }
+//   public static void showList(RoomActivity roomActivity) {
+//      if (roomActivityExists())
+//         roomActivity.showList();
+//   }
 
-   public static void showProgress() {
-      if (roomActivityExists())
-         roomActivity.showProgress();
-   }
+//   public static void showProgress(RoomActivity roomActivity) {
+//      if (roomActivityExists())
+//         roomActivity.showProgress();
+//   }
 }

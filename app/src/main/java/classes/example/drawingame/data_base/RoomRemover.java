@@ -1,5 +1,7 @@
 package classes.example.drawingame.data_base;
 
+import android.content.Context;
+
 import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
 import classes.example.drawingame.utils.Utils;
@@ -18,8 +20,8 @@ public class RoomRemover {
         this.listener = listener;
     }
 
-    public void start(Item item) {
-        if (!Utils.isNetworkAvailable()) {
+    public void start(Item item, Context context) {
+        if (!Utils.isNetworkAvailable(context)) {
             listener.onRoomRemoved("error");
             return;
         }

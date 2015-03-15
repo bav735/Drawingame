@@ -21,20 +21,21 @@ public class BanChecker {
             @Override
             public void run(ItemSnapshot itemSnapshot) {
                 if (itemSnapshot != null && itemSnapshot.val() != null && !itemSnapshot.val().isEmpty()) {
-                    listener.onBanChecked(true);
+                    listener.onBanChecked(itemSnapshot.val()
+                            .get(DataBase.ATTRIBUTE_BAN_REASON).toString());
                 } else {
-                    listener.onBanChecked(false);
+                    listener.onBanChecked("");
                 }
             }
         }, new OnError() {
             @Override
             public void run(Integer integer, String s) {
-                listener.onBanChecked(false);
+                listener.onBanChecked("");
             }
         });
     }
 
     public interface OnBanCheckedListener {
-        void onBanChecked(boolean isBanned);
+        void onBanChecked(String banReason);
     }
 }

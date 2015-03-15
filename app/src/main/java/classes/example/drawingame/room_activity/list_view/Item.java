@@ -1,7 +1,5 @@
 package classes.example.drawingame.room_activity.list_view;
 
-import android.graphics.Bitmap;
-
 import java.io.File;
 import java.util.LinkedHashMap;
 
@@ -15,13 +13,10 @@ import co.realtime.storage.ItemAttribute;
 public class Item {
    public String roomId;
    public String roomName;
-   public String roomImgUrl = null;
+   public String roomImgUrl;
    public String lastEditorDeviceId;
-   public Bitmap itemBitmap = null;
-   //    public Drawing drawing = null;
    public int pos;
-   //    public boolean onError = false;
-   public boolean onProgress = false;
+   public String busyState;
 
    public Item(LinkedHashMap<String, ItemAttribute> dbItem) {
       roomId = dbItem.get(DataBase.ATTRIBUTE_ROOM_ID).toString();
@@ -36,8 +31,6 @@ public class Item {
       this.roomImgUrl = item.roomImgUrl;
       this.lastEditorDeviceId = item.lastEditorDeviceId;
       this.pos = item.pos;
-//      this.onProgress = item.onProgress;
-      this.itemBitmap = item.itemBitmap;
    }
 
    public Item() {
@@ -68,8 +61,8 @@ public class Item {
 //   }
 
    public boolean isImgSaved() {
-      return Utils.preferences.getString(roomId, "").equals(roomImgUrl) &&
-              new File(getImgFilePath()).exists();
+//       Utils.preferences.getString(roomId, "").equals(roomImgUrl) &&
+      return new File(getImgFilePath()).exists();
    }
 
    public String getImgFilePath() {
@@ -77,6 +70,7 @@ public class Item {
    }
 
    public String getImgFileName() {
-      return roomId;
+//      http://i.imgur.com/***.png -> ***
+      return roomImgUrl.substring(19, roomImgUrl.length() - 4);
    }
 }

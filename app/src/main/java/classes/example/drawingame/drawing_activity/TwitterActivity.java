@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import classes.example.drawingame.R;
+import classes.example.drawingame.room_activity.service.ListService;
 import classes.example.drawingame.utils.MyAlertDialog;
 import classes.example.drawingame.utils.Utils;
 
@@ -80,7 +81,7 @@ public class TwitterActivity extends FragmentActivity {
 
    private void onException() {
       twitterActivity.finish();
-      Utils.toast(Utils.roomActivity, getString(R.string.repostDrawingFail));
+      ListService.sendMessageShowErrorDialog(R.string.repostDrawingFail);
    }
 
    public volatile boolean isDestroyed = false;
@@ -192,9 +193,9 @@ public class TwitterActivity extends FragmentActivity {
       service.signRequest(accessToken, request);
       Response response = request.send();
       if (response.isSuccessful()) {
-         Utils.toast(Utils.roomActivity, getString(R.string.repostDrawingSuccess));
+         Utils.toast(getApplicationContext(), getString(R.string.repostDrawingSuccess));
       } else {
-         Utils.toast(Utils.roomActivity, getString(R.string.repostDrawingFail));
+         ListService.sendMessageShowErrorDialog(R.string.repostDrawingFail);
       }
       twitterActivity.finish();
    }

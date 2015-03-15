@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +21,7 @@ import classes.example.drawingame.R;
 import classes.example.drawingame.data_base.DataBase;
 import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
+import classes.example.drawingame.room_activity.service.ListService;
 import classes.example.drawingame.utils.Utils;
 
 /**
@@ -46,8 +48,12 @@ public class RoomCreateDialog extends DialogFragment {
          switch (requestCode) {
             case REQUEST_CODE_GALLERY:
                Uri imgUri = data.getData();
-               String imgPath = Utils.getPath(imgUri);
-               newImgBitmap = Utils.getBitmapByPath(imgPath);
+               String imgPath = Utils.getPath(getActivity(), imgUri);
+               try {
+                  newImgBitmap = Utils.getBitmapByPath(imgPath);
+               } catch (Exception e) {
+                  Utils.toast(getActivity(), "Error while image pick!");
+               }
                break;
             case REQUEST_CODE_CAMERA:
                newImgBitmap = (Bitmap) data.getExtras().get("data");
@@ -58,10 +64,12 @@ public class RoomCreateDialog extends DialogFragment {
 
    @Override
    public Dialog onCreateDialog(Bundle bundle) {
-      view = Utils.roomActivity.getLayoutInflater().inflate(R.layout.dialog_room_create, null);
+      view = getActivity().getLayoutInflater().
+              inflate(R.layout.dialog_room_create, null);
       etRoomName = (EditText) view.findViewById(R.id.roomCreateDialogEt);
       ivDialogRoomDrawing = (ImageView) view.findViewById(R.id.roomCreateDialogIv);
-      newImgBitmap = ((BitmapDrawable) getResources().getDrawable(R.drawable.blankimg_white)).getBitmap();
+      newImgBitmap = ((BitmapDrawable) getResources().
+              getDrawable(R.drawable.blankimg_white)).getBitmap();
       setBitmapToIv();
 
       btnCamera = (Button) view.findViewById(R.id.roomCreateDialogBtnCamera);
@@ -97,20 +105,19 @@ public class RoomCreateDialog extends DialogFragment {
          public void onClick(View v) {
             final String roomName = etRoomName.getText().toString();
             if (!roomName.isEmpty()) {
-               Utils.showProgress();
+               ListService.sendMessageShowPb();
                Item item = new Item();
-               item.itemBitmap = Utils.getResizedBitmap(newImgBitmap);
                item.roomId = Utils.getNewId();
                item.lastEditorDeviceId = DataBase.thisDeviceId;
                item.roomName = roomName;
-               ItemList.addNewItem(item);
+               ItemList.startAddItemToDB(item, Utils.getResizedBitmap(newImgBitmap));
                dismiss();
             } else
-               Utils.showErrorDialog(Utils.stringFromRes(R.string.dialogRoomCreateError));
+               ListService.sendMessageShowErrorDialog(R.string.dialogRoomCreateError);
          }
       });
 
-      Dialog dialog = new Dialog(Utils.roomActivity, R.style.DialogStyle);
+      Dialog dialog = new Dialog(getActivity(), R.style.DialogStyle);
       dialog.setContentView(view);
       WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
       lp.dimAmount = 0.73f;
@@ -119,7 +126,7 @@ public class RoomCreateDialog extends DialogFragment {
 
    private void setBitmapToIv() {
       LinearLayout.LayoutParams layoutParams = Utils.scaleToLl(newImgBitmap.getWidth(), newImgBitmap.getHeight(),
-              Utils.dpToPx(144), Utils.dpToPx(224));
+              Utils.dpToPx(144, getActivity()), Utils.dpToPx(224, getActivity()));
       layoutParams.gravity = Gravity.CENTER;
       ivDialogRoomDrawing.setLayoutParams(layoutParams);
       ivDialogRoomDrawing.setImageBitmap(newImgBitmap);

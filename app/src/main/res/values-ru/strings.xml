@@ -12,14 +12,14 @@
     <string name="toastDialogNo">Не надо</string>
     <string name="toastDialogGotIt">Ок</string>
 
-    <string name="banMessage">Поздравляем, вы были забанены</string>
+    <string name="banMessage">Поздравляем, вы были забанены.</string>
     <string name="errorRefreshOne">Картинка не была обновлена, проверьте соединение с интернетом</string>
     <string name="errorRefreshAll">Некоторые картинки не были обновлены, проверьте соединение с интернетом</string>
     <string name="errorDownload">Картинка не была загружена из базы данных, проверьте соединение с интернетом</string>
-    <string name="errorUpload">Ваша картинка не была загружена в базу данных, после отмены она будет утеряна</string>
+    <string name="errorUpload">К сожалению, ваша картинка не была загружена в базу данных</string>
     <string name="errorDb">База данных картинок недоступна, проверьте соединение с интернетом</string>
     <string name="removeMessage">Картинка будет навсегда удалена из базы данных</string>
-    <string name="errorNotFound">Картинка не найдена в базе данных, она будет удалена из списка автоматически</string>
+    <string name="errorNotFound">Картинка не найдена в базе данных, попробуйте обновить список картинок</string>
 
     <string name="repostMessage">Рисунок выложен через Android-приложение Drawingame:</string>
     <string name="repostDrawingSuccess">Репост выполнен успешно</string>

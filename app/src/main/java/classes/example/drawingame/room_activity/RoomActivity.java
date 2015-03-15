@@ -1,8 +1,13 @@
 package classes.example.drawingame.room_activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,15 +24,19 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import classes.example.drawingame.R;
 import classes.example.drawingame.data_base.DataBase;
-import classes.example.drawingame.drawing_activity.DrawingActivity;
+import classes.example.drawingame.data_base.RoomsGetter;
+import classes.example.drawingame.room_activity.list_view.Disk;
 import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
 import classes.example.drawingame.room_activity.list_view.ListAdapter;
+import classes.example.drawingame.room_activity.list_view.Memory;
 import classes.example.drawingame.room_activity.service.ListService;
+import classes.example.drawingame.room_activity.service.ServiceTimer;
 import classes.example.drawingame.utils.MyAlertDialog;
 import classes.example.drawingame.utils.Utils;
 
@@ -41,14 +50,52 @@ public class RoomActivity extends FragmentActivity {
    private int statusBarHeight = 0;
    private int actionBarHeight = 0;
 
+   private SharedPreferences preferences;
    public ListAdapter tcAdapter;
    public ListView roomListView;
    private LinearLayout llBottom;
    public ProgressBar roomProgressBar;
-   public volatile boolean isDestroyed = false;
    public boolean scrollFinished = true;
-   PopupMenu popupMenu;
+   private PopupMenu popupMenu;
    private String notifiedId = null;
+
+   public class MessageHandler extends Handler {
+      @Override
+      public void handleMessage(Message message) {
+         int state = message.arg1;
+         switch (state) {
+            case ListService.MESSAGE_SHOW_PB:
+               showProgress();
+               break;
+            case ListService.MESSAGE_SHOW_LIST:
+               showList();
+               break;
+            case ListService.MESSAGE_NOTIFY_ADAPTER:
+               runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                     if (tcAdapter != null)
+                        tcAdapter.notifyDataSetChanged();
+                  }
+               });
+               break;
+            case ListService.MESSAGE_SHOW_ERROR_DIALOG:
+               Utils.showErrorDialog(Utils.stringFromRes(getApplicationContext()
+                       , message.arg2), RoomActivity.this);
+               break;
+            case ListService.MESSAGE_INIT:
+               if (ItemList.list.isEmpty())
+                  reloadItemList();
+               else
+                  finishInitialize();
+               break;
+            case ListService.MESSAGE_NOTIFY_SCROLL:
+               if (roomProgressBar.getVisibility() == View.INVISIBLE)
+                  checkNotified();
+               break;
+         }
+      }
+   }
 
    @Override
    public void onBackPressed() {
@@ -57,8 +104,6 @@ public class RoomActivity extends FragmentActivity {
 
    private void clearFocus() {
       if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
-//      llBottom.setFocusableInTouchMode(true);
-//      llBottom.requestFocusFromTouch();
    }
 
    private void selectHolderLayout() {
@@ -77,13 +122,6 @@ public class RoomActivity extends FragmentActivity {
          mul--;
          holderHeight = Utils.displayWidth * mul / 9;
       } while (holderHeight > holderMaxHeight);
-//      Log.d("!", "height = " + String.valueOf(Utils.displayHeight));
-//      Log.d("!", "width = " + String.valueOf(Utils.displayWidth));
-//      Log.d("!", "maxheight = " + String.valueOf(holderMaxHeight));
-//      Log.d("!", "holderheight = " + String.valueOf(holderHeight));
-//      Log.d("!", "mul = " + String.valueOf(mul));
-//      Log.d("!", "statusheight = " + String.valueOf(statusBarHeight));
-//      Log.d("!", "barheight = " + String.valueOf(actionBarHeight));
       switch (mul) {
          case 12:
             holderLayoutId = R.layout.holder_3_4;
@@ -104,27 +142,15 @@ public class RoomActivity extends FragmentActivity {
       setTheme(R.style.RoomActivityTheme);
       getWindow().getDecorView().setBackgroundColor(Color.BLACK);
       super.onCreate(savedInstanceState);
+      initializeOverflow();
+      preferences = getApplicationContext().
+              getSharedPreferences("preferences", Context.MODE_PRIVATE);
+      preferences.edit().putBoolean("destroyed", false).commit();
       Log.d("!", "onCreate roomAct");
-      Utils.init(getApplicationContext(), this);
-      DataBase.init();
-      try {
-         ViewConfiguration config = ViewConfiguration.get(Utils.appContext);
-         Field menuKeyField = ViewConfiguration.class
-                 .getDeclaredField("sHasPermanentMenuKey");
-         if (menuKeyField != null) {
-            menuKeyField.setAccessible(true);
-            menuKeyField.setBoolean(config, false);
-         }
-      } catch (Exception e) {
-         //
-      }
       setContentView(R.layout.activity_room);
-      selectHolderLayout();
-      createListView();
-      createPopupMenu();
-      startService(new Intent(Utils.roomActivity, ListService.class));
-      Intent intent = getIntent();
-      notifiedId = intent.getStringExtra("id");
+      roomProgressBar = (ProgressBar) findViewById(R.id.pbActivityRoom);
+      showProgress();
+      initializeInBackground();
    }
 
    private void createPopupMenu() {
@@ -138,13 +164,88 @@ public class RoomActivity extends FragmentActivity {
       });
    }
 
+   private void initializeOverflow() {
+      try {
+         ViewConfiguration config = ViewConfiguration.get(getApplicationContext());
+         Field menuKeyField = ViewConfiguration.class
+                 .getDeclaredField("sHasPermanentMenuKey");
+         if (menuKeyField != null) {
+            menuKeyField.setAccessible(true);
+            menuKeyField.setBoolean(config, false);
+         }
+      } catch (Exception e) {
+         Log.d("!", "overflow is invisible");
+      }
+   }
+
+   private void initializeInBackground() {
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+//            Log.d("!", "started initializeInBackground");
+            DataBase.init(getApplicationContext());
+            Disk.init();
+            Memory.init();
+            Utils.getDisplaySize(RoomActivity.this);
+            selectHolderLayout();
+            RoomActivity.this.runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                  Intent serviceIntent = new Intent(RoomActivity.this, ListService.class);
+                  serviceIntent.putExtra("MESSENGER", new Messenger(new MessageHandler()));
+                  RoomActivity.this.startService(serviceIntent);
+               }
+            });
+         }
+      }).start();
+   }
+
+   private void reloadItemList() {
+//      Log.d("!", "reloading");
+      ItemList.reloadItems(new ItemList.OnReloadListener() {
+         @Override
+         public void onReloaded(boolean isReloaded) {
+            if (!isReloaded) {
+//               Log.d("!", "not reloaded, liist size = " + String.valueOf(ItemList.list.size()));
+               ServiceTimer.isDialogShown = true;
+               Utils.showRetryActionDialog(Utils.stringFromRes(getApplicationContext(), R.string.errorDb),
+                       new MyAlertDialog.OnDismissedListener() {
+                          @Override
+                          public void onDismissed(boolean isPositive) {
+                             ServiceTimer.isDialogShown = false;
+                             if (!isPositive)
+                                RoomActivity.this.finish();
+                             else
+                                reloadItemList();
+                          }
+                       }, RoomActivity.this);
+            } else {
+//               Log.d("!", "reloaded, liist size = " + String.valueOf(ItemList.list.size()));
+               RoomActivity.this.runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                     finishInitialize();
+                  }
+               });
+            }
+         }
+      }, getApplicationContext());
+   }
+
+   private void finishInitialize() {
+      createListView();
+      createPopupMenu();
+      showList();
+      Intent intent = getIntent();
+      notifiedId = intent.getStringExtra("id");
+      ListService.sendMessageNotifyScroll();
+   }
+
    @Override
    protected void onDestroy() {
-      if (Utils.drawingActivityExists())
-         DrawingActivity.drawingActivity.finish();
       super.onDestroy();
       Log.d("!", "onDestroy");
-      isDestroyed = true;
+      preferences.edit().putBoolean("destroyed", true).commit();
    }
 
    @Override
@@ -163,16 +264,8 @@ public class RoomActivity extends FragmentActivity {
    protected void onResume() {
       Log.d("!", "onResume");
       super.onResume();
-      if (Utils.preferences.getBoolean("ban", false))
-         Utils.showErrorWithListenerDialog(Utils.stringFromRes(R.string.banMessage), new MyAlertDialog.OnDismissedListener() {
-            @Override
-            public void onDismissed(boolean isPositive) {
-               if (Utils.roomActivityExists())
-                  finish();
-            }
-         });
-      if (roomProgressBar.getVisibility() == View.INVISIBLE)
-         checkNotified();
+      checkBan();
+      ListService.sendMessageNotifyScroll();
    }
 
    @Override
@@ -187,7 +280,7 @@ public class RoomActivity extends FragmentActivity {
       Log.d("!", "onStop roomAct");
    }
 
-   private int curr = 0;
+//   private int curr = 0;
 
    @Override
    protected void onRestart() {
@@ -207,7 +300,7 @@ public class RoomActivity extends FragmentActivity {
       }
       if (scrollFinished && !ItemList.list.isEmpty()) {
          if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
-            if (event.getAction() == KeyEvent.ACTION_UP)
+            if (event.getAction() == KeyEvent.ACTION_UP && popupMenu != null)
                popupMenu.show();
          } else
             return super.dispatchKeyEvent(event);
@@ -234,8 +327,7 @@ public class RoomActivity extends FragmentActivity {
 
    @Override
    public boolean onOptionsItemSelected(MenuItem menuItem) {
-      boolean switcher = menuSwitcher(menuItem);
-      if (switcher)
+      if (menuSwitcher(menuItem))
          return true;
       return super.onOptionsItemSelected(menuItem);
    }
@@ -244,11 +336,26 @@ public class RoomActivity extends FragmentActivity {
       switch (menuItem.getItemId()) {
 
          case R.id.menuActivityRoomRefresh:
-            ItemList.refreshItems();
+            showProgress();
+            new RoomsGetter(new RoomsGetter.OnRoomsGotListener() {
+               @Override
+               public void onRoomsGot(final ArrayList<Item> dbList) {
+                  if (dbList == null) {
+                     Utils.showErrorDialog(Utils.stringFromRes(getApplicationContext(),
+                             R.string.errorDb), RoomActivity.this);
+                     showList();
+                  } else {
+                     if (!ItemList.listIsSetting && !ItemList.isOnProgress())
+                        ItemList.setNewList(getApplicationContext(), dbList, null);
+                     else
+                        showList();
+                  }
+               }
+            }).start(getApplicationContext());
             return true;
 
          case R.id.menuActivityRoomAdd:
-//            ListService.sendNotification("111", ItemList.get(curr).roomId);
+//            ListService.sendNotification("111", ItemList.list.get(curr).roomId);
 //            curr++;
             RoomCreateDialog roomCreateDialog = new RoomCreateDialog();
             roomCreateDialog.setCancelable(false);
@@ -256,17 +363,17 @@ public class RoomActivity extends FragmentActivity {
             return true;
 
          case R.id.menuActivityRoomExit:
-            Utils.showConfirmActionDialog(Utils.stringFromRes(R.string.appExit),
-                    new MyAlertDialog.OnDismissedListener() {
-                       @Override
-                       public void onDismissed(boolean isPositive) {
-                          if (isPositive) {
-                             ListService.stopTimer();
-                             stopService(new Intent(Utils.roomActivity, ListService.class));
-                             Utils.roomActivity.finish();
-                          }
-                       }
-                    });
+            Utils.showConfirmActionDialog(Utils.stringFromRes(getApplicationContext(),
+                    R.string.appExit), new MyAlertDialog.OnDismissedListener() {
+               @Override
+               public void onDismissed(boolean isPositive) {
+                  if (isPositive) {
+                     ListService.stopTimer();
+                     stopService(new Intent(RoomActivity.this, ListService.class));
+                     RoomActivity.this.finish();
+                  }
+               }
+            }, RoomActivity.this);
             return true;
 
          default:
@@ -280,18 +387,11 @@ public class RoomActivity extends FragmentActivity {
       super.openOptionsMenu();
    }
 
-   private void
-   createListView() {
+   private void createListView() {
       llBottom = (LinearLayout) findViewById(R.id.roomActivityLlBottom);
-      roomProgressBar = (ProgressBar) findViewById(R.id.pbActivityRoom);
       roomListView = (ListView) findViewById(R.id.roomListView);
-//      roomListView.addFooterView(new View(Utils.appContext), null, true);
-      tcAdapter = new ListAdapter();
+      tcAdapter = new ListAdapter(getApplicationContext(), RoomActivity.this, roomListView);
       roomListView.setAdapter(tcAdapter);
-      if (ItemList.list.isEmpty()) {
-         showProgress();
-      } else
-         ItemList.reloadItems();
    }
 
    private void checkNotified() {
@@ -308,20 +408,33 @@ public class RoomActivity extends FragmentActivity {
                public void run() {
                   scroll(map.get(notifiedIdCopy).pos);
                }
-            }, 333);
+            }, 500);
          } else
-            Utils.toast(Utils.roomActivity, Utils.stringFromRes(R.string.errorNotFound));
+            Utils.toast(RoomActivity.this, Utils.stringFromRes(getApplicationContext(),
+                    R.string.errorNotFound));
       }
    }
 
+   public void checkBan() {
+      String banReason = preferences.getString("ban", "");
+      if (!banReason.isEmpty())
+         Utils.showErrorWithListenerDialog(Utils.stringFromRes(getApplicationContext(),
+                 R.string.banMessage) + " " + banReason, new MyAlertDialog.OnDismissedListener() {
+            @Override
+            public void onDismissed(boolean isPositive) {
+               RoomActivity.this.finish();
+            }
+         }, RoomActivity.this);
+   }
+
    private void scroll(final int pos) {
-      Log.d("!", "scroll to " + String.valueOf(pos));
+//      Log.d("!", "scroll to " + String.valueOf(pos));
       scrollFinished = false;
       int postTime = 0;
       if (pos > 0) {
          int offset = (getResources().getDimensionPixelSize(R.dimen.room_activity_divider_size)
                  + holderHeight) * pos;
-         if (pos < ItemList.size() - 1)
+         if (pos < ItemList.list.size() - 1)
             offset -= actionBarHeight;
          roomListView.smoothScrollBy(offset, SCROLL_DURATION);
          postTime = SCROLL_DURATION;
@@ -346,8 +459,8 @@ public class RoomActivity extends FragmentActivity {
          @Override
          public void run() {
             if (getActionBar() != null) getActionBar().hide();
-            roomProgressBar.setVisibility(View.VISIBLE);
-            roomListView.setVisibility(View.INVISIBLE);
+            if (roomProgressBar != null) roomProgressBar.setVisibility(View.VISIBLE);
+            if (roomListView != null) roomListView.setVisibility(View.INVISIBLE);
          }
       });
    }
@@ -357,9 +470,8 @@ public class RoomActivity extends FragmentActivity {
          @Override
          public void run() {
             if (getActionBar() != null) getActionBar().show();
-            roomProgressBar.setVisibility(View.INVISIBLE);
-            roomListView.setVisibility(View.VISIBLE);
-            checkNotified();
+            if (roomProgressBar != null) roomProgressBar.setVisibility(View.INVISIBLE);
+            if (roomListView != null) roomListView.setVisibility(View.VISIBLE);
          }
       });
    }
