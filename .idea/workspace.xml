@@ -22,41 +22,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="app: classes.example.drawingame" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9aae26e3-5e21-44a2-858a-560c19eb8807" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/A.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Disk.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Memory.java" />
-      <change type="DELETED" beforePath="C:\Android_Projects\Drawingame\app\app-release.apk" afterPath="" />
-      <change type="DELETED" beforePath="C:\Android_Projects\Drawingame\app\src\main\java\classes\example\drawingame\utils\MyApplication.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/BanChecker.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/BanChecker.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/DataBase.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/DataBase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/draw_view/DrawView.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/draw_view/DrawView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/DrawingActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/DrawingActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurDownload.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurDownload.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurUpload.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurUpload.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Item.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Item.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ItemList.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ItemList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ListAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ListAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ListService.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ListService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/MyAlertDialog.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/MyAlertDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomCreateDialog.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomCreateDialog.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomRemover.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomRemover.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomUpdater.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomUpdater.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomsGetter.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomsGetter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ServiceTimer.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ServiceTimer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/TwitterActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/TwitterActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/Utils.java" afterPath="$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/Utils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values-ru/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/twitter_activity_style.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/twitter_activity_style.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="9aae26e3-5e21-44a2-858a-560c19eb8807" name="Default" comment="" />
     <ignored path="Drawingame.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,20 +52,23 @@
       <file leaf-file-name="ItemList.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ItemList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4319" max-vertical-offset="6447">
-              <caret line="253" column="40" selection-start-line="253" selection-start-column="40" selection-end-line="253" selection-end-column="40" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="5075" max-vertical-offset="7560">
+              <caret line="253" column="26" selection-start-line="253" selection-start-column="26" selection-end-line="253" selection-end-column="26" />
               <folding>
-                <element signature="e#1308#1314#0" expanded="true" />
-                <element signature="e#3490#3496#0" expanded="true" />
                 <element signature="e#4776#4790#0" expanded="true" />
-                <element signature="e#8547#9110#0" expanded="true" />
-                <element signature="e#8926#8948#0" expanded="true" />
-                <element signature="e#9101#9102#0" expanded="true" />
-                <element signature="e#9553#9573#0" expanded="true" />
-                <element signature="e#10534#10554#0" expanded="true" />
+                <element signature="e#5262#6132#0" expanded="false" />
+                <element signature="e#5648#5670#0" expanded="false" />
+                <element signature="e#6123#6124#0" expanded="false" />
+                <element signature="e#7053#7054#0" expanded="false" />
+                <element signature="e#7283#7307#0" expanded="false" />
+                <element signature="e#7424#7446#0" expanded="false" />
+                <element signature="e#9251#9649#0" expanded="true" />
+                <element signature="e#9640#9641#0" expanded="true" />
                 <element signature="e#11434#12140#0" expanded="true" />
-                <element signature="e#12035#12055#0" expanded="true" />
                 <element signature="e#12131#12132#0" expanded="true" />
+                <element signature="e#13164#13165#0" expanded="false" />
+                <marker date="1426450268365" expanded="true" signature="9602:9636" placeholder="&quot;Unfortunately, your picture wasn't loaded to data base&quot;" />
+                <marker date="1426450268365" expanded="false" signature="11254:11297" placeholder="&quot;Unfortunately, your picture wasn't loaded to data base&quot;" />
               </folding>
             </state>
           </provider>
@@ -121,45 +90,17 @@
       <file leaf-file-name="RoomActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="7347" max-vertical-offset="10101">
+            <state vertical-scroll-proportion="0.0" vertical-offset="7431" max-vertical-offset="10185">
               <caret line="359" column="14" selection-start-line="359" selection-start-column="14" selection-end-line="359" selection-end-column="14" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2641#2862#0" expanded="true" />
-                <element signature="e#2844#2845#0" expanded="true" />
-                <element signature="e#5670#5845#0" expanded="true" />
-                <element signature="e#5836#5837#0" expanded="true" />
-                <element signature="e#6399#7135#0" expanded="true" />
-                <element signature="e#6759#7114#0" expanded="true" />
-                <element signature="e#7099#7100#0" expanded="true" />
-                <element signature="e#7126#7127#0" expanded="true" />
-                <element signature="e#7247#8501#0" expanded="true" />
-                <element signature="e#7622#7638#0" expanded="true" />
-                <element signature="e#7664#8121#0" expanded="true" />
-                <element signature="e#8095#8096#0" expanded="true" />
-                <element signature="e#8306#8466#0" expanded="true" />
-                <element signature="e#8448#8449#0" expanded="true" />
-                <element signature="e#8492#8493#0" expanded="true" />
-                <element signature="e#8986#8987#0" expanded="true" />
-                <element signature="e#9014#9015#0" expanded="true" />
-                <element signature="e#9642#9643#0" expanded="true" />
-                <element signature="e#9672#9673#0" expanded="true" />
+                <element signature="e#3623#3624#0" expanded="false" />
                 <element signature="e#9742#9743#0" expanded="true" />
                 <element signature="e#9791#9792#0" expanded="true" />
-                <element signature="e#11104#11768#0" expanded="true" />
-                <element signature="e#11395#11411#0" expanded="true" />
-                <element signature="e#11753#11754#0" expanded="true" />
-                <element signature="e#12339#12355#0" expanded="true" />
-                <element signature="e#12358#12751#0" expanded="true" />
-                <element signature="e#12736#12737#0" expanded="true" />
+                <element signature="e#9742#9743#0" expanded="true" />
+                <element signature="e#9791#9792#0" expanded="true" />
                 <element signature="e#12904#12905#0" expanded="true" />
                 <element signature="e#12940#12941#0" expanded="true" />
-                <element signature="e#13662#13824#0" expanded="true" />
-                <element signature="e#13809#13810#0" expanded="true" />
-                <element signature="e#13956#13978#0" expanded="true" />
-                <element signature="e#14220#14239#0" expanded="true" />
-                <element signature="e#14260#14449#0" expanded="true" />
-                <element signature="e#14437#14438#0" expanded="true" />
                 <element signature="e#14671#14743#0" expanded="true" />
                 <element signature="e#15007#15153#0" expanded="true" />
                 <element signature="e#15144#15145#0" expanded="true" />
@@ -172,24 +113,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Drawing.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Drawing.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/draw_view/Drawing.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="392" max-vertical-offset="861">
-              <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.60553634" vertical-offset="266" max-vertical-offset="861">
+              <caret line="29" column="10" selection-start-line="29" selection-start-column="10" selection-end-line="29" selection-end-column="10" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Memory.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Memory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.61989796" vertical-offset="135" max-vertical-offset="1533">
-              <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -197,9 +126,11 @@
       <file leaf-file-name="RoomCreateDialog.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomCreateDialog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1509" max-vertical-offset="2289">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2034" max-vertical-offset="2835">
               <caret line="112" column="30" selection-start-line="112" selection-start-column="30" selection-end-line="112" selection-end-column="30" />
-              <folding />
+              <folding>
+                <element signature="e#4533#4563#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -207,15 +138,13 @@
       <file leaf-file-name="ListService.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ListService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3757" max-vertical-offset="4179">
-              <caret line="180" column="13" selection-start-line="180" selection-start-column="13" selection-end-line="180" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3841" max-vertical-offset="4179">
+              <caret line="184" column="13" selection-start-line="184" selection-start-column="13" selection-end-line="184" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2505#2521#0" expanded="true" />
-                <element signature="e#2583#2611#0" expanded="true" />
-                <element signature="e#2972#3004#0" expanded="true" />
-                <element signature="e#3242#3243#0" expanded="true" />
-                <element signature="e#3268#3269#0" expanded="true" />
+                <marker date="1426450268546" expanded="true" signature="2505:2530" placeholder="&quot;Drawingame&quot;" />
+                <marker date="1426450268546" expanded="true" signature="2583:2620" placeholder="&quot;Pictures updating service is running&quot;" />
+                <marker date="1426450268546" expanded="true" signature="6128:6133" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -224,26 +153,13 @@
       <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/Utils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="6235" max-vertical-offset="16821">
+            <state vertical-scroll-proportion="0.0" vertical-offset="6298" max-vertical-offset="16884">
               <caret line="307" column="28" selection-start-line="307" selection-start-column="28" selection-end-line="307" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1913#2190#0" expanded="true" />
-                <element signature="e#2184#2185#0" expanded="true" />
-                <element signature="e#2313#2589#0" expanded="true" />
-                <element signature="e#2583#2584#0" expanded="true" />
-                <element signature="e#19239#19430#0" expanded="true" />
-                <element signature="e#19418#19419#0" expanded="true" />
-                <element signature="e#19604#19762#0" expanded="true" />
-                <element signature="e#19750#19751#0" expanded="true" />
-                <element signature="e#20008#20195#0" expanded="true" />
-                <element signature="e#20183#20184#0" expanded="true" />
-                <element signature="e#20439#20624#0" expanded="true" />
-                <element signature="e#20612#20613#0" expanded="true" />
-                <element signature="e#23981#23982#0" expanded="true" />
-                <element signature="e#24051#24052#0" expanded="true" />
-                <element signature="e#25804#25805#0" expanded="true" />
-                <element signature="e#25845#25846#0" expanded="true" />
+                <element signature="e#2915#3182#0" expanded="false" />
+                <element signature="e#3176#3177#0" expanded="false" />
+                <marker date="1426450268656" expanded="true" signature="26130:26134" placeholder="//..." />
               </folding>
             </state>
           </provider>
@@ -252,20 +168,10 @@
       <file leaf-file-name="DrawingActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/DrawingActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="880" max-vertical-offset="6426">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1048" max-vertical-offset="6699">
               <caret line="77" column="40" selection-start-line="77" selection-start-column="40" selection-end-line="77" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Disk.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Disk.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="156" max-vertical-offset="1575">
-              <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <marker date="1426450268109" expanded="false" signature="5645:5681" placeholder="&quot;This option requires network-provided time to be used, ...&quot;" />
               </folding>
             </state>
           </provider>
@@ -294,7 +200,7 @@
       <file leaf-file-name="Item.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Item.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="155" max-vertical-offset="1575">
+            <state vertical-scroll-proportion="0.0" vertical-offset="260" max-vertical-offset="1722">
               <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
               <folding />
             </state>
@@ -304,15 +210,12 @@
       <file leaf-file-name="RoomsGetter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomsGetter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1176">
-              <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="31" selection-end-column="7" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="478" max-vertical-offset="1344">
+              <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
               <folding>
                 <element signature="e#566#567#0" expanded="true" />
                 <element signature="e#603#604#0" expanded="true" />
-                <element signature="e#918#1294#0" expanded="true" />
-                <element signature="e#1285#1286#0" expanded="true" />
-                <element signature="e#1296#1442#0" expanded="true" />
-                <element signature="e#1433#1434#0" expanded="true" />
+                <marker date="1426450268039" expanded="true" signature="1504:1506" placeholder="//..." />
               </folding>
             </state>
           </provider>
@@ -321,9 +224,11 @@
       <file leaf-file-name="ImgurDownload.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurDownload.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="182" max-vertical-offset="819">
+            <state vertical-scroll-proportion="0.0" vertical-offset="287" max-vertical-offset="987">
               <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-              <folding />
+              <folding>
+                <element signature="e#1116#1117#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1656,14 +1561,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4350877" sideWeight="0.6039454" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4350877" sideWeight="0.6039454" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4631579" sideWeight="0.69224924" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6984668" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.75" sideWeight="0.24658574" order="10" side_tool="true" content_ui="tabs" />
@@ -1672,14 +1577,14 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.95964915" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25265554" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24912281" sideWeight="0.7534143" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25438598" sideWeight="0.75911856" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25438598" sideWeight="0.75911856" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2530395" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2530395" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7280702" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Memory Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -2002,104 +1907,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/draw_view/Drawing.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="392" max-vertical-offset="861">
-          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/imgur/ImgurDownload.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="182" max-vertical-offset="819">
+        <state vertical-scroll-proportion="0.0" vertical-offset="287" max-vertical-offset="987">
           <caret line="21" column="12" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
-          <folding />
+          <folding>
+            <element signature="e#1116#1117#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/service/ListService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3757" max-vertical-offset="4179">
-          <caret line="180" column="13" selection-start-line="180" selection-start-column="13" selection-end-line="180" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="3841" max-vertical-offset="4179">
+          <caret line="184" column="13" selection-start-line="184" selection-start-column="13" selection-end-line="184" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2505#2521#0" expanded="true" />
-            <element signature="e#2583#2611#0" expanded="true" />
-            <element signature="e#2972#3004#0" expanded="true" />
-            <element signature="e#3242#3243#0" expanded="true" />
-            <element signature="e#3268#3269#0" expanded="true" />
+            <marker date="1426450268546" expanded="true" signature="2505:2530" placeholder="&quot;Drawingame&quot;" />
+            <marker date="1426450268546" expanded="true" signature="2583:2620" placeholder="&quot;Pictures updating service is running&quot;" />
+            <marker date="1426450268546" expanded="true" signature="6128:6133" placeholder="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/utils/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6235" max-vertical-offset="16821">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6298" max-vertical-offset="16884">
           <caret line="307" column="28" selection-start-line="307" selection-start-column="28" selection-end-line="307" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1913#2190#0" expanded="true" />
-            <element signature="e#2184#2185#0" expanded="true" />
-            <element signature="e#2313#2589#0" expanded="true" />
-            <element signature="e#2583#2584#0" expanded="true" />
-            <element signature="e#19239#19430#0" expanded="true" />
-            <element signature="e#19418#19419#0" expanded="true" />
-            <element signature="e#19604#19762#0" expanded="true" />
-            <element signature="e#19750#19751#0" expanded="true" />
-            <element signature="e#20008#20195#0" expanded="true" />
-            <element signature="e#20183#20184#0" expanded="true" />
-            <element signature="e#20439#20624#0" expanded="true" />
-            <element signature="e#20612#20613#0" expanded="true" />
-            <element signature="e#23981#23982#0" expanded="true" />
-            <element signature="e#24051#24052#0" expanded="true" />
-            <element signature="e#25804#25805#0" expanded="true" />
-            <element signature="e#25845#25846#0" expanded="true" />
+            <element signature="e#2915#3182#0" expanded="false" />
+            <element signature="e#3176#3177#0" expanded="false" />
+            <marker date="1426450268656" expanded="true" signature="26130:26134" placeholder="//..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="7347" max-vertical-offset="10101">
+        <state vertical-scroll-proportion="0.0" vertical-offset="7431" max-vertical-offset="10185">
           <caret line="359" column="14" selection-start-line="359" selection-start-column="14" selection-end-line="359" selection-end-column="14" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2641#2862#0" expanded="true" />
-            <element signature="e#2844#2845#0" expanded="true" />
-            <element signature="e#5670#5845#0" expanded="true" />
-            <element signature="e#5836#5837#0" expanded="true" />
-            <element signature="e#6399#7135#0" expanded="true" />
-            <element signature="e#6759#7114#0" expanded="true" />
-            <element signature="e#7099#7100#0" expanded="true" />
-            <element signature="e#7126#7127#0" expanded="true" />
-            <element signature="e#7247#8501#0" expanded="true" />
-            <element signature="e#7622#7638#0" expanded="true" />
-            <element signature="e#7664#8121#0" expanded="true" />
-            <element signature="e#8095#8096#0" expanded="true" />
-            <element signature="e#8306#8466#0" expanded="true" />
-            <element signature="e#8448#8449#0" expanded="true" />
-            <element signature="e#8492#8493#0" expanded="true" />
-            <element signature="e#8986#8987#0" expanded="true" />
-            <element signature="e#9014#9015#0" expanded="true" />
-            <element signature="e#9642#9643#0" expanded="true" />
-            <element signature="e#9672#9673#0" expanded="true" />
+            <element signature="e#3623#3624#0" expanded="false" />
             <element signature="e#9742#9743#0" expanded="true" />
             <element signature="e#9791#9792#0" expanded="true" />
-            <element signature="e#11104#11768#0" expanded="true" />
-            <element signature="e#11395#11411#0" expanded="true" />
-            <element signature="e#11753#11754#0" expanded="true" />
-            <element signature="e#12339#12355#0" expanded="true" />
-            <element signature="e#12358#12751#0" expanded="true" />
-            <element signature="e#12736#12737#0" expanded="true" />
+            <element signature="e#9742#9743#0" expanded="true" />
+            <element signature="e#9791#9792#0" expanded="true" />
             <element signature="e#12904#12905#0" expanded="true" />
             <element signature="e#12940#12941#0" expanded="true" />
-            <element signature="e#13662#13824#0" expanded="true" />
-            <element signature="e#13809#13810#0" expanded="true" />
-            <element signature="e#13956#13978#0" expanded="true" />
-            <element signature="e#14220#14239#0" expanded="true" />
-            <element signature="e#14260#14449#0" expanded="true" />
-            <element signature="e#14437#14438#0" expanded="true" />
             <element signature="e#14671#14743#0" expanded="true" />
             <element signature="e#15007#15153#0" expanded="true" />
             <element signature="e#15144#15145#0" expanded="true" />
@@ -2113,17 +1969,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/RoomCreateDialog.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1509" max-vertical-offset="2289">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2034" max-vertical-offset="2835">
           <caret line="112" column="30" selection-start-line="112" selection-start-column="30" selection-end-line="112" selection-end-column="30" />
-          <folding />
+          <folding>
+            <element signature="e#4533#4563#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/DrawingActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="880" max-vertical-offset="6426">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1048" max-vertical-offset="6699">
           <caret line="77" column="40" selection-start-line="77" selection-start-column="40" selection-end-line="77" selection-end-column="40" />
-          <folding />
+          <folding>
+            <marker date="1426450268109" expanded="false" signature="5645:5681" placeholder="&quot;This option requires network-provided time to be used, ...&quot;" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2145,35 +2005,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/data_base/RoomsGetter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1176">
-          <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="31" selection-end-column="7" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="478" max-vertical-offset="1344">
+          <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
           <folding>
             <element signature="e#566#567#0" expanded="true" />
             <element signature="e#603#604#0" expanded="true" />
-            <element signature="e#918#1294#0" expanded="true" />
-            <element signature="e#1285#1286#0" expanded="true" />
-            <element signature="e#1296#1442#0" expanded="true" />
-            <element signature="e#1433#1434#0" expanded="true" />
+            <marker date="1426450268039" expanded="true" signature="1504:1506" placeholder="//..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/ItemList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4319" max-vertical-offset="6447">
-          <caret line="253" column="40" selection-start-line="253" selection-start-column="40" selection-end-line="253" selection-end-column="40" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="5075" max-vertical-offset="7560">
+          <caret line="253" column="26" selection-start-line="253" selection-start-column="26" selection-end-line="253" selection-end-column="26" />
           <folding>
-            <element signature="e#1308#1314#0" expanded="true" />
-            <element signature="e#3490#3496#0" expanded="true" />
             <element signature="e#4776#4790#0" expanded="true" />
-            <element signature="e#8547#9110#0" expanded="true" />
-            <element signature="e#8926#8948#0" expanded="true" />
-            <element signature="e#9101#9102#0" expanded="true" />
-            <element signature="e#9553#9573#0" expanded="true" />
-            <element signature="e#10534#10554#0" expanded="true" />
+            <element signature="e#5262#6132#0" expanded="false" />
+            <element signature="e#5648#5670#0" expanded="false" />
+            <element signature="e#6123#6124#0" expanded="false" />
+            <element signature="e#7053#7054#0" expanded="false" />
+            <element signature="e#7283#7307#0" expanded="false" />
+            <element signature="e#7424#7446#0" expanded="false" />
+            <element signature="e#9251#9649#0" expanded="true" />
+            <element signature="e#9640#9641#0" expanded="true" />
             <element signature="e#11434#12140#0" expanded="true" />
-            <element signature="e#12035#12055#0" expanded="true" />
             <element signature="e#12131#12132#0" expanded="true" />
+            <element signature="e#13164#13165#0" expanded="false" />
+            <marker date="1426450268365" expanded="true" signature="9602:9636" placeholder="&quot;Unfortunately, your picture wasn't loaded to data base&quot;" />
+            <marker date="1426450268365" expanded="false" signature="11254:11297" placeholder="&quot;Unfortunately, your picture wasn't loaded to data base&quot;" />
           </folding>
         </state>
       </provider>
@@ -2189,31 +2049,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Disk.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="156" max-vertical-offset="1575">
-          <caret line="67" column="34" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Item.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="155" max-vertical-offset="1575">
+        <state vertical-scroll-proportion="0.0" vertical-offset="260" max-vertical-offset="1722">
           <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/room_activity/list_view/Memory.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/classes/example/drawingame/drawing_activity/draw_view/Drawing.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61989796" vertical-offset="135" max-vertical-offset="1533">
-          <caret line="18" column="42" selection-start-line="18" selection-start-column="42" selection-end-line="18" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.60553634" vertical-offset="266" max-vertical-offset="861">
+          <caret line="29" column="10" selection-start-line="29" selection-start-column="10" selection-end-line="29" selection-end-column="10" />
+          <folding />
         </state>
       </provider>
     </entry>
