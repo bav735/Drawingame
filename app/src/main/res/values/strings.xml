@@ -12,7 +12,8 @@
     <string name="toastDialogNo">No</string>
     <string name="toastDialogGotIt">Got it</string>
 
-    <string name="banMessage">Congratulations, you were banned.</string>
+    <string name="banMessage1">Unfortunately, you were banned.\nThe reason:</string>
+    <string name="banMessage2">\nBan until:</string>
     <string name="errorRefreshOne">The picture wasn\'t refreshed, check connection to network</string>
     <string name="errorRefreshAll">Some of pictures weren\'t refreshed, check connection to network</string>
     <string name="errorDownload">The picture wasn\'t loaded from data base</string>

@@ -76,7 +76,8 @@ public class DrawingActivity extends FragmentActivity {
 //                  Item item = new Item(ItemList.list.get(pos));
 //                  item.lastEditorDeviceId = DataBase.thisDeviceId;
                   ItemList.startUpdateItemToDB(ItemList.list.get(pos),
-                          Utils.getResizedBitmap(drawView.getBitmap()));
+                          Utils.getResizedBitmap(drawView.getBitmap()),
+                          getApplicationContext());
                   finish();
                   return true;
 

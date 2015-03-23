@@ -3,6 +3,7 @@ package classes.example.drawingame.room_activity.list_view;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,7 +135,7 @@ public class ItemList {
       return false;
    }
 
-   public static void refreshItemFromDB(final Item item) {
+   public static void refreshItemFromDB(final Item item, Context context) {
       if (item.busyState != null) return;
       ItemList.setBusyState(item, ITEM_PROGRESS);
       new RoomGetter(new RoomGetter.OnRoomGotListener() {
@@ -158,7 +159,7 @@ public class ItemList {
             } else
                setBusyState(item, null);
          }
-      }).start(item.roomId);
+      }).start(item.roomId, context);
    }
 
    public static void setBusyState(Item item, String state) {
@@ -221,11 +222,11 @@ public class ItemList {
       }).start(item, context);
    }
 
-   public static void startUpdateItemToDB(Item item, Bitmap bitmap) {
-      updateItemToDBCheckFromDB(item, bitmap);
+   public static void startUpdateItemToDB(Item item, Bitmap bitmap, Context context) {
+      updateItemToDBCheckFromDB(item, bitmap, context);
    }
 
-   private static void updateItemToDBCheckFromDB(final Item item, final Bitmap bitmap) {
+   private static void updateItemToDBCheckFromDB(final Item item, final Bitmap bitmap, final Context context) {
       new RoomGetter(new RoomGetter.OnRoomGotListener() {
          @Override
          public void onRoomGot(Item dbItem, boolean isError) {
@@ -237,18 +238,19 @@ public class ItemList {
                   ListService.sendMessageShowErrorDialog(R.string.errorNotFound);
                   setBusyState(item, null);
                } else
-                  updateItemToDBUploadToImgur(item, bitmap);
+                  updateItemToDBUploadToImgur(item, bitmap, context);
             }
          }
-      }).start(item.roomId);
+      }).start(item.roomId, context);
    }
 
-   private static void updateItemToDBUploadToImgur(final Item item, final Bitmap bitmap) {
+   private static void updateItemToDBUploadToImgur(final Item item, final Bitmap bitmap,
+                                                   final Context context) {
       new ImgurUpload(new ImgurUpload.OnImgUrlReceivedListener() {
          @Override
          public void onImgUrlReceived(final String newImgUrl) {
             if (newImgUrl != null) {
-               finishUpdateItemToDB(item, bitmap, newImgUrl);
+               finishUpdateItemToDB(item, bitmap, newImgUrl, context);
             } else {
                ListService.sendMessageShowErrorDialog(R.string.errorUpload);
                setBusyState(item, null);
@@ -257,7 +259,8 @@ public class ItemList {
       }).start(bitmap);
    }
 
-   private static void finishUpdateItemToDB(final Item item, final Bitmap bitmap, final String newUrl) {
+   private static void finishUpdateItemToDB(final Item item, final Bitmap bitmap,
+                                            final String newUrl,Context context) {
       new RoomUpdater(new RoomUpdater.onRoomUpdatedListener() {
          @Override
          public void onRoomUpdated(boolean isUpdated) {
@@ -279,20 +282,20 @@ public class ItemList {
                setBusyState(item, null);
             }
          }
-      }).start(item, newUrl);
+      }).start(item, newUrl,context);
    }
 
-   public static void startAddItemToDB(Item item, Bitmap bitmap) {
-      uploadItemToImgur(item, bitmap);
+   public static void startAddItemToDB(Item item, Bitmap bitmap, Context context) {
+      uploadItemToImgur(item, bitmap, context);
    }
 
-   public static void uploadItemToImgur(final Item item, final Bitmap bitmap) {
+   public static void uploadItemToImgur(final Item item, final Bitmap bitmap, final Context context) {
       new ImgurUpload(new ImgurUpload.OnImgUrlReceivedListener() {
          @Override
          public void onImgUrlReceived(final String newImgUrl) {
             if (newImgUrl != null) {
                item.roomImgUrl = newImgUrl;
-               finishAddItemToDB(item, bitmap);
+               finishAddItemToDB(item, bitmap, context);
             } else {
                ListService.sendMessageShowErrorDialog(R.string.errorUpload);
                ListService.sendMessageShowList();
@@ -301,7 +304,7 @@ public class ItemList {
       }).start(bitmap);
    }
 
-   private static void finishAddItemToDB(final Item item, final Bitmap bitmap) {
+   private static void finishAddItemToDB(final Item item, final Bitmap bitmap, Context context) {
       new RoomAdder(new RoomAdder.onRoomAddedListener() {
          @Override
          public void onRoomAdded(boolean isAdded) {
@@ -320,21 +323,19 @@ public class ItemList {
                ListService.sendMessageShowList();
             }
          }
-      }).start(item);
+      }).start(item, context);
    }
 
    public static void reloadItems(final OnReloadListener listener, final Context context) {
       new Thread(new Runnable() {
          @Override
          public void run() {
-//            if (!ItemList.listIsSetting) {
-//               ItemList.listIsSetting = true;
             SharedPreferences preferences = context.
                     getSharedPreferences("preferences", Context.MODE_PRIVATE);
             if (preferences.contains("list"))
                getFromPref(context, preferences.getString("list", null), listener);
             else {
-//               Log.d("!", "getting from web");
+               Log.d("!", "getting from web");
                new RoomsGetter(new RoomsGetter.OnRoomsGotListener() {
                   @Override
                   public void onRoomsGot(final ArrayList<Item> dbList) {

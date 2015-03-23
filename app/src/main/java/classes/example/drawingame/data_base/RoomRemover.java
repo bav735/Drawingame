@@ -3,7 +3,6 @@ package classes.example.drawingame.data_base;
 import android.content.Context;
 
 import classes.example.drawingame.room_activity.list_view.Item;
-import classes.example.drawingame.room_activity.list_view.ItemList;
 import classes.example.drawingame.utils.Utils;
 import co.realtime.storage.ItemAttribute;
 import co.realtime.storage.ItemSnapshot;
@@ -21,7 +20,7 @@ public class RoomRemover {
     }
 
     public void start(Item item, Context context) {
-        if (!Utils.isNetworkAvailable(context)) {
+        if (Utils.isNoInternet(context)) {
             listener.onRoomRemoved("error");
             return;
         }

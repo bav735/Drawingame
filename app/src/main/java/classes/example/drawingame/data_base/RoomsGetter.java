@@ -1,6 +1,7 @@
 package classes.example.drawingame.data_base;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -22,11 +23,14 @@ public class RoomsGetter {
    }
 
    public void start(final Context context) {
-//      new Thread(new Runnable() {
-//         @Override
-//         public void run() {
-//            Looper.prepare();
-      if (!Utils.isNetworkAvailable(context)) {
+      if (DataBase.isDisconnected()) {
+         Log.d("!", "DB disconnected");
+         listener.onRoomsGot(null);//CHECK_RESULT_DISCONNECT);
+         DataBase.connect(context);
+         return;
+      }
+      if (Utils.isNoInternet(context)) {
+         Log.d("!", "no net");
          listener.onRoomsGot(null);
          return;
       }
@@ -47,9 +51,6 @@ public class RoomsGetter {
             listener.onRoomsGot(null);
          }
       });
-//            Looper.loop();
-//         }
-//      }).start();
    }
 
    public interface OnRoomsGotListener {

@@ -1,9 +1,11 @@
 package classes.example.drawingame.data_base;
 
+import android.content.Context;
+
 import java.util.LinkedHashMap;
 
 import classes.example.drawingame.room_activity.list_view.Item;
-import classes.example.drawingame.room_activity.list_view.ItemList;
+import classes.example.drawingame.utils.Utils;
 import co.realtime.storage.ItemAttribute;
 import co.realtime.storage.ItemSnapshot;
 import co.realtime.storage.ext.OnError;
@@ -19,7 +21,16 @@ public class RoomAdder {
         this.listener = listener;
     }
 
-    public void start(Item item) {
+    public void start(Item item, Context context) {
+       if (DataBase.isDisconnected()) {
+          listener.onRoomAdded(false);//CHECK_RESULT_DISCONNECT);
+          DataBase.connect(context);
+          return;
+       }
+       if (Utils.isNoInternet(context)) {
+          listener.onRoomAdded(false);
+          return;
+       }
         LinkedHashMap<String, ItemAttribute> dbItem = item.dbItem();
         DataBase.roomTableRef.push(dbItem, new OnItemSnapshot() {
             @Override

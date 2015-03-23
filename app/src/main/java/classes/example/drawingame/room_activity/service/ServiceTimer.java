@@ -8,11 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.TimerTask;
 
 import classes.example.drawingame.data_base.BanChecker;
+import classes.example.drawingame.data_base.BanRemover;
 import classes.example.drawingame.data_base.DataBase;
 import classes.example.drawingame.data_base.RoomsGetter;
 import classes.example.drawingame.room_activity.RoomActivity;
 import classes.example.drawingame.room_activity.list_view.Item;
 import classes.example.drawingame.room_activity.list_view.ItemList;
+import classes.example.drawingame.utils.Utils;
 
 /**
  * Created by A on 30.12.2014.
@@ -29,17 +31,36 @@ public class ServiceTimer extends TimerTask {
 
    @Override
    public void run() {
-      new BanChecker(new BanChecker.OnBanCheckedListener() {
-         @Override
-         public void onBanChecked(String banReason) {
-            SharedPreferences preferences = context.
-                    getSharedPreferences("preferences", Context.MODE_PRIVATE);
-            if (!banReason.isEmpty())
-               preferences.edit().putString("ban", banReason).commit();
-            else
-               preferences.edit().putString("ban", "").commit();
-         }
-      }).start();
+      final SharedPreferences preferences = context.
+              getSharedPreferences("preferences", Context.MODE_PRIVATE);
+      if (preferences.contains(BanChecker.BAN_REASON)) {
+         if (Utils.banDateHasPast(preferences.getString(BanChecker.UNBAN_DATE, null)))
+            new BanRemover(new BanRemover.OnBanRemovedListener() {
+               @Override
+               public void onBanRemoved(String response) {
+                  if (response.equals("removed")) {
+                     preferences.edit().remove(BanChecker.BAN_REASON);
+                     preferences.edit().remove(BanChecker.UNBAN_DATE);
+                  }
+               }
+            }).start(context);
+      } else
+         new BanChecker(new BanChecker.OnBanCheckedListener() {
+            @Override
+            public void onBanChecked(String result, String unbanDate) {
+               switch (result) {
+                  case BanChecker.CHECK_RESULT_OK:
+                     break;
+                  case BanChecker.CHECK_RESULT_ERROR:
+                     return;
+                  default:
+                     preferences.edit().putString(BanChecker.BAN_REASON, result).commit();
+                     preferences.edit().putString(BanChecker.UNBAN_DATE, unbanDate).commit();
+                     break;
+               }
+
+            }
+         }).start(context);
       new RoomsGetter(new RoomsGetter.OnRoomsGotListener() {
          @Override
          public void onRoomsGot(final ArrayList<Item> dbList) {

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import classes.example.drawingame.R;
+import classes.example.drawingame.data_base.BanChecker;
 import classes.example.drawingame.data_base.DataBase;
 import classes.example.drawingame.data_base.RoomsGetter;
 import classes.example.drawingame.room_activity.list_view.Disk;
@@ -183,7 +184,7 @@ public class RoomActivity extends FragmentActivity {
          @Override
          public void run() {
 //            Log.d("!", "started initializeInBackground");
-            DataBase.init(getApplicationContext());
+            DataBase.connect(getApplicationContext());
             Disk.init();
             Memory.init();
             Utils.getDisplaySize(RoomActivity.this);
@@ -201,12 +202,12 @@ public class RoomActivity extends FragmentActivity {
    }
 
    private void reloadItemList() {
-//      Log.d("!", "reloading");
+      Log.d("!", "reloading");
       ItemList.reloadItems(new ItemList.OnReloadListener() {
          @Override
          public void onReloaded(boolean isReloaded) {
             if (!isReloaded) {
-//               Log.d("!", "not reloaded, liist size = " + String.valueOf(ItemList.list.size()));
+               Log.d("!", "not reloaded, liist size = " + String.valueOf(ItemList.list.size()));
                ServiceTimer.isDialogShown = true;
                Utils.showRetryActionDialog(Utils.stringFromRes(getApplicationContext(), R.string.errorDb),
                        new MyAlertDialog.OnDismissedListener() {
@@ -220,7 +221,7 @@ public class RoomActivity extends FragmentActivity {
                           }
                        }, RoomActivity.this);
             } else {
-//               Log.d("!", "reloaded, liist size = " + String.valueOf(ItemList.list.size()));
+               Log.d("!", "reloaded, liist size = " + String.valueOf(ItemList.list.size()));
                RoomActivity.this.runOnUiThread(new Runnable() {
                   @Override
                   public void run() {
@@ -416,16 +417,22 @@ public class RoomActivity extends FragmentActivity {
    }
 
    public void checkBan() {
-      String banReason = preferences.getString("ban", "");
-      if (!banReason.isEmpty())
-         Utils.showErrorWithListenerDialog(Utils.stringFromRes(getApplicationContext(),
-                 R.string.banMessage) + " " + banReason, new MyAlertDialog.OnDismissedListener() {
-            @Override
-            public void onDismissed(boolean isPositive) {
-               RoomActivity.this.finish();
-            }
-         }, RoomActivity.this);
+      String banReason = preferences.getString(BanChecker.BAN_REASON, "");
+      String unbanDate = preferences.getString(BanChecker.UNBAN_DATE, "");
+      if (preferences.contains(BanChecker.BAN_REASON)) {
+         if (!Utils.banDateHasPast(preferences.getString(BanChecker.UNBAN_DATE, null)))
+            Utils.showErrorWithListenerDialog(Utils.stringFromRes(getApplicationContext(),
+                    R.string.banMessage1) + " " + banReason +
+                    Utils.stringFromRes(getApplicationContext(), R.string.banMessage2)
+                    + " " + unbanDate, new MyAlertDialog.OnDismissedListener() {
+               @Override
+               public void onDismissed(boolean isPositive) {
+                  RoomActivity.this.finish();
+               }
+            }, RoomActivity.this);
+      }
    }
+
 
    private void scroll(final int pos) {
 //      Log.d("!", "scroll to " + String.valueOf(pos));

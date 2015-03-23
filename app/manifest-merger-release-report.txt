@@ -46,8 +46,10 @@ ADDED from AndroidManifest.xml:12:5
 	android:name
 		ADDED from AndroidManifest.xml:12:22
 application
-ADDED from AndroidManifest.xml:14:5
-MERGED from com.android.support:appcompat-v7:19.0.1:19:5
+ADDED from AndroidManifest.xml:15:5
+MERGED from com.android.support:appcompat-v7:21.0.3:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
 	android:label
 		ADDED from AndroidManifest.xml:17:9
 	android:allowBackup
@@ -56,8 +58,6 @@ MERGED from com.android.support:appcompat-v7:19.0.1:19:5
 		ADDED from AndroidManifest.xml:19:9
 	android:theme
 		ADDED from AndroidManifest.xml:18:9
-	android:name
-		ADDED from AndroidManifest.xml:15:9
 activity#classes.example.drawingame.room_activity.RoomActivity
 ADDED from AndroidManifest.xml:21:9
 	android:screenOrientation
@@ -104,7 +104,9 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:51:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
-MERGED from com.android.support:appcompat-v7:19.0.1:18:5
+MERGED from com.android.support:appcompat-v7:21.0.3:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
 	android:targetSdkVersion
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0

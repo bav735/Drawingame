@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
@@ -34,13 +33,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Random;
 
 import classes.example.drawingame.room_activity.RoomActivity;
-import classes.example.drawingame.room_activity.list_view.Item;
 
 /**
  * @author Peli
@@ -594,54 +593,55 @@ public class Utils {
    public static void showErrorWithListenerDialog(final String message, final
    MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
 //      if (roomActivityExists())
-         roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               MyAlertDialog.showErrorWithListener(message, onDismissedListener, roomActivity);
-            }
-         });
+      roomActivity.runOnUiThread(new Runnable() {
+         @Override
+         public void run() {
+            MyAlertDialog.showErrorWithListener(message, onDismissedListener, roomActivity);
+         }
+      });
    }
 
    public static void showErrorDialog(final String message, final RoomActivity roomActivity) {
 //      if (roomActivityExists())
-         roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               MyAlertDialog.showError(message, roomActivity);
-            }
-         });
+      roomActivity.runOnUiThread(new Runnable() {
+         @Override
+         public void run() {
+            MyAlertDialog.showError(message, roomActivity);
+         }
+      });
    }
 
    public static void showConfirmActionDialog(final String message, final
    MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
 //      if (roomActivityExists())
-         roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               MyAlertDialog.showConfirmAction(message, onDismissedListener, roomActivity);
-            }
-         });
+      roomActivity.runOnUiThread(new Runnable() {
+         @Override
+         public void run() {
+            MyAlertDialog.showConfirmAction(message, onDismissedListener, roomActivity);
+         }
+      });
    }
 
    public static void showRetryActionDialog(final String message, final
    MyAlertDialog.OnDismissedListener onDismissedListener, final RoomActivity roomActivity) {
 //      if (roomActivityExists())
-         roomActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               MyAlertDialog.showRetryAction(message, onDismissedListener, roomActivity);
-            }
-         });
+      roomActivity.runOnUiThread(new Runnable() {
+         @Override
+         public void run() {
+            MyAlertDialog.showRetryAction(message, onDismissedListener, roomActivity);
+         }
+      });
    }
 
-   public static boolean isNetworkAvailable(Context context) {
-      ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-      NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-      if (activeNetwork == null || !activeNetwork.isAvailable()
-              || !activeNetwork.isConnected()) {
-         return false;
+   public static boolean isNoInternet(Context context) {
+      try {
+         ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+         NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+         return activeNetwork == null || !activeNetwork.isAvailable()
+                 || !activeNetwork.isConnected();
+      } catch (Exception e) {
+         return true;
       }
-      return true;
    }
 
    public static int dpToPx(int dp, Context context) {
@@ -784,6 +784,18 @@ public class Utils {
 
    public static String stringFromRes(Context context, int id) {
       return context.getString(id);
+   }
+
+   public static boolean banDateHasPast(String unbanDateStr) {
+      if (unbanDateStr == null) return true;
+      SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+      try {
+         Date unbanDate = sdf.parse(unbanDateStr);
+         return new Date().after(unbanDate);
+      } catch (ParseException e) {
+         Log.d("!", "wrong date format");
+         return true;
+      }
    }
 
 //   public static void showList(RoomActivity roomActivity) {

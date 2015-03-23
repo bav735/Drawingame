@@ -33,7 +33,7 @@ public class ListService extends Service {
    public static final int MESSAGE_SHOW_RETRY_DIALOG = 4;
    public static final int MESSAGE_INIT = 5;
    public static final int MESSAGE_NOTIFY_SCROLL = 6;
-   public static final int TIMER_MSEC = 10 * 1000;
+   public static final int TIMER_MSEC = 30 * 1000;
    private static Timer timer;
    private static ServiceTimer task;
    private static NotificationManager notificationManager;
@@ -102,7 +102,7 @@ public class ListService extends Service {
       SharedPreferences preferences = context.
               getSharedPreferences("preferences", Context.MODE_PRIVATE);
       if (preferences.getBoolean("destroyed", true)) {
-         DataBase.init(context);
+         DataBase.connect(context);
          ItemList.reloadItems(null, context);
          Log.d("!", "reloading from service");
       }
@@ -122,14 +122,6 @@ public class ListService extends Service {
       }
       return START_STICKY;
    }
-
-//   @Override
-//   protected void onHandleIntent(Intent intent) {
-//      Log.d("!", "handling intent");
-//      Bundle extras = intent.getExtras();
-//      messageHandler = (Messenger) extras.get("MESSENGER");
-//      sendMessageInit();
-//   }
 
    public static void sendMessageShowPb() {
       Message message = Message.obtain();

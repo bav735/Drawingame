@@ -2,9 +2,7 @@ package classes.example.drawingame.imgur;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
-import java.lang.ref.SoftReference;
 import java.net.URL;
 
 /**
@@ -19,7 +17,7 @@ public class ImgurDownload {
 
    public void start(final String url) {
 //      Log.d("!", "downloaded item " + url);
-      Thread download = new Thread(new Runnable() {
+      new Thread(new Runnable() {
          @Override
          public void run() {
             try {
@@ -33,8 +31,7 @@ public class ImgurDownload {
                listener.onImgReceived(null);
             }
          }
-      });
-      download.start();
+      }).start();
    }
 
    public interface OnImgReceivedListener {

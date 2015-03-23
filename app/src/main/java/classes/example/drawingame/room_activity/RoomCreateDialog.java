@@ -44,7 +44,7 @@ public class RoomCreateDialog extends DialogFragment {
    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        Utils.roomActivity.showProgress();
       super.onActivityResult(requestCode, resultCode, data);
-      if (resultCode == Activity.RESULT_OK && data != null)
+      if (resultCode == Activity.RESULT_OK && data != null) {
          switch (requestCode) {
             case REQUEST_CODE_GALLERY:
                Uri imgUri = data.getData();
@@ -58,7 +58,8 @@ public class RoomCreateDialog extends DialogFragment {
             case REQUEST_CODE_CAMERA:
                newImgBitmap = (Bitmap) data.getExtras().get("data");
          }
-      setBitmapToIv();
+         setBitmapToIv();
+      }
    }
 
 
@@ -110,7 +111,8 @@ public class RoomCreateDialog extends DialogFragment {
                item.roomId = Utils.getNewId();
                item.lastEditorDeviceId = DataBase.thisDeviceId;
                item.roomName = roomName;
-               ItemList.startAddItemToDB(item, Utils.getResizedBitmap(newImgBitmap));
+               ItemList.startAddItemToDB(item, Utils.getResizedBitmap(newImgBitmap),
+                       getActivity().getApplicationContext());
                dismiss();
             } else
                ListService.sendMessageShowErrorDialog(R.string.dialogRoomCreateError);

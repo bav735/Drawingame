@@ -107,7 +107,7 @@ public class ListAdapter extends ArrayAdapter<Item> {
       holder.ibHolderRefresh.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-            ItemList.refreshItemFromDB(ItemList.list.get(pos));
+            ItemList.refreshItemFromDB(ItemList.list.get(pos), getContext());
          }
       });
 

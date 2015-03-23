@@ -12,7 +12,8 @@
     <string name="toastDialogNo">Не надо</string>
     <string name="toastDialogGotIt">Ок</string>
 
-    <string name="banMessage">Поздравляем, вы были забанены.</string>
+    <string name="banMessage1">К сожалению, вы были забанены.\nПричина:</string>
+    <string name="banMessage2">\nБан до:</string>
     <string name="errorRefreshOne">Картинка не была обновлена, проверьте соединение с интернетом</string>
     <string name="errorRefreshAll">Некоторые картинки не были обновлены, проверьте соединение с интернетом</string>
     <string name="errorDownload">Картинка не была загружена из базы данных, проверьте соединение с интернетом</string>

@@ -1,9 +1,9 @@
 package classes.example.drawingame.data_base;
 
-import java.util.logging.Handler;
+import android.content.Context;
 
 import classes.example.drawingame.room_activity.list_view.Item;
-import classes.example.drawingame.room_activity.service.ListService;
+import classes.example.drawingame.utils.Utils;
 import co.realtime.storage.ItemAttribute;
 import co.realtime.storage.ItemSnapshot;
 import co.realtime.storage.ext.OnError;
@@ -19,7 +19,16 @@ public class RoomGetter {
       this.listener = listener;
    }
 
-   public void start(final String id) {
+   public void start(final String id, Context context) {
+      if (DataBase.isDisconnected()) {
+         listener.onRoomGot(null, true);//CHECK_RESULT_DISCONNECT);
+         DataBase.connect(context);
+         return;
+      }
+      if (Utils.isNoInternet(context)) {
+         listener.onRoomGot(null, true);
+         return;
+      }
       DataBase.roomTableRef.item(new ItemAttribute(id)).get(new OnItemSnapshot() {
          @Override
          public void run(ItemSnapshot itemSnapshot) {
