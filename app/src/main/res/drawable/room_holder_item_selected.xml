@@ -1,0 +1,14 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:top="@dimen/holder_item_selected_frame_size"
+        android:right="@dimen/holder_item_selected_frame_size"
+        android:left="@dimen/holder_item_selected_frame_size"
+        android:bottom="@dimen/holder_item_selected_frame_size">
+        <shape>
+            <solid android:color="@color/black" />
+            <stroke
+                android:color="@color/holo_blue_light"
+                android:width="@dimen/holder_item_selected_size" />
+        </shape>
+    </item>
+</layer-list>

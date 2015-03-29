@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        applicationId "classes.example.drawingame"
+        minSdkVersion 11
+        targetSdkVersion 21
+        versionCode 5
+        versionName "2.2"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("KeyStore")
+            storePassword "111111"
+            keyAlias "ф"
+            keyPassword "111111"
+        }
+    }
+
+    buildTypes {
+        release {
+//            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:support-v4:21.0.+'
+    compile 'org.apache.httpcomponents:httpmime:4.4-beta1'
+    compile 'org.apache.httpcomponents:httpcore:4.4'
+    compile 'com.github.jbellis:jamm:0.3.0'
+    compile 'com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.4.2'
+}

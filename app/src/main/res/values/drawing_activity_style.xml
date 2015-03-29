@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DrawingActivityTheme" parent="android:Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.ExampleRA</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Example</item>
+    </style>
+
+    <!--<style name="PopupMenu.ExampleRA" parent="android:Widget.Holo.ListPopupWindow">-->
+        <!--<item name="android:popupBackground">@drawable/dialog_room_create_frame</item>-->
+    <!--</style>-->
+
+    <!--<style name="DropDownListView.Example2" parent="android:Widget.Holo.ListView.DropDown">-->
+        <!--<item name="android:listSelector">@drawable/selectable_background_example</item>-->
+    <!--</style>-->
+</resources>
