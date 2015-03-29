@@ -8,8 +8,8 @@ android {
         applicationId "classes.example.drawingame"
         minSdkVersion 11
         targetSdkVersion 21
-        versionCode 4
-        versionName "2.1"
+        versionCode 5
+        versionName "2.2"
     }
 
     signingConfigs {
